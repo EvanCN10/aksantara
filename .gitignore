@@ -1,0 +1,90 @@
+# ==========================================
+# Aksantara Monorepo .gitignore
+# Hackathon JOINTS UGM 2026
+# ==========================================
+
+# --- Node.js & Next.js ---
+node_modules/
+.next/
+out/
+build/
+dist/
+.turbo/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+
+# --- Environment & Secrets ---
+.env
+.env*.local
+.env.development
+.env.production
+*.pem
+*.key
+*.cert
+
+# --- Python & AI Engine ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+*.ipynb_checkpoints/
+
+# --- Large AI Model Weights & Datasets (>50MB) ---
+# Store models on HuggingFace / Supabase Storage instead of Git
+*.pth
+*.pt
+*.bin
+*.onnx
+*.h5
+*.tflite
+*.safetensors
+datasets/cache/
+
+# --- Hardware & IoT (ESP32 / PlatformIO / Arduino) ---
+.pio/
+.vscode/.browse.c_cpp.db*
+*.hex
+*.elf
+
+# --- Operating System & Editor Junk ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.tmp
+*.bak
+*.swp
+*~
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
