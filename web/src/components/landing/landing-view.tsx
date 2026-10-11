@@ -1,0 +1,51 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import HeroSection from './hero-section';
+import EntranceVideo from './entrance-video';
+
+export function LandingView() {
+  const [hasSeenIntro, setHasSeenIntro] = useState(false);
+  const [isHeroStarted, setIsHeroStarted] = useState(false);
+
+  // Kunci scroll body selama intro video aktif
+  useEffect(() => {
+    if (!hasSeenIntro) {
+      document.body.style.overflow = 'hidden';
+      window.scrollTo(0, 0);
+    } else {
+      document.body.style.overflow = '';
+      window.scrollTo(0, 0);
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [hasSeenIntro]);
+
+  const handleVideoComplete = () => {
+    setHasSeenIntro(true);
+    setIsHeroStarted(true);
+    window.scrollTo(0, 0);
+  };
+
+  const handleFadeStart = () => {
+    // Memicu animasi hero saat video mulai fade-out (detik 7.2)
+    setIsHeroStarted(true);
+    window.scrollTo(0, 0);
+  };
+
+  return (
+    <main className="min-h-screen w-full bg-[#0c1a2c] relative">
+      {!hasSeenIntro && (
+        <EntranceVideo
+          onComplete={handleVideoComplete}
+          onFadeStart={handleFadeStart}
+        />
+      )}
+      <HeroSection isStarted={isHeroStarted} />
+    </main>
+  );
+}
+
+export default LandingView;
