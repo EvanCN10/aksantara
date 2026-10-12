@@ -1,7 +1,11 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import ShinyButton from '@/components/ui/shiny-button';
 
 const DESIGN_W = 1440;
-const DESIGN_H = 1857;
+const DESIGN_H = 1853;
 
 interface LayerItem {
   id: string;
@@ -12,10 +16,13 @@ interface LayerItem {
   h: number;
   src: string;
   priority?: boolean;
+  transformOrigin?: string;
   inner?: {
     w: number;
     h: number;
-    transform: string;
+    transform?: string;
+    className?: string;
+    transformOrigin?: string;
   };
   animateEnter?: string;
   animateLoop?: string;
@@ -29,7 +36,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     x: 0,
     y: 0,
     w: 1440,
-    h: 1857,
+    h: 1855,
     src: '/images/ui/landing-page/bg-main.png',
     priority: true,
     animateEnter: 'heroBgZoom 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
@@ -41,10 +48,10 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     y: 634,
     w: 1440,
     h: 805,
-    src: '/images/ui/landing-page/section-landing/Parallax-Castle.png',
+    src: '/images/ui/landing-page/section-landing/Parallax-Castle.svg',
     priority: true,
   },
-  // flower 2 (Figma node 3:4) - statis sesuai arahan
+  // flower 2 (Figma node 3:4) - Sesuai Dev Mode Figma: -scale-y-100 rotate-[-115.3deg]
   {
     id: '3:4',
     name: 'flower 2',
@@ -56,8 +63,10 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     inner: {
       w: 427.553,
       h: 450.705,
-      transform: 'scaleY(-1) rotate(-115.3deg)',
+      className: 'flex-none -scale-y-100 rotate-[-115.3deg]',
+      transformOrigin: '15% 82%',
     },
+    animateLoop: 'swayFlower2 4.6s ease-in-out infinite alternate',
   },
   // 12x Kelopak (posisi sesuai Figma node 1:20 s.d 1:42)
   // Masuk: scale(0) -> scale(1) (bukan fade), fase & ritme floating dibedakan secara organik
@@ -269,7 +278,7 @@ const LAYERS_ABOVE_TITLE: LayerItem[] = [
     animateEnter: 'enterCloudLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both',
     animateLoop: 'floatCloudLeftB 9.6s ease-in-out infinite alternate',
   },
-  // left-flower 1 (Figma node 3:2) - statis sesuai arahan
+  // left-flower 1 (Figma node 3:2) - Breathing tipis di pojok kiri bawah
   {
     id: '3:2',
     name: 'left-flower 1',
@@ -278,8 +287,10 @@ const LAYERS_ABOVE_TITLE: LayerItem[] = [
     w: 537,
     h: 756,
     src: '/images/ui/landing-page/section-landing/left-flower.png',
+    transformOrigin: '0% 100%',
+    animateLoop: 'breatheLeftFlower 6.2s ease-in-out infinite alternate',
   },
-  // flower 1 (Figma node 3:3) - statis sesuai arahan
+  // flower 1 (Figma node 3:3) - Mengayun berporos pangkal tangkai
   {
     id: '3:3',
     name: 'flower 1',
@@ -291,8 +302,10 @@ const LAYERS_ABOVE_TITLE: LayerItem[] = [
     inner: {
       w: 307.152,
       h: 323.785,
-      transform: 'rotate(-64.7deg)',
+      className: 'flex-none rotate-[-64.7deg]',
+      transformOrigin: '15% 82%',
     },
+    animateLoop: 'swayFlower1 5.2s ease-in-out 0.4s infinite alternate',
   },
 ];
 
@@ -303,9 +316,13 @@ const TITLE_STAGGER = 0.06;   // 60ms selisih antar huruf
 function RenderLayer({
   item,
   isStarted = true,
+  elementRef,
+  customStyle,
 }: {
   item: LayerItem;
   isStarted?: boolean;
+  elementRef?: React.Ref<HTMLDivElement>;
+  customStyle?: React.CSSProperties;
 }) {
   const left = `${(item.x / DESIGN_W) * 100}%`;
   const top = `${(item.y / DESIGN_H) * 100}%`;
@@ -321,6 +338,7 @@ function RenderLayer({
     return (
       <div
         key={item.id}
+        ref={elementRef}
         data-node-id={item.id}
         data-name={item.name}
         className="absolute pointer-events-none select-none flex items-center justify-center will-change-transform"
@@ -331,25 +349,33 @@ function RenderLayer({
           height,
           animation: isStarted ? item.animateEnter : 'none',
           opacity: !isStarted && item.animateEnter ? 0 : undefined,
+          ...customStyle,
         }}
       >
         <div
-          className="relative will-change-transform"
+          className={`relative will-change-transform ${item.inner.className || ''}`}
           style={{
             width: innerW,
             height: innerH,
             transform: item.inner.transform,
-            animation: isStarted ? item.animateLoop : 'none',
           }}
         >
-          <Image
-            src={item.src}
-            alt=""
-            fill
-            sizes={sizes}
-            priority={item.priority}
-            className="object-contain"
-          />
+          <div
+            className="relative size-full will-change-transform"
+            style={{
+              transformOrigin: item.inner.transformOrigin || 'center',
+              animation: isStarted ? item.animateLoop : 'none',
+            }}
+          >
+            <Image
+              src={item.src}
+              alt=""
+              fill
+              sizes={sizes}
+              priority={item.priority}
+              className="object-contain"
+            />
+          </div>
         </div>
       </div>
     );
@@ -359,6 +385,7 @@ function RenderLayer({
   return (
     <div
       key={item.id}
+      ref={elementRef}
       data-node-id={item.id}
       data-name={item.name}
       className="absolute pointer-events-none select-none will-change-transform"
@@ -369,11 +396,13 @@ function RenderLayer({
         height,
         animation: isStarted ? item.animateEnter : 'none',
         opacity: !isStarted && item.animateEnter && item.name !== 'bg-main' ? 0 : undefined,
+        ...customStyle,
       }}
     >
       <div
         className="relative size-full will-change-transform"
         style={{
+          transformOrigin: item.transformOrigin || 'center',
           animation: isStarted ? item.animateLoop : 'none',
         }}
       >
@@ -390,15 +419,109 @@ function RenderLayer({
   );
 }
 
+// [dx, dy] px pergeseran saat exit = 1.
+// Miring: Mahkota (kanan-atas), Keris (kiri-atas), Cloud-1 (kanan-atas).
+// Sisanya: awan atas & kelopak meluncur ke atas.
+const EXIT_VECTORS: Record<string, [number, number]> = {
+  '1:21': [65, -85],  // Mahkota 1
+  '1:22': [-65, -75], // Keris 1
+  '1:26': [60, -70],  // Cloud-1 1
+  '1:23': [0, -75],   // Cloud-2 1
+  '1:24': [0, -75],   // Cloud-3(1) 1
+  '1:25': [0, -75],   // Cloud-3 1
+  '1:20': [0, -60],   // Kelopak 1
+  '1:28': [0, -60],   // Kelopak 2
+  '1:30': [0, -60],   // Kelopak 4
+  '1:31': [0, -60],   // Kelopak 5
+  '1:32': [0, -60],   // Kelopak 6
+  '1:46': [0, -60],   // Kelopak 7
+  '1:41': [0, -60],   // Kelopak 8
+  '1:42': [0, -60],   // Kelopak 9
+};
+
 export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
+  const castleRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!isStarted) {
+      if (castleRef.current) {
+        castleRef.current.style.opacity = '0';
+        castleRef.current.style.transform = 'translateY(64px)';
+      }
+      if (sectionRef.current) {
+        sectionRef.current.style.setProperty('--exit', '0');
+      }
+      return;
+    }
+
+    let rafId: number | null = null;
+
+    const updateCastle = () => {
+      if (!castleRef.current) return;
+      const rect = castleRef.current.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const h = rect.height || 1;
+
+      // Proporsi istana yang sudah masuk ke viewport dari bawah
+      const visibleFromBottom = vh - rect.top;
+      const visibleRatio = visibleFromBottom / h;
+
+      if (visibleRatio < 0.25) {
+        castleRef.current.style.opacity = '0';
+        castleRef.current.style.transform = 'translateY(64px)';
+      } else if (visibleRatio >= 1.0) {
+        castleRef.current.style.opacity = '1';
+        castleRef.current.style.transform = 'translateY(0px)';
+      } else {
+        const progress = (visibleRatio - 0.25) / 0.75;
+        // Langsung masuk fade in penuh, posisi ber-parallax seiring scroll
+        castleRef.current.style.opacity = '1';
+        castleRef.current.style.transform = `translateY(${(1 - progress) * 64}px)`;
+      }
+    };
+
+    const updateScrollEffects = () => {
+      // 1. Castle Scroll
+      updateCastle();
+
+      // 2. Parallax Exit untuk komponen atas (rentang scroll 0 s.d. 450px)
+      const scrollY = window.scrollY;
+      const p = Math.min(1, Math.max(0, scrollY / 450));
+      if (sectionRef.current) {
+        sectionRef.current.style.setProperty('--exit', String(p));
+      }
+    };
+
+    const handleScroll = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        updateScrollEffects();
+        rafId = null;
+      });
+    };
+
+    updateScrollEffects();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+
+    return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [isStarted]);
+
   return (
     <section
+      ref={sectionRef}
       data-node-id="1:54"
       aria-label="Hero Aksantara"
       className="@container relative w-full overflow-hidden bg-[#0c1a2c]"
       style={{
         aspectRatio: `${DESIGN_W} / ${DESIGN_H}`,
         containerType: 'inline-size',
+        ['--exit' as any]: '0',
       }}
     >
       {/* 0. White Overlay Fade Out (Cinematic entrance dari putih) */}
@@ -413,15 +536,51 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
       />
 
       {/* 1. Layers di bawah judul */}
-      {LAYERS_BELOW_TITLE.map((layer) => (
-        <RenderLayer key={layer.id} item={layer} isStarted={isStarted} />
-      ))}
+      {LAYERS_BELOW_TITLE.map((layer) => {
+        const rendered =
+          layer.id === '1:18' ? (
+            <RenderLayer
+              key={layer.id}
+              item={layer}
+              isStarted={isStarted}
+              elementRef={castleRef}
+              customStyle={{
+                opacity: 0,
+                transform: 'translateY(64px)',
+                transition:
+                  'opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.2, 0, 0, 1)',
+              }}
+            />
+          ) : (
+            <RenderLayer key={layer.id} item={layer} isStarted={isStarted} />
+          );
 
-      {/* 2. Judul AKSANTARA (Figma node 1:52) - Staggered huruf masuk dari bawah */}
+        const vector = EXIT_VECTORS[layer.id];
+        if (vector) {
+          const [dx, dy] = vector;
+          return (
+            <div
+              key={layer.id}
+              className="absolute inset-0 size-full pointer-events-none will-change-transform"
+              style={{
+                transform: `translate(calc(var(--exit) * ${dx}px), calc(var(--exit) * ${dy}px))`,
+                opacity: 'calc(1 - var(--exit))',
+                transition:
+                  'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+            >
+              {rendered}
+            </div>
+          );
+        }
+        return rendered;
+      })}
+
+      {/* 2. Judul AKSANTARA (Figma node 1:52) - Staggered huruf masuk dari bawah + Scroll Exit */}
       <h1
         data-node-id="1:52"
         data-name="AKSANTARA"
-        className="absolute select-none whitespace-nowrap font-bold tracking-normal leading-none"
+        className="absolute select-none whitespace-nowrap font-bold tracking-normal leading-none will-change-transform"
         style={{
           left: `${(358 / DESIGN_W) * 100}%`,
           top: `${(212 / DESIGN_H) * 100}%`,
@@ -429,6 +588,10 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
           fontFamily: 'var(--font-philosopher), serif',
           filter:
             'drop-shadow(0 calc(6 / 1440 * 100cqw) calc(11.4 / 1440 * 100cqw) rgba(0, 0, 0, 0.75))',
+          transform: 'translateY(calc(var(--exit) * -90px))',
+          opacity: 'calc(1 - var(--exit))',
+          transition:
+            'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         {TITLE_LETTERS.map((char, index) => {
@@ -453,41 +616,85 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
         })}
       </h1>
 
-      {/* 3. Layers di atas judul (awan depan teks & latar depan) */}
-      {LAYERS_ABOVE_TITLE.map((layer) => (
-        <RenderLayer key={layer.id} item={layer} isStarted={isStarted} />
-      ))}
-
-      {/* 4. Navigasi sementara agar akses halaman tetap terjaga */}
-      <nav
-        aria-label="Navigasi Utama"
-        className="absolute z-20 flex items-center justify-center gap-[2cqw] text-white/90 font-medium tracking-wide"
+      {/* 2.1 Subtext Naratif & CTA Button (Struktur sesuai referensi Hero & SSOT v3.1) */}
+      <div
+        data-name="Hero Narrative & CTA"
+        className="absolute z-20 flex flex-col items-center text-center will-change-transform pointer-events-auto select-none"
         style={{
-          top: `${(24 / DESIGN_H) * 100}%`,
           left: '50%',
-          transform: 'translateX(-50%)',
-          fontSize: 'clamp(12px, 1.2cqw, 18px)',
+          top: `${(365 / DESIGN_H) * 100}%`,
+          transform: 'translate(-50%, calc(var(--exit) * -90px))',
+          opacity: 'calc(1 - var(--exit))',
+          width: 'min(90%, calc(680 / 1440 * 100cqw))',
+          maxWidth: '680px',
+          transition:
+            'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-        <a
-          href="/mulai"
-          className="px-[1.2cqw] py-[0.5cqw] rounded-full backdrop-blur-md bg-black/25 hover:bg-black/40 transition-colors border border-white/15 shadow-sm"
+        <p
+          className="text-white font-semibold tracking-wide text-balance drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]"
+          style={{
+            fontSize: 'clamp(14px, calc(17 / 1440 * 100cqw), 18px)',
+            lineHeight: 1.65,
+            animation: isStarted
+              ? 'enterHeroSubtext 0.85s cubic-bezier(0.16, 1, 0.3, 1) 2.25s both'
+              : 'none',
+            opacity: isStarted ? undefined : 0,
+          }}
         >
-          Mulai Belajar
-        </a>
-        <a
-          href="/trinitas"
-          className="px-[1.2cqw] py-[0.5cqw] rounded-full backdrop-blur-md bg-black/25 hover:bg-black/40 transition-colors border border-white/15 shadow-sm"
+          Lestarikan Aksara Nusantara lewat AI dan permainan interaktif
+          <br className="hidden sm:inline" />
+          {' '}Revitalisasi harmoni Lontara, Sunda, dan Bali lewat presisi AI dan sentuhan kinestetik.
+        </p>
+
+        <div
+          className="mt-[calc(22/1440*100cqw)] flex justify-center"
+          style={{
+            animation: isStarted
+              ? 'enterHeroBtn 0.75s cubic-bezier(0.16, 1, 0.3, 1) 2.5s both'
+              : 'none',
+            opacity: isStarted ? undefined : 0,
+          }}
         >
-          Tentang Trinitas Aksara
-        </a>
-        <a
-          href="/auth"
-          className="px-[1.2cqw] py-[0.5cqw] rounded-full backdrop-blur-md bg-black/25 hover:bg-black/40 transition-colors border border-white/15 shadow-sm"
-        >
-          Masuk
-        </a>
-      </nav>
+          <ShinyButton
+            label="Mulai Petualangan Aksara"
+            href="/mulai"
+            fillColor="rgba(13, 14, 18, 0.65)"
+            labelColor="#F6F2E9"
+            accentColor="#ffd261"
+            accentSoftColor="#ffe8a3"
+            cornerRadius={9999}
+            className="text-xs md:text-sm tracking-wide font-medium shadow-[0_8px_32px_rgba(0,0,0,0.45),0_0_24px_rgba(255,210,97,0.18)] hover:scale-105 active:scale-95 transition-transform duration-300"
+          />
+        </div>
+      </div>
+
+      {/* 3. Layers di atas judul (awan depan teks & latar depan) */}
+      {LAYERS_ABOVE_TITLE.map((layer) => {
+        const rendered = (
+          <RenderLayer key={layer.id} item={layer} isStarted={isStarted} />
+        );
+
+        const vector = EXIT_VECTORS[layer.id];
+        if (vector) {
+          const [dx, dy] = vector;
+          return (
+            <div
+              key={layer.id}
+              className="absolute inset-0 size-full pointer-events-none will-change-transform"
+              style={{
+                transform: `translate(calc(var(--exit) * ${dx}px), calc(var(--exit) * ${dy}px))`,
+                opacity: 'calc(1 - var(--exit))',
+                transition:
+                  'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+            >
+              {rendered}
+            </div>
+          );
+        }
+        return rendered;
+      })}
     </section>
   );
 }

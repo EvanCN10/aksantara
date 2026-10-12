@@ -77,7 +77,16 @@ export function EntranceVideo({ onComplete, onFadeStart }: EntranceVideoProps) {
     }
   };
 
-  const handleSkip = () => {
+  const [showSkipPrompt, setShowSkipPrompt] = useState(false);
+
+  const handleScreenClick = () => {
+    if (!showSkipPrompt) {
+      setShowSkipPrompt(true);
+    }
+  };
+
+  const handleSkip = (e: React.MouseEvent) => {
+    e.stopPropagation();
     startFade();
     finishVideo();
   };
@@ -85,7 +94,8 @@ export function EntranceVideo({ onComplete, onFadeStart }: EntranceVideoProps) {
   return (
     <div
       aria-label="Video Pembuka Aksantara"
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black select-none touch-none overscroll-none transition-opacity duration-800 ease-out ${
+      onClick={handleScreenClick}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black select-none touch-none overscroll-none transition-opacity duration-800 ease-out cursor-pointer ${
         isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >
@@ -96,20 +106,22 @@ export function EntranceVideo({ onComplete, onFadeStart }: EntranceVideoProps) {
         preload="auto"
         onTimeUpdate={handleTimeUpdate}
         onEnded={startFade}
-        className="w-full h-full object-cover select-none"
+        className="w-full h-full object-cover select-none pointer-events-none"
       />
 
-      {/* Tombol Lewati / Skip Intro (Pojok Kanan Atas) */}
-      <button
-        onClick={handleSkip}
-        type="button"
-        className="absolute top-6 right-6 z-50 flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md bg-black/40 hover:bg-black/60 text-white/90 text-sm font-medium border border-white/20 transition-all cursor-pointer shadow-lg"
-      >
-        <span>Lewati Intro</span>
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-        </svg>
-      </button>
+      {/* Tombol Skip muncul hanya setelah user mengklik layar */}
+      {showSkipPrompt && (
+        <button
+          onClick={handleSkip}
+          type="button"
+          className="absolute top-6 right-6 z-50 flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md bg-black/60 hover:bg-black/80 text-white text-sm font-medium border border-white/30 transition-all cursor-pointer shadow-xl animate-fade-in"
+        >
+          <span>Klik untuk Lewati Intro</span>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+          </svg>
+        </button>
+      )}
 
       {/* Prompt Mulai Pengalaman jika browser menahan audio autoplay */}
       {needsUserInteraction && !hasStarted && (

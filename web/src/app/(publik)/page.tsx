@@ -1,9 +1,11 @@
+import { cookies } from 'next/headers';
 import LandingView from '@/components/landing/landing-view';
 
-export const LandingPage = () => {
-  return <LandingView />;
-};
+export default async function LandingPage() {
+  const cookieStore = await cookies();
+  const initialSeen = cookieStore.get('aksantara_intro_seen')?.value === 'true';
 
-export default LandingPage;
+  return <LandingView initialSeen={initialSeen} />;
+}
 
 

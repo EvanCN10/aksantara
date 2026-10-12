@@ -3,10 +3,19 @@
 import { useEffect, useState } from 'react';
 import HeroSection from './hero-section';
 import EntranceVideo from './entrance-video';
+import Navbar from '../layout/navbar';
 
-export function LandingView() {
-  const [hasSeenIntro, setHasSeenIntro] = useState(false);
-  const [isHeroStarted, setIsHeroStarted] = useState(false);
+export function LandingView({ initialSeen = false }: { initialSeen?: boolean }) {
+  const [hasSeenIntro, setHasSeenIntro] = useState(initialSeen);
+  const [isHeroStarted, setIsHeroStarted] = useState(initialSeen);
+
+  useEffect(() => {
+    const seen = sessionStorage.getItem('aksantara_intro_seen');
+    if (seen === 'true' || initialSeen) {
+      setHasSeenIntro(true);
+      setIsHeroStarted(true);
+    }
+  }, [initialSeen]);
 
   // Kunci scroll body selama intro video aktif
   useEffect(() => {
@@ -24,6 +33,8 @@ export function LandingView() {
   }, [hasSeenIntro]);
 
   const handleVideoComplete = () => {
+    document.cookie = 'aksantara_intro_seen=true; path=/; SameSite=Lax';
+    sessionStorage.setItem('aksantara_intro_seen', 'true');
     setHasSeenIntro(true);
     setIsHeroStarted(true);
     window.scrollTo(0, 0);
@@ -43,6 +54,7 @@ export function LandingView() {
           onFadeStart={handleFadeStart}
         />
       )}
+      <Navbar isStarted={isHeroStarted} />
       <HeroSection isStarted={isHeroStarted} />
     </main>
   );
