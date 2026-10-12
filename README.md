@@ -74,6 +74,12 @@ aksantara/
 └── README.md                  # Dokumentasi utama proyek
 ```
 
+SSOT resmi berada di [`context/AKSANTARA-SSOT-v3.1.md`](context/AKSANTARA-SSOT-v3.1.md); panduan kompetisi berada di [`context/competition/guidebook-joints-2026.md`](context/competition/guidebook-joints-2026.md).
+
+Folder `datasets/` disimpan lokal dan tidak diikutkan ke Git. Konfigurasi asisten lokal `.agents/` dan `.omp/` juga di-ignore; aturan tim yang dilacak berada di `.agent/`.
+
+Branch `main` mengikuti struktur dasar monorepo. Implementasi frontend yang sudah tersedia di remote berada pada branch `web`.
+
 ---
 
 ## ⚡ Tech Stack

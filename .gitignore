@@ -1,8 +1,3 @@
-# ==========================================
-# Aksantara Monorepo .gitignore
-# Hackathon JOINTS UGM 2026
-# ==========================================
-
 # --- Node.js & Next.js ---
 node_modules/
 .next/
@@ -64,7 +59,7 @@ htmlcov/
 *.h5
 *.tflite
 *.safetensors
-datasets/cache/
+datasets/
 
 # --- Hardware & IoT (ESP32 / PlatformIO / Arduino) ---
 .pio/
@@ -88,3 +83,7 @@ Thumbs.db
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
+
+# --- Local Assistant Configuration ---
+/.agents/
+/.omp/

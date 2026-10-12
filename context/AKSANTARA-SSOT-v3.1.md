@@ -10,7 +10,7 @@
 
 | Parameter | Spesifikasi |
 |---|---|
-| **Nama Proyek** | **Aksantara** *(Aksara Nusantara Berdaya di Era Digital & Fisik)* |
+| **Nama Proyek** | **Aksantara** *(Aksara & Nusantara — Berdaya di Era Digital & Fisik)* |
 | **Deskripsi Formal** | Platform edukasi multi-modal berbasis AI klasifikasi dan perangkat kinestetik (Phygital) untuk melatih, mengevaluasi, dan merevitalisasi aksara daerah Nusantara — mendukung latihan digital (Web Mode via AI Canvas) maupun media sensorik fisik (Hardware Mode via Aksantara Tactile Pad), terintegrasi dengan Narrative Story Mode berbasis cerita rakyat dan jembatan pelestarian manuskrip kuno. |
 | **Tema Lomba** | **Education** (revitalisasi literasi aksara daerah melalui pendekatan digital AI dan perangkat fisik kinestetik) |
 | **Masalah Inti** | Indonesia memiliki >700 bahasa dan puluhan aksara daerah, namun generasi muda mengalami krisis literasi aksara non-Latin. Riset UGM (2026) mencatat aksara Nusantara berisiko punah karena metode ajar yang membosankan, minimnya alat peraga interaktif di sekolah, dan pendekatan digital yang kaku. Aksantara mengunci fokus implementasi pada **Trinitas Aksara Nusantara (Lontara, Sunda, Bali)** sebagai representasi paleografi Indonesia. |
