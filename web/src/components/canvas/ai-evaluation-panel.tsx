@@ -4,18 +4,9 @@ import React from 'react';
 import Link from 'next/link';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { ShinyButton } from '@/components/ui/shiny-button';
+import type { GlyphInferenceOutput } from '@/lib/onnx/onnx-classifier';
 import type { GlifData, AksaraDetail } from '@/data/aksara/trinitas';
 
-export interface EvaluationResult {
-  score: number;
-  status: 'sempurna' | 'bagus' | 'kurang';
-  ringkasan: string;
-  kriteria: {
-    label: string;
-    lulus: boolean;
-    catatan: string;
-  }[];
-}
 
 interface AiEvaluationPanelProps {
   aksara: AksaraDetail;
@@ -23,7 +14,8 @@ interface AiEvaluationPanelProps {
   nextGlif?: GlifData;
   strokeCount: number;
   isEvaluating: boolean;
-  evaluationResult: EvaluationResult | null;
+  evaluationResult: GlyphInferenceOutput | null;
+  evaluationError: string | null;
   onEvaluate: () => void;
   onResetEvaluation: () => void;
   onPlayPronunciation?: () => void;
@@ -47,13 +39,6 @@ function SparklesIcon({ className = 'w-4 h-4' }: { className?: string }) {
   );
 }
 
-function CheckIcon({ className = 'w-3.5 h-3.5' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 6 9 17l-5-5" />
-    </svg>
-  );
-}
 
 function StarIcon({ className = 'w-3.5 h-3.5', filled = false }: { className?: string; filled?: boolean }) {
   return (
@@ -78,6 +63,7 @@ export function AiEvaluationPanel({
   strokeCount,
   isEvaluating,
   evaluationResult,
+  evaluationError,
   onEvaluate,
   onResetEvaluation,
   onPlayPronunciation,
@@ -88,7 +74,7 @@ export function AiEvaluationPanel({
     <OrnateFrame className="w-full bg-[#0c1a2c]/85 backdrop-blur-xl border border-[#D4A373]/30 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
       <div className="p-5 sm:p-6 flex flex-col gap-5">
         {/* ================================================================
-            1. TOP ROW: CATEGORY, XP & TARGET GLIF CARD
+            1. TOP ROW: CATEGORY, EXPERIMENT & TARGET GLIF CARD
             ================================================================ */}
         <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3">
           <div className="flex items-center gap-1.5">
@@ -104,7 +90,7 @@ export function AiEvaluationPanel({
 
           <div className="flex items-center gap-1 text-xs font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 rounded-full">
             <SparklesIcon className="w-3 h-3 text-[#ffd261]" />
-            <span>+{glif.xp} XP</span>
+            <span>Eksperimen</span>
           </div>
         </div>
 
@@ -181,62 +167,54 @@ export function AiEvaluationPanel({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#ffd261]">
               <SparklesIcon className="w-3.5 h-3.5 text-[#ffd261]" />
-              <span>Evaluasi AI Real-time</span>
+              <span>Klasifikasi AI Eksperimental</span>
             </div>
             {evaluationResult && (
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
-                AI Analisis Selesai
+              <span className="rounded-full border border-[#D4A373]/30 bg-[#D4A373]/15 px-2 py-0.5 font-mono text-[10px] text-[#D4A373]">
+                Perlu review
               </span>
             )}
           </div>
 
+          {evaluationError && (
+            <p role="alert" className="rounded-xl border border-[#E76F51]/40 bg-[#E76F51]/10 p-3 text-xs text-[#F6F2E9]">
+              {evaluationError}
+            </p>
+          )}
+
           {/* STATE A: EVALUATION RESULT VIEW */}
           {evaluationResult ? (
             <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
-              {/* Score Gauge Card */}
-              <div className="rounded-xl border border-[#ffd261]/30 bg-gradient-to-r from-[#ffd261]/15 via-white/[0.03] to-transparent p-4 flex items-center justify-between">
+              <div role="status" aria-live="polite" className="space-y-3 rounded-xl border border-[#D4A373]/30 bg-white/[0.03] p-4">
                 <div>
-                  <span className="text-[10px] font-medium text-white/60 block">Akurasi Bentuk Glif</span>
-                  <div className="text-3xl font-extrabold text-[#ffd261] font-mono">
-                    {evaluationResult.score}%
-                  </div>
-                  <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1 mt-0.5">
-                    <CheckIcon className="w-3.5 h-3.5" />
-                    {evaluationResult.status === 'sempurna'
-                      ? 'Goresan Sangat Akurat!'
-                      : evaluationResult.status === 'bagus'
-                      ? 'Bentuk Cukup Presisi'
-                      : 'Perlu Sedikit Perbaikan'}
-                  </span>
-                </div>
-
-                <div className="text-right max-w-[150px]">
-                  <p className="text-[11px] text-white/70 leading-tight">
-                    {evaluationResult.ringkasan}
+                  <span className="block text-xs text-white/70">Label sumber teratas (bukan Unicode terverifikasi)</span>
+                  <strong className="break-all font-mono text-xl text-[#D4A373]">{evaluationResult.predictedSymbol}</strong>
+                  <p className="text-sm text-[#F6F2E9]">
+                    Probabilitas kelas: {(evaluationResult.confidence * 100).toFixed(2)}%
                   </p>
                 </div>
-              </div>
-
-              {/* Criteria Breakdown */}
-              <div className="space-y-1.5">
-                {evaluationResult.kriteria.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="p-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-xs flex items-start gap-2"
-                  >
-                    <span
-                      className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-[10px] ${
-                        item.lulus ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'
-                      }`}
-                    >
-                      {item.lulus ? '✓' : '•'}
-                    </span>
-                    <div className="flex-1">
-                      <div className="font-semibold text-white/90">{item.label}</div>
-                      <p className="text-[11px] text-white/60 mt-0.5">{item.catatan}</p>
-                    </div>
-                  </div>
-                ))}
+                <p className="text-xs leading-relaxed text-white/80">{evaluationResult.ringkasan}</p>
+                <p className="text-xs leading-relaxed text-[#D4A373]">
+                  {evaluationResult.targetSupported
+                    ? `Probabilitas label target ${glif.slug}: ${evaluationResult.score.toFixed(2)}%. Kecocokan label sumber saja, bukan validasi bentuk.`
+                    : `Target ${glif.slug} tidak memiliki label sumber unik yang cocok. Persentase yang ditampilkan adalah probabilitas kelas teratas, bukan target.`}
+                </p>
+                <ol aria-label="Tiga probabilitas label sumber teratas" className="space-y-2">
+                  {evaluationResult.top3.map((item) => (
+                    <li key={item.labelId} className="flex justify-between gap-3 border-t border-white/10 pt-2 text-xs">
+                      <span className="break-all font-mono text-[#F6F2E9]">{item.sourceLabel}</span>
+                      <span className="shrink-0 font-mono text-[#D4A373]">{(item.probability * 100).toFixed(2)}%</span>
+                    </li>
+                  ))}
+                </ol>
+                <p className="text-xs leading-relaxed text-white/80">
+                  Probabilitas belum terkalibrasi; mapping Unicode belum terverifikasi. Hasil perlu review manusia, bukan skor kualitas tulisan atau pemeriksaan diakritik. Tidak menambah XP, penguasaan, atau progres.
+                </p>
+                <p className="text-xs text-white/70">ONNX backend · Latensi layanan aktual: {evaluationResult.latencyMs.toFixed(1)} ms</p>
+                <details className="text-xs text-white/70">
+                  <summary className="cursor-pointer">Identitas model SHA256</summary>
+                  <p className="mt-1 break-all font-mono">{evaluationResult.modelId}</p>
+                </details>
               </div>
 
               {/* Action Buttons: Next Character or Retry */}
@@ -247,14 +225,14 @@ export function AiEvaluationPanel({
                     className="w-full"
                   >
                     <ShinyButton
-                      label={`Lanjut ke Karakter ${nextGlif.label} (${nextGlif.simbol}) →`}
+                      label={`Buka Karakter ${nextGlif.label} (${nextGlif.simbol}) →`}
                       className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01] transition-all"
                     />
                   </Link>
                 ) : (
-                  <Link href="/latihan/web/hasil" className="w-full">
+                  <Link href={`/latihan/web/hasil?aksara=${aksara.id}`} className="w-full">
                     <ShinyButton
-                      label="Selesaikan Seluruh Sesi Latihan →"
+                      label="Akhiri Sesi Eksperimen →"
                       className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01] transition-all"
                     />
                   </Link>
@@ -274,7 +252,7 @@ export function AiEvaluationPanel({
             <div className="space-y-3">
               <p className="text-xs text-white/60 leading-relaxed">
                 {strokeCount === 0
-                  ? 'Goreskan karakter pada kanvas di samping, lalu tekan tombol periksa untuk menganalisis akurasi geometri goresanmu.'
+                  ? 'Goreskan karakter pada kanvas, lalu periksa prediksi label sumber. Probabilitas kelas bukan skor kualitas tulisan.'
                   : `Tercatat ${strokeCount} goresan. Kanvas siap dievaluasi oleh sistem pengenal AI.`}
               </p>
 
@@ -282,10 +260,10 @@ export function AiEvaluationPanel({
               <ShinyButton
                 label={
                   isEvaluating
-                    ? 'Memindai Goresan AI...'
+                    ? 'Mengklasifikasi Citra...'
                     : strokeCount === 0
                     ? 'Buat Goresan Terlebih Dahulu'
-                    : 'Periksa AI (Evaluasi) ⚡'
+                    : 'Periksa Klasifikasi AI'
                 }
                 onClick={onEvaluate}
                 className={`w-full py-3 text-sm font-semibold transition-all ${
@@ -304,7 +282,7 @@ export function AiEvaluationPanel({
                   ← Daftar Glif {aksara.nama}
                 </Link>
                 <Link
-                  href="/latihan/web/hasil"
+                  href={`/latihan/web/hasil?aksara=${aksara.id}`}
                   className="hover:text-[#ffd261] transition-colors"
                 >
                   Selesaikan Sesi
@@ -317,23 +295,3 @@ export function AiEvaluationPanel({
     </OrnateFrame>
   );
 }
-
-// ============================================================================
-// TODO: BACKEND / ONNX INTEGRATION
-//
-// Endpoint target:
-// POST /api/evaluasi-goresan
-// Body Payload:
-// {
-//   aksaraId: string;       // e.g. "lontara" | "sunda" | "bali"
-//   karakterSlug: string;   // e.g. "ka"
-//   imageBase64: string;    // Data URL PNG dari canvas.toDataURL()
-//   strokes: { x: number; y: number; pressure?: number }[][];
-// }
-//
-// Model On-Device (ONNX Runtime Web):
-// import * as ort from 'onnxruntime-web';
-// const session = await ort.InferenceSession.create('/models/aksara-lontara.onnx');
-// const inputTensor = preprocessCanvas(canvas);
-// const results = await session.run({ input: inputTensor });
-// ============================================================================

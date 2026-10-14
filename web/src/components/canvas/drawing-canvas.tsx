@@ -42,6 +42,26 @@ const BRUSH_WIDTHS: Record<BrushSize, number> = {
   tebal: 11,
 };
 
+const MAX_SNAPSHOT_SIDE = 1024;
+
+function captureClassifierImage(canvas: HTMLCanvasElement): string | null {
+  const scale = Math.min(1, MAX_SNAPSHOT_SIDE / Math.max(canvas.width, canvas.height));
+  const snapshot = document.createElement('canvas');
+  snapshot.width = Math.max(1, Math.round(canvas.width * scale));
+  snapshot.height = Math.max(1, Math.round(canvas.height * scale));
+  const ctx = snapshot.getContext('2d');
+  if (!ctx) return null;
+  // Preserve the drawn alpha silhouette, without gold color or DOM reference/grid overlays.
+  ctx.drawImage(canvas, 0, 0, snapshot.width, snapshot.height);
+  ctx.globalCompositeOperation = 'source-in';
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, snapshot.width, snapshot.height);
+  ctx.globalCompositeOperation = 'destination-over';
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, snapshot.width, snapshot.height);
+  return snapshot.toDataURL('image/png');
+}
+
 export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
   (
     {
@@ -233,8 +253,10 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
       }
 
       if (currentStrokeRef.current.length > 0) {
-        setStrokes((prev) => [...prev, [...currentStrokeRef.current]]);
+        // React may execute the updater after the mutable pointer buffer is reset.
+        const completedStroke = [...currentStrokeRef.current];
         currentStrokeRef.current = [];
+        setStrokes((prev) => [...prev, completedStroke]);
       }
     };
 
@@ -258,7 +280,7 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
       getCanvasBase64: () => {
         const canvas = canvasRef.current;
         if (!canvas) return null;
-        return canvas.toDataURL('image/png');
+        return captureClassifierImage(canvas);
       },
       getStrokes: () => strokes,
       isEmpty: () => strokes.length === 0,
