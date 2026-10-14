@@ -9,9 +9,7 @@ interface EntranceVideoProps {
 
 export function EntranceVideo({ onComplete, onFadeStart }: EntranceVideoProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [needsUserInteraction, setNeedsUserInteraction] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
   const fadeTriggeredRef = useRef(false);
   const completedRef = useRef(false);
 
@@ -37,35 +35,42 @@ export function EntranceVideo({ onComplete, onFadeStart }: EntranceVideoProps) {
     }, 800);
   };
 
-  // Mencoba autoplay dengan audio saat mount
+  // Langsung putar video tanpa jeda saat mount
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
+    // Coba putar dengan audio; jika browser memblokir audio unmuted, langsung fallback ke muted tanpa jeda
     video.muted = false;
     const playPromise = video.play();
 
     if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          setHasStarted(true);
-        })
-        .catch(() => {
-          // Browser memblokir autoplay audio otomatis tanpa interaksi
-          setNeedsUserInteraction(true);
-        });
+      playPromise.catch(() => {
+        video.muted = true;
+        video.play().catch(() => {});
+      });
     }
-  }, []);
 
-  const handleStartWithSound = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = false;
-    video.play().then(() => {
-      setNeedsUserInteraction(false);
-      setHasStarted(true);
-    });
-  };
+    // Unmute otomatis saat user berinteraksi pertama kali (klik layar)
+    const handleFirstInteraction = () => {
+      if (videoRef.current) {
+        videoRef.current.muted = false;
+      }
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+
+    window.addEventListener('click', handleFirstInteraction, { once: true });
+    window.addEventListener('keydown', handleFirstInteraction, { once: true });
+    window.addEventListener('touchstart', handleFirstInteraction, { once: true });
+
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, []);
 
   const handleTimeUpdate = () => {
     const video = videoRef.current;
@@ -103,6 +108,7 @@ export function EntranceVideo({ onComplete, onFadeStart }: EntranceVideoProps) {
         ref={videoRef}
         src="/videos/landing-page/Landing-Video.mp4"
         playsInline
+        autoPlay
         preload="auto"
         onTimeUpdate={handleTimeUpdate}
         onEnded={startFade}
@@ -121,32 +127,6 @@ export function EntranceVideo({ onComplete, onFadeStart }: EntranceVideoProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
           </svg>
         </button>
-      )}
-
-      {/* Prompt Mulai Pengalaman jika browser menahan audio autoplay */}
-      {needsUserInteraction && !hasStarted && (
-        <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm p-6 text-center">
-          <div className="max-w-md p-8 rounded-2xl bg-white/10 border border-white/20 shadow-2xl backdrop-blur-md flex flex-col items-center">
-            <div className="w-16 h-16 mb-4 rounded-full bg-gradient-to-tr from-[#ffd261] to-[#cf5600] flex items-center justify-center shadow-lg">
-              <svg className="w-8 h-8 text-slate-900 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-2 font-['Philosopher',sans-serif]">
-              Aksantara
-            </h2>
-            <p className="text-white/80 text-sm mb-6 leading-relaxed">
-              Tekan tombol di bawah untuk memulai pengalaman sinematik dengan audio lengkap.
-            </p>
-            <button
-              onClick={handleStartWithSound}
-              type="button"
-              className="px-6 py-3 rounded-full font-semibold text-slate-950 bg-gradient-to-r from-[#ffd261] to-[#cf5600] hover:brightness-110 active:scale-95 transition-all shadow-md cursor-pointer"
-            >
-              Mulai Pengalaman
-            </button>
-          </div>
-        </div>
       )}
     </div>
   );

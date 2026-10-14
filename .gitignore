@@ -15,9 +15,12 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .npm/
+*.tsbuildinfo
 
 # --- Environment & Secrets ---
 .env
+.env*
+!.env.example
 .env*.local
 .env.development
 .env.production

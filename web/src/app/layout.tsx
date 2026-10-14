@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Philosopher } from 'next/font/google';
 import './globals.css';
+import { AuthProvider } from '@/context/auth-context';
 
 const philosopher = Philosopher({
   weight: ['400', '700'],
@@ -10,8 +11,13 @@ const philosopher = Philosopher({
 });
 
 export const metadata: Metadata = {
-  title: 'Aksantara — Multi-Modal AI & Phygital Platform',
+  title: 'Aksantara',
   description: 'Platform edukasi pelestarian Trinitas Aksara Nusantara (Lontara, Sunda, Bali)',
+  icons: {
+    icon: '/images/ui/logo/MAIN LOGO AKSANTARA.png',
+    shortcut: '/images/ui/logo/MAIN LOGO AKSANTARA.png',
+    apple: '/images/ui/logo/MAIN LOGO AKSANTARA.png',
+  },
 };
 
 export default function RootLayout({
@@ -21,7 +27,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className={philosopher.variable}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

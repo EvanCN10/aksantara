@@ -2,10 +2,68 @@
 
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import ShinyButton from '@/components/ui/shiny-button';
+import OrnateFrame from '@/components/ui/ornate-frame';
+
+interface Pillar {
+  id: string;
+  pilar: string;
+  nama: string;
+  desc: string;
+  img: string;
+  accent: string;
+  tag: string;
+  href: string;
+}
+
+const PILLARS: Pillar[] = [
+  {
+    id: 'pilar-1',
+    pilar: 'Pilar I',
+    nama: 'Precision AI Writing Coach',
+    desc: 'Evaluasi bentuk akhir aksara di Web Canvas menggunakan AI Classifier serta validasi posisi diakritik secara real-time.',
+    img: '/images/ui/landing-page/card/black-bg-card.png',
+    accent: '#D4A373',
+    tag: 'AI Classifier · NusaAksara',
+    href: '/latihan/web/lontara',
+  },
+  {
+    id: 'pilar-2',
+    pilar: 'Pilar II',
+    nama: 'Trinitas Aksara Nusantara',
+    desc: 'Kurikulum terstruktur tiga aksara dengan kontras visual tinggi: Lontara (sudut), Sunda (modular), dan Bali (kurvalinier).',
+    img: '/images/ui/landing-page/card/green-bg-card.png',
+    accent: '#2A9D8F',
+    tag: 'Lontara · Sunda · Bali',
+    href: '/trinitas',
+  },
+  {
+    id: 'pilar-3',
+    pilar: 'Pilar III',
+    nama: 'Gamified Engagement Layer',
+    desc: 'Petualangan naratif Story Mode dan tantangan fisik Tactile Phygital Arena berbasis sensor IoT.',
+    img: '/images/ui/landing-page/card/purple-bg-card.png',
+    accent: '#A78BFA',
+    tag: 'Story Mode · IoT Phygital',
+    href: '/cerita',
+  },
+  {
+    id: 'pilar-4',
+    pilar: 'Pilar IV',
+    nama: 'Human-in-the-Loop Preservasi',
+    desc: 'Koreksi prediksi OCR naskah kuno oleh siswa mahir dan validasi kurator ahli filologi.',
+    img: '/images/ui/landing-page/card/yelllow-bg-card.png',
+    accent: '#ffd261',
+    tag: 'OCR Manuskrip · Kurasi Ahli',
+    href: '/pelestarian',
+  },
+];
 
 const DESIGN_W = 1440;
 const DESIGN_H = 1853;
+
+export const SECTION_2_TOP_PX = 1000;
 
 interface LayerItem {
   id: string;
@@ -17,6 +75,7 @@ interface LayerItem {
   src: string;
   priority?: boolean;
   transformOrigin?: string;
+  rotation?: number;
   inner?: {
     w: number;
     h: number;
@@ -70,6 +129,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
   },
   // 12x Kelopak (posisi sesuai Figma node 1:20 s.d 1:42)
   // Masuk: scale(0) -> scale(1) (bukan fade), fase & ritme floating dibedakan secara organik
+  // Setiap kelopak memiliki rotasi awal unik agar terlihat natural seperti gugur ditiup angin
   {
     id: '1:20',
     name: 'Kelopak 1',
@@ -78,6 +138,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     w: 33,
     h: 31,
     src: '/images/ui/landing-page/section-landing/Kelopak.png',
+    rotation: 28,
     animateEnter: 'popPetal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.72s both',
     animateLoop: 'floatPetalSlow 3.8s ease-in-out 0.2s infinite alternate',
   },
@@ -89,6 +150,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     w: 33,
     h: 31,
     src: '/images/ui/landing-page/section-landing/Kelopak.png',
+    rotation: -42,
     animateEnter: 'popPetal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.85s both',
     animateLoop: 'floatPetalMedium 4.6s ease-in-out 0.6s infinite alternate',
   },
@@ -100,6 +162,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     w: 33,
     h: 31,
     src: '/images/ui/landing-page/section-landing/Kelopak.png',
+    rotation: 75,
     animateEnter: 'popPetal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 1.10s both',
     animateLoop: 'floatPetalSlow 5.2s ease-in-out 1.1s infinite alternate',
   },
@@ -111,6 +174,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     w: 33,
     h: 31,
     src: '/images/ui/landing-page/section-landing/Kelopak.png',
+    rotation: -115,
     animateEnter: 'popPetal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.95s both',
     animateLoop: 'floatPetalMedium 4.1s ease-in-out 0.4s infinite alternate',
   },
@@ -122,6 +186,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     w: 33,
     h: 31,
     src: '/images/ui/landing-page/section-landing/Kelopak.png',
+    rotation: 45,
     animateEnter: 'popPetal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.78s both',
     animateLoop: 'floatPetalSlow 4.4s ease-in-out 0.8s infinite alternate',
   },
@@ -133,6 +198,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     w: 33,
     h: 31,
     src: '/images/ui/landing-page/section-landing/Kelopak.png',
+    rotation: -68,
     animateEnter: 'popPetal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 1.30s both',
     animateLoop: 'floatPetalMedium 4.9s ease-in-out 0.1s infinite alternate',
   },
@@ -144,6 +210,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     w: 33,
     h: 31,
     src: '/images/ui/landing-page/section-landing/Kelopak.png',
+    rotation: 130,
     animateEnter: 'popPetal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 1.05s both',
     animateLoop: 'floatPetalSlow 3.6s ease-in-out 0.5s infinite alternate',
   },
@@ -155,6 +222,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     w: 33,
     h: 31,
     src: '/images/ui/landing-page/section-landing/Kelopak.png',
+    rotation: -25,
     animateEnter: 'popPetal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 1.22s both',
     animateLoop: 'floatPetalMedium 5.4s ease-in-out 1.3s infinite alternate',
   },
@@ -166,6 +234,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     w: 33,
     h: 31,
     src: '/images/ui/landing-page/section-landing/Kelopak.png',
+    rotation: 62,
     animateEnter: 'popPetal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 1.15s both',
     animateLoop: 'floatPetalSlow 4.0s ease-in-out 0.7s infinite alternate',
   },
@@ -177,6 +246,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     w: 33,
     h: 31,
     src: '/images/ui/landing-page/section-landing/Kelopak.png',
+    rotation: -145,
     animateEnter: 'popPetal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.90s both',
     animateLoop: 'floatPetalMedium 4.3s ease-in-out 0.3s infinite alternate',
   },
@@ -188,6 +258,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     w: 33,
     h: 31,
     src: '/images/ui/landing-page/section-landing/Kelopak.png',
+    rotation: 85,
     animateEnter: 'popPetal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.82s both',
     animateLoop: 'floatPetalSlow 4.7s ease-in-out 0.9s infinite alternate',
   },
@@ -199,6 +270,7 @@ const LAYERS_BELOW_TITLE: LayerItem[] = [
     w: 33,
     h: 31,
     src: '/images/ui/landing-page/section-landing/Kelopak.png',
+    rotation: -35,
     animateEnter: 'popPetal 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 1.00s both',
     animateLoop: 'floatPetalMedium 3.9s ease-in-out 1.2s infinite alternate',
   },
@@ -406,14 +478,21 @@ function RenderLayer({
           animation: isStarted ? item.animateLoop : 'none',
         }}
       >
-        <Image
-          src={item.src}
-          alt=""
-          fill
-          sizes={sizes}
-          priority={item.priority}
-          className="object-contain"
-        />
+        <div
+          className="relative size-full"
+          style={{
+            transform: item.rotation ? `rotate(${item.rotation}deg)` : undefined,
+          }}
+        >
+          <Image
+            src={item.src}
+            alt=""
+            fill
+            sizes={sizes}
+            priority={item.priority}
+            className={item.name === 'bg-main' ? 'object-cover' : 'object-contain'}
+          />
+        </div>
       </div>
     </div>
   );
@@ -442,54 +521,66 @@ const EXIT_VECTORS: Record<string, [number, number]> = {
 export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
   const castleRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const section2Ref = useRef<HTMLDivElement>(null);
+  const dimOverlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isStarted) {
       if (castleRef.current) {
-        castleRef.current.style.opacity = '0';
-        castleRef.current.style.transform = 'translateY(64px)';
+        castleRef.current.style.transform = 'translate3d(0, 64px, 0)';
       }
       if (sectionRef.current) {
         sectionRef.current.style.setProperty('--exit', '0');
+      }
+      if (section2Ref.current) {
+        delete section2Ref.current.dataset.inView;
+      }
+      if (dimOverlayRef.current) {
+        dimOverlayRef.current.style.opacity = '0';
       }
       return;
     }
 
     let rafId: number | null = null;
 
-    const updateCastle = () => {
-      if (!castleRef.current) return;
-      const rect = castleRef.current.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const h = rect.height || 1;
-
-      // Proporsi istana yang sudah masuk ke viewport dari bawah
-      const visibleFromBottom = vh - rect.top;
-      const visibleRatio = visibleFromBottom / h;
-
-      if (visibleRatio < 0.25) {
-        castleRef.current.style.opacity = '0';
-        castleRef.current.style.transform = 'translateY(64px)';
-      } else if (visibleRatio >= 1.0) {
-        castleRef.current.style.opacity = '1';
-        castleRef.current.style.transform = 'translateY(0px)';
-      } else {
-        const progress = (visibleRatio - 0.25) / 0.75;
-        // Langsung masuk fade in penuh, posisi ber-parallax seiring scroll
-        castleRef.current.style.opacity = '1';
-        castleRef.current.style.transform = `translateY(${(1 - progress) * 64}px)`;
-      }
-    };
-
     const updateScrollEffects = () => {
-      // 1. Castle Scroll
-      updateCastle();
-
-      // 2. Parallax Exit untuk komponen atas (rentang scroll 0 s.d. 450px)
       const scrollY = window.scrollY;
-      const p = Math.min(1, Math.max(0, scrollY / 450));
+
+      // 1. Parallax Exit untuk komponen atas (rentang scroll 0 s.d. 450px)
+      const exitP = Math.min(1, Math.max(0, scrollY / 450));
       if (sectionRef.current) {
-        sectionRef.current.style.setProperty('--exit', String(p));
+        sectionRef.current.style.setProperty('--exit', String(exitP));
+      }
+
+      // 2. Parallax Castle: bergerak 1:1 real-time seiring scroll (ongoing while scrolling)
+      if (castleRef.current) {
+        const castleProgress = Math.min(1, Math.max(0, scrollY / 450));
+        castleRef.current.style.transform = `translate3d(0, ${(1 - castleProgress) * 64}px, 0)`;
+      }
+
+      // 3. Trigger animasi masuk kartu Section 2: baru muncul ketika elemen sudah 75% muncul di viewport user
+      if (section2Ref.current) {
+        const rect = section2Ref.current.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const elemH = rect.height || 1;
+
+        // Porsi tinggi elemen Section 2 yang sudah berada di dalam viewport user
+        const visiblePx = Math.max(0, Math.min(elemH, vh - rect.top));
+        const visibleRatio = visiblePx / elemH;
+
+        // Baru muncul ketika elemennya sudah 75% (0.75) muncul di viewport user
+        if (visibleRatio >= 0.75 && !section2Ref.current.dataset.inView) {
+          section2Ref.current.dataset.inView = 'true';
+        } else if (visibleRatio < 0.2 && section2Ref.current.dataset.inView) {
+          delete section2Ref.current.dataset.inView;
+        }
+
+        // 4. Redupkan background secara halus saat masuk Section 2, dan kembali terang normal saat kembali ke Section 1
+        if (dimOverlayRef.current) {
+          const dimProgress = Math.min(1, Math.max(0, (visibleRatio - 0.2) / 0.55));
+          const dimOpacity = dimProgress * 0.42;
+          dimOverlayRef.current.style.opacity = String(dimOpacity);
+        }
       }
     };
 
@@ -517,7 +608,7 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
       ref={sectionRef}
       data-node-id="1:54"
       aria-label="Hero Aksantara"
-      className="@container relative w-full overflow-hidden bg-[#0c1a2c]"
+      className="@container relative w-full overflow-hidden bg-[#0c1a2c] min-h-[1850px] lg:min-h-0"
       style={{
         aspectRatio: `${DESIGN_W} / ${DESIGN_H}`,
         containerType: 'inline-size',
@@ -545,10 +636,8 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
               isStarted={isStarted}
               elementRef={castleRef}
               customStyle={{
-                opacity: 0,
-                transform: 'translateY(64px)',
-                transition:
-                  'opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.2, 0, 0, 1)',
+                transform: 'translate3d(0, 64px, 0)',
+                willChange: 'transform',
               }}
             />
           ) : (
@@ -563,10 +652,8 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
               key={layer.id}
               className="absolute inset-0 size-full pointer-events-none will-change-transform"
               style={{
-                transform: `translate(calc(var(--exit) * ${dx}px), calc(var(--exit) * ${dy}px))`,
+                transform: `translate3d(calc(var(--exit) * ${dx}px), calc(var(--exit) * ${dy}px), 0)`,
                 opacity: 'calc(1 - var(--exit))',
-                transition:
-                  'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
               }}
             >
               {rendered}
@@ -588,10 +675,8 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
           fontFamily: 'var(--font-philosopher), serif',
           filter:
             'drop-shadow(0 calc(6 / 1440 * 100cqw) calc(11.4 / 1440 * 100cqw) rgba(0, 0, 0, 0.75))',
-          transform: 'translateY(calc(var(--exit) * -90px))',
+          transform: 'translate3d(0, calc(var(--exit) * -90px), 0)',
           opacity: 'calc(1 - var(--exit))',
-          transition:
-            'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         {TITLE_LETTERS.map((char, index) => {
@@ -623,12 +708,10 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
         style={{
           left: '50%',
           top: `${(365 / DESIGN_H) * 100}%`,
-          transform: 'translate(-50%, calc(var(--exit) * -90px))',
+          transform: 'translate3d(-50%, calc(var(--exit) * -90px), 0)',
           opacity: 'calc(1 - var(--exit))',
           width: 'min(90%, calc(680 / 1440 * 100cqw))',
           maxWidth: '680px',
-          transition:
-            'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         <p
@@ -669,6 +752,135 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
         </div>
       </div>
 
+      {/* 2.15 Background Dimming Overlay saat masuk Section 2 */}
+      <div
+        ref={dimOverlayRef}
+        aria-hidden="true"
+        className="absolute inset-0 z-[25] pointer-events-none transition-opacity duration-500 ease-out"
+        style={{
+          backgroundColor: '#060b14',
+          opacity: 0,
+        }}
+      />
+
+      {/* 2.2 Section 2: Empat Pilar Revitalisasi (Bento Grid di dalam Main Background) */}
+      <div
+        ref={section2Ref}
+        data-name="Section 2 Pillars"
+        aria-label="Empat Pilar Revitalisasi Aksantara"
+        className="absolute z-30 w-full px-4 sm:px-6 lg:px-10 pointer-events-auto flex flex-col items-center select-none"
+        style={{
+          top: `${(SECTION_2_TOP_PX / DESIGN_H) * 100}%`,
+          left: '0',
+          isolation: 'isolate',
+          contain: 'layout style',
+        }}
+      >
+        {/* Header Section 2 */}
+        <div className="pillar-header flex flex-col items-center text-center mb-6 sm:mb-8 max-w-2xl mx-auto">
+          <span
+            className="text-[11px] sm:text-xs font-semibold tracking-[0.25em] uppercase mb-2.5 px-3.5 py-1 rounded-full border border-[#D4A373]/35 bg-[#0D0E12]/90 shadow-[0_4px_16px_rgba(0,0,0,0.6)]"
+            style={{ color: '#D4A373' }}
+          >
+            Empat Pilar Revitalisasi
+          </span>
+
+          <h2
+            className="font-bold tracking-tight text-balance leading-tight"
+            style={{
+              fontFamily: 'var(--font-philosopher), serif',
+              fontSize: 'clamp(24px, calc(36 / 1440 * 100cqw), 44px)',
+              background: 'linear-gradient(to top, #ffd261, #F6F2E9)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              filter:
+                'drop-shadow(0 calc(3 / 1440 * 100cqw) calc(6 / 1440 * 100cqw) rgba(0, 0, 0, 0.75))',
+            }}
+          >
+            Satu Sistem, Empat Cara Belajar
+          </h2>
+
+          <p
+            className="mt-2.5 font-semibold text-shadow-lg text-xs sm:text-sm text-balance text-[#ffffff]/85 max-w-lg drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]"
+            style={{ lineHeight: 1.6 }}
+          >
+            Dari evaluasi cerdas AI hingga sentuhan kinestetik fisik, setiap pilar merawat warisan aksara secara utuh.
+          </p>
+        </div>
+
+        {/* 4 Cards Grid: 1 kolom di HP, 2 kolom di tablet, 4 kolom di desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 lg:gap-5 w-full max-w-[1240px] mx-auto">
+          {PILLARS.map((pillar, index) => (
+            <Link
+              key={pillar.id}
+              href={pillar.href}
+              className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd261] rounded-2xl"
+            >
+              <OrnateFrame
+                className="pillar-card group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-[#ffd261]/50 cursor-pointer h-full flex flex-col"
+                style={{
+                  background: 'rgba(20, 23, 33, 0.94)',
+                  boxShadow:
+                    '0 12px 36px rgba(0,0,0,0.7), inset 0 0 0 1px rgba(255,210,97,0.15)',
+                  animationDelay: `${index * 0.12}s`,
+                }}
+              >
+                {/* Thumbnail Image dengan gradient blend */}
+                <div className="relative h-28 sm:h-32 w-full overflow-hidden">
+                  <Image
+                    src={pillar.img}
+                    alt={pillar.nama}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        'linear-gradient(to bottom, rgba(13,14,18,0.05) 0%, rgba(13,14,18,0.45) 50%, rgba(13,14,18,0.96) 100%)',
+                    }}
+                  />
+                  <span
+                    className="absolute top-3 left-3 text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full border border-white/20 bg-[#0D0E12]/95 shadow-md"
+                    style={{ color: pillar.accent }}
+                  >
+                    {pillar.pilar}
+                  </span>
+                </div>
+
+                {/* Card Body & Deskripsi */}
+                <div className="p-4 sm:p-5 flex flex-col justify-between flex-1 min-h-[145px] sm:min-h-[160px]">
+                  <div>
+                    <h3
+                      className="font-bold text-[#F6F2E9] leading-snug tracking-tight text-sm sm:text-base group-hover:text-[#ffd261] transition-colors drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] flex items-center justify-between"
+                      style={{
+                        fontFamily: 'var(--font-philosopher), serif',
+                      }}
+                    >
+                      <span>{pillar.nama}</span>
+                      <span className="text-[#ffd261] text-xs opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all">→</span>
+                    </h3>
+                    <p className="mt-2 text-xs sm:text-[13px] text-[#F6F2E9]/80 leading-relaxed drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]">
+                      {pillar.desc}
+                    </p>
+                  </div>
+
+                  <div className="mt-3.5 pt-2.5 border-t border-white/[0.08] flex items-center justify-between">
+                    <span className="text-[10px] text-[#D4A373] font-medium tracking-wide">
+                      {pillar.tag}
+                    </span>
+                    <span className="text-[10px] text-[#ffd261] font-semibold tracking-wider uppercase group-hover:underline">
+                      Jelajahi →
+                    </span>
+                  </div>
+                </div>
+              </OrnateFrame>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* 3. Layers di atas judul (awan depan teks & latar depan) */}
       {LAYERS_ABOVE_TITLE.map((layer) => {
         const rendered = (
@@ -683,10 +895,8 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
               key={layer.id}
               className="absolute inset-0 size-full pointer-events-none will-change-transform"
               style={{
-                transform: `translate(calc(var(--exit) * ${dx}px), calc(var(--exit) * ${dy}px))`,
+                transform: `translate3d(calc(var(--exit) * ${dx}px), calc(var(--exit) * ${dy}px), 0)`,
                 opacity: 'calc(1 - var(--exit))',
-                transition:
-                  'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
               }}
             >
               {rendered}

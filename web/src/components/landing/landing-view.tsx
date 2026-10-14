@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import HeroSection from './hero-section';
 import EntranceVideo from './entrance-video';
-import Navbar from '../layout/navbar';
 
 export function LandingView({ initialSeen = false }: { initialSeen?: boolean }) {
   const [hasSeenIntro, setHasSeenIntro] = useState(initialSeen);
@@ -37,12 +36,18 @@ export function LandingView({ initialSeen = false }: { initialSeen?: boolean }) 
     sessionStorage.setItem('aksantara_intro_seen', 'true');
     setHasSeenIntro(true);
     setIsHeroStarted(true);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('aksantara_hero_started'));
+    }
     window.scrollTo(0, 0);
   };
 
   const handleFadeStart = () => {
     // Memicu animasi hero saat video mulai fade-out (detik 7.2)
     setIsHeroStarted(true);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('aksantara_hero_started'));
+    }
     window.scrollTo(0, 0);
   };
 
@@ -54,7 +59,6 @@ export function LandingView({ initialSeen = false }: { initialSeen?: boolean }) 
           onFadeStart={handleFadeStart}
         />
       )}
-      <Navbar isStarted={isHeroStarted} />
       <HeroSection isStarted={isHeroStarted} />
     </main>
   );
