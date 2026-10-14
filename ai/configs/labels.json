@@ -1,0 +1,1748 @@
+{
+  "lontara": [
+    {
+      "class_id": 0,
+      "source_label": "A",
+      "category": "aksara",
+      "display_name": "A",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/A"
+    },
+    {
+      "class_id": 1,
+      "source_label": "Ba",
+      "category": "aksara",
+      "display_name": "Ba",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ba"
+    },
+    {
+      "class_id": 2,
+      "source_label": "Be",
+      "category": "aksara",
+      "display_name": "Be",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Be"
+    },
+    {
+      "class_id": 3,
+      "source_label": "Bi",
+      "category": "aksara",
+      "display_name": "Bi",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Bi"
+    },
+    {
+      "class_id": 4,
+      "source_label": "Bo",
+      "category": "aksara",
+      "display_name": "Bo",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Bo"
+    },
+    {
+      "class_id": 5,
+      "source_label": "Bu",
+      "category": "aksara",
+      "display_name": "Bu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Bu"
+    },
+    {
+      "class_id": 6,
+      "source_label": "Ca",
+      "category": "aksara",
+      "display_name": "Ca",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ca"
+    },
+    {
+      "class_id": 7,
+      "source_label": "Ce",
+      "category": "aksara",
+      "display_name": "Ce",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ce"
+    },
+    {
+      "class_id": 8,
+      "source_label": "Ci",
+      "category": "aksara",
+      "display_name": "Ci",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ci"
+    },
+    {
+      "class_id": 9,
+      "source_label": "Co",
+      "category": "aksara",
+      "display_name": "Co",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Co"
+    },
+    {
+      "class_id": 10,
+      "source_label": "Cu",
+      "category": "aksara",
+      "display_name": "Cu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Cu"
+    },
+    {
+      "class_id": 11,
+      "source_label": "Da",
+      "category": "aksara",
+      "display_name": "Da",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Da"
+    },
+    {
+      "class_id": 12,
+      "source_label": "De",
+      "category": "aksara",
+      "display_name": "De",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/De"
+    },
+    {
+      "class_id": 13,
+      "source_label": "Di",
+      "category": "aksara",
+      "display_name": "Di",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Di"
+    },
+    {
+      "class_id": 14,
+      "source_label": "Do",
+      "category": "aksara",
+      "display_name": "Do",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Do"
+    },
+    {
+      "class_id": 15,
+      "source_label": "Du",
+      "category": "aksara",
+      "display_name": "Du",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Du"
+    },
+    {
+      "class_id": 16,
+      "source_label": "E",
+      "category": "aksara",
+      "display_name": "E",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/E"
+    },
+    {
+      "class_id": 17,
+      "source_label": "Ga",
+      "category": "aksara",
+      "display_name": "Ga",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ga"
+    },
+    {
+      "class_id": 18,
+      "source_label": "Ge",
+      "category": "aksara",
+      "display_name": "Ge",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ge"
+    },
+    {
+      "class_id": 19,
+      "source_label": "Gi",
+      "category": "aksara",
+      "display_name": "Gi",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Gi"
+    },
+    {
+      "class_id": 20,
+      "source_label": "Go",
+      "category": "aksara",
+      "display_name": "Go",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Go"
+    },
+    {
+      "class_id": 21,
+      "source_label": "Gu",
+      "category": "aksara",
+      "display_name": "Gu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Gu"
+    },
+    {
+      "class_id": 22,
+      "source_label": "Ha",
+      "category": "aksara",
+      "display_name": "Ha",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ha"
+    },
+    {
+      "class_id": 23,
+      "source_label": "He",
+      "category": "aksara",
+      "display_name": "He",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/He"
+    },
+    {
+      "class_id": 24,
+      "source_label": "Hi",
+      "category": "aksara",
+      "display_name": "Hi",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Hi"
+    },
+    {
+      "class_id": 25,
+      "source_label": "Ho",
+      "category": "aksara",
+      "display_name": "Ho",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ho"
+    },
+    {
+      "class_id": 26,
+      "source_label": "Hu",
+      "category": "aksara",
+      "display_name": "Hu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Hu"
+    },
+    {
+      "class_id": 27,
+      "source_label": "I",
+      "category": "aksara",
+      "display_name": "I",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/I"
+    },
+    {
+      "class_id": 28,
+      "source_label": "Ja",
+      "category": "aksara",
+      "display_name": "Ja",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ja"
+    },
+    {
+      "class_id": 29,
+      "source_label": "Je",
+      "category": "aksara",
+      "display_name": "Je",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Je"
+    },
+    {
+      "class_id": 30,
+      "source_label": "Ji",
+      "category": "aksara",
+      "display_name": "Ji",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ji"
+    },
+    {
+      "class_id": 31,
+      "source_label": "Jo",
+      "category": "aksara",
+      "display_name": "Jo",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Jo"
+    },
+    {
+      "class_id": 32,
+      "source_label": "Ju",
+      "category": "aksara",
+      "display_name": "Ju",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ju"
+    },
+    {
+      "class_id": 33,
+      "source_label": "Ka",
+      "category": "aksara",
+      "display_name": "Ka",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ka"
+    },
+    {
+      "class_id": 34,
+      "source_label": "Ke",
+      "category": "aksara",
+      "display_name": "Ke",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ke"
+    },
+    {
+      "class_id": 35,
+      "source_label": "Ke_",
+      "category": "aksara",
+      "display_name": "Ke_",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ke_"
+    },
+    {
+      "class_id": 36,
+      "source_label": "Ki",
+      "category": "aksara",
+      "display_name": "Ki",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ki"
+    },
+    {
+      "class_id": 37,
+      "source_label": "Ko",
+      "category": "aksara",
+      "display_name": "Ko",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ko"
+    },
+    {
+      "class_id": 38,
+      "source_label": "Ku",
+      "category": "aksara",
+      "display_name": "Ku",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ku"
+    },
+    {
+      "class_id": 39,
+      "source_label": "La",
+      "category": "aksara",
+      "display_name": "La",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/La"
+    },
+    {
+      "class_id": 40,
+      "source_label": "Le",
+      "category": "aksara",
+      "display_name": "Le",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Le"
+    },
+    {
+      "class_id": 41,
+      "source_label": "Li",
+      "category": "aksara",
+      "display_name": "Li",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Li"
+    },
+    {
+      "class_id": 42,
+      "source_label": "Lo",
+      "category": "aksara",
+      "display_name": "Lo",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Lo"
+    },
+    {
+      "class_id": 43,
+      "source_label": "Lu",
+      "category": "aksara",
+      "display_name": "Lu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Lu"
+    },
+    {
+      "class_id": 44,
+      "source_label": "Ma",
+      "category": "aksara",
+      "display_name": "Ma",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ma"
+    },
+    {
+      "class_id": 45,
+      "source_label": "Me",
+      "category": "aksara",
+      "display_name": "Me",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Me"
+    },
+    {
+      "class_id": 46,
+      "source_label": "Mi",
+      "category": "aksara",
+      "display_name": "Mi",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Mi"
+    },
+    {
+      "class_id": 47,
+      "source_label": "Mo",
+      "category": "aksara",
+      "display_name": "Mo",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Mo"
+    },
+    {
+      "class_id": 48,
+      "source_label": "Mpa",
+      "category": "aksara",
+      "display_name": "Mpa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Mpa"
+    },
+    {
+      "class_id": 49,
+      "source_label": "Mpe",
+      "category": "aksara",
+      "display_name": "Mpe",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Mpe"
+    },
+    {
+      "class_id": 50,
+      "source_label": "Mpi",
+      "category": "aksara",
+      "display_name": "Mpi",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Mpi"
+    },
+    {
+      "class_id": 51,
+      "source_label": "Mpo",
+      "category": "aksara",
+      "display_name": "Mpo",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Mpo"
+    },
+    {
+      "class_id": 52,
+      "source_label": "Mpu",
+      "category": "aksara",
+      "display_name": "Mpu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Mpu"
+    },
+    {
+      "class_id": 53,
+      "source_label": "Mu",
+      "category": "aksara",
+      "display_name": "Mu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Mu"
+    },
+    {
+      "class_id": 54,
+      "source_label": "Na",
+      "category": "aksara",
+      "display_name": "Na",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Na"
+    },
+    {
+      "class_id": 55,
+      "source_label": "Nca",
+      "category": "aksara",
+      "display_name": "Nca",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nca"
+    },
+    {
+      "class_id": 56,
+      "source_label": "Nce",
+      "category": "aksara",
+      "display_name": "Nce",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nce"
+    },
+    {
+      "class_id": 57,
+      "source_label": "Nci",
+      "category": "aksara",
+      "display_name": "Nci",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nci"
+    },
+    {
+      "class_id": 58,
+      "source_label": "Nco",
+      "category": "aksara",
+      "display_name": "Nco",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nco"
+    },
+    {
+      "class_id": 59,
+      "source_label": "Ncu",
+      "category": "aksara",
+      "display_name": "Ncu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ncu"
+    },
+    {
+      "class_id": 60,
+      "source_label": "Ne",
+      "category": "aksara",
+      "display_name": "Ne",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ne"
+    },
+    {
+      "class_id": 61,
+      "source_label": "Nga",
+      "category": "aksara",
+      "display_name": "Nga",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nga"
+    },
+    {
+      "class_id": 62,
+      "source_label": "Nge",
+      "category": "aksara",
+      "display_name": "Nge",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nge"
+    },
+    {
+      "class_id": 63,
+      "source_label": "Ngi",
+      "category": "aksara",
+      "display_name": "Ngi",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ngi"
+    },
+    {
+      "class_id": 64,
+      "source_label": "Ngo",
+      "category": "aksara",
+      "display_name": "Ngo",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ngo"
+    },
+    {
+      "class_id": 65,
+      "source_label": "Ngu",
+      "category": "aksara",
+      "display_name": "Ngu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ngu"
+    },
+    {
+      "class_id": 66,
+      "source_label": "Ni",
+      "category": "aksara",
+      "display_name": "Ni",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ni"
+    },
+    {
+      "class_id": 67,
+      "source_label": "Nka",
+      "category": "aksara",
+      "display_name": "Nka",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nka"
+    },
+    {
+      "class_id": 68,
+      "source_label": "Nke",
+      "category": "aksara",
+      "display_name": "Nke",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nke"
+    },
+    {
+      "class_id": 69,
+      "source_label": "Nki",
+      "category": "aksara",
+      "display_name": "Nki",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nki"
+    },
+    {
+      "class_id": 70,
+      "source_label": "Nko",
+      "category": "aksara",
+      "display_name": "Nko",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nko"
+    },
+    {
+      "class_id": 71,
+      "source_label": "Nku",
+      "category": "aksara",
+      "display_name": "Nku",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nku"
+    },
+    {
+      "class_id": 72,
+      "source_label": "No",
+      "category": "aksara",
+      "display_name": "No",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/No"
+    },
+    {
+      "class_id": 73,
+      "source_label": "Nra",
+      "category": "aksara",
+      "display_name": "Nra",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nra"
+    },
+    {
+      "class_id": 74,
+      "source_label": "Nre",
+      "category": "aksara",
+      "display_name": "Nre",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nre"
+    },
+    {
+      "class_id": 75,
+      "source_label": "Nri",
+      "category": "aksara",
+      "display_name": "Nri",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nri"
+    },
+    {
+      "class_id": 76,
+      "source_label": "Nro",
+      "category": "aksara",
+      "display_name": "Nro",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nro"
+    },
+    {
+      "class_id": 77,
+      "source_label": "Nru",
+      "category": "aksara",
+      "display_name": "Nru",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nru"
+    },
+    {
+      "class_id": 78,
+      "source_label": "Nu",
+      "category": "aksara",
+      "display_name": "Nu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nu"
+    },
+    {
+      "class_id": 79,
+      "source_label": "Nya",
+      "category": "aksara",
+      "display_name": "Nya",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nya"
+    },
+    {
+      "class_id": 80,
+      "source_label": "Nye",
+      "category": "aksara",
+      "display_name": "Nye",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nye"
+    },
+    {
+      "class_id": 81,
+      "source_label": "Nyi",
+      "category": "aksara",
+      "display_name": "Nyi",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nyi"
+    },
+    {
+      "class_id": 82,
+      "source_label": "Nyo",
+      "category": "aksara",
+      "display_name": "Nyo",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nyo"
+    },
+    {
+      "class_id": 83,
+      "source_label": "Nyu",
+      "category": "aksara",
+      "display_name": "Nyu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Nyu"
+    },
+    {
+      "class_id": 84,
+      "source_label": "O",
+      "category": "aksara",
+      "display_name": "O",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/O"
+    },
+    {
+      "class_id": 85,
+      "source_label": "Pa",
+      "category": "aksara",
+      "display_name": "Pa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Pa"
+    },
+    {
+      "class_id": 86,
+      "source_label": "Pe",
+      "category": "aksara",
+      "display_name": "Pe",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Pe"
+    },
+    {
+      "class_id": 87,
+      "source_label": "Pi",
+      "category": "aksara",
+      "display_name": "Pi",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Pi"
+    },
+    {
+      "class_id": 88,
+      "source_label": "Po",
+      "category": "aksara",
+      "display_name": "Po",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Po"
+    },
+    {
+      "class_id": 89,
+      "source_label": "Pu",
+      "category": "aksara",
+      "display_name": "Pu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Pu"
+    },
+    {
+      "class_id": 90,
+      "source_label": "Ra",
+      "category": "aksara",
+      "display_name": "Ra",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ra"
+    },
+    {
+      "class_id": 91,
+      "source_label": "Re",
+      "category": "aksara",
+      "display_name": "Re",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Re"
+    },
+    {
+      "class_id": 92,
+      "source_label": "Ri",
+      "category": "aksara",
+      "display_name": "Ri",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ri"
+    },
+    {
+      "class_id": 93,
+      "source_label": "Ro",
+      "category": "aksara",
+      "display_name": "Ro",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ro"
+    },
+    {
+      "class_id": 94,
+      "source_label": "Ru",
+      "category": "aksara",
+      "display_name": "Ru",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ru"
+    },
+    {
+      "class_id": 95,
+      "source_label": "Sa",
+      "category": "aksara",
+      "display_name": "Sa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Sa"
+    },
+    {
+      "class_id": 96,
+      "source_label": "Se",
+      "category": "aksara",
+      "display_name": "Se",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Se"
+    },
+    {
+      "class_id": 97,
+      "source_label": "Si",
+      "category": "aksara",
+      "display_name": "Si",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Si"
+    },
+    {
+      "class_id": 98,
+      "source_label": "So",
+      "category": "aksara",
+      "display_name": "So",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/So"
+    },
+    {
+      "class_id": 99,
+      "source_label": "Su",
+      "category": "aksara",
+      "display_name": "Su",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Su"
+    },
+    {
+      "class_id": 100,
+      "source_label": "Ta",
+      "category": "aksara",
+      "display_name": "Ta",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ta"
+    },
+    {
+      "class_id": 101,
+      "source_label": "Te",
+      "category": "aksara",
+      "display_name": "Te",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Te"
+    },
+    {
+      "class_id": 102,
+      "source_label": "Ti",
+      "category": "aksara",
+      "display_name": "Ti",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ti"
+    },
+    {
+      "class_id": 103,
+      "source_label": "Tu",
+      "category": "aksara",
+      "display_name": "Tu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Tu"
+    },
+    {
+      "class_id": 104,
+      "source_label": "U",
+      "category": "aksara",
+      "display_name": "U",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/U"
+    },
+    {
+      "class_id": 105,
+      "source_label": "Wa",
+      "category": "aksara",
+      "display_name": "Wa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Wa"
+    },
+    {
+      "class_id": 106,
+      "source_label": "We",
+      "category": "aksara",
+      "display_name": "We",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/We"
+    },
+    {
+      "class_id": 107,
+      "source_label": "Wi",
+      "category": "aksara",
+      "display_name": "Wi",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Wi"
+    },
+    {
+      "class_id": 108,
+      "source_label": "Wo",
+      "category": "aksara",
+      "display_name": "Wo",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Wo"
+    },
+    {
+      "class_id": 109,
+      "source_label": "Wu",
+      "category": "aksara",
+      "display_name": "Wu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Wu"
+    },
+    {
+      "class_id": 110,
+      "source_label": "Ya",
+      "category": "aksara",
+      "display_name": "Ya",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ya"
+    },
+    {
+      "class_id": 111,
+      "source_label": "Ye",
+      "category": "aksara",
+      "display_name": "Ye",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Ye"
+    },
+    {
+      "class_id": 112,
+      "source_label": "Yi",
+      "category": "aksara",
+      "display_name": "Yi",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Yi"
+    },
+    {
+      "class_id": 113,
+      "source_label": "Yo",
+      "category": "aksara",
+      "display_name": "Yo",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "lontara/aksara-lontara-fix/Yo"
+    }
+  ],
+  "sunda": [
+    {
+      "class_id": 0,
+      "source_label": "a",
+      "category": "aksara",
+      "display_name": "a",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/a"
+    },
+    {
+      "class_id": 1,
+      "source_label": "ae",
+      "category": "aksara",
+      "display_name": "ae",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/ae"
+    },
+    {
+      "class_id": 2,
+      "source_label": "ba",
+      "category": "aksara",
+      "display_name": "ba",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/ba"
+    },
+    {
+      "class_id": 3,
+      "source_label": "ca",
+      "category": "aksara",
+      "display_name": "ca",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/ca"
+    },
+    {
+      "class_id": 4,
+      "source_label": "da",
+      "category": "aksara",
+      "display_name": "da",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/da"
+    },
+    {
+      "class_id": 5,
+      "source_label": "e",
+      "category": "aksara",
+      "display_name": "e",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/e"
+    },
+    {
+      "class_id": 6,
+      "source_label": "eu",
+      "category": "aksara",
+      "display_name": "eu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/eu"
+    },
+    {
+      "class_id": 7,
+      "source_label": "fa",
+      "category": "aksara",
+      "display_name": "fa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/fa"
+    },
+    {
+      "class_id": 8,
+      "source_label": "ga",
+      "category": "aksara",
+      "display_name": "ga",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/ga"
+    },
+    {
+      "class_id": 9,
+      "source_label": "ha",
+      "category": "aksara",
+      "display_name": "ha",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/ha"
+    },
+    {
+      "class_id": 10,
+      "source_label": "i",
+      "category": "aksara",
+      "display_name": "i",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/i"
+    },
+    {
+      "class_id": 11,
+      "source_label": "ja",
+      "category": "aksara",
+      "display_name": "ja",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/ja"
+    },
+    {
+      "class_id": 12,
+      "source_label": "ka",
+      "category": "aksara",
+      "display_name": "ka",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/ka"
+    },
+    {
+      "class_id": 13,
+      "source_label": "la",
+      "category": "aksara",
+      "display_name": "la",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/la"
+    },
+    {
+      "class_id": 14,
+      "source_label": "ma",
+      "category": "aksara",
+      "display_name": "ma",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/ma"
+    },
+    {
+      "class_id": 15,
+      "source_label": "na",
+      "category": "aksara",
+      "display_name": "na",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/na"
+    },
+    {
+      "class_id": 16,
+      "source_label": "nga",
+      "category": "aksara",
+      "display_name": "nga",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/nga"
+    },
+    {
+      "class_id": 17,
+      "source_label": "nya",
+      "category": "aksara",
+      "display_name": "nya",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/nya"
+    },
+    {
+      "class_id": 18,
+      "source_label": "o",
+      "category": "aksara",
+      "display_name": "o",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/o"
+    },
+    {
+      "class_id": 19,
+      "source_label": "pa",
+      "category": "aksara",
+      "display_name": "pa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/pa"
+    },
+    {
+      "class_id": 20,
+      "source_label": "qa",
+      "category": "aksara",
+      "display_name": "qa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/qa"
+    },
+    {
+      "class_id": 21,
+      "source_label": "ra",
+      "category": "aksara",
+      "display_name": "ra",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/ra"
+    },
+    {
+      "class_id": 22,
+      "source_label": "sa",
+      "category": "aksara",
+      "display_name": "sa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/sa"
+    },
+    {
+      "class_id": 23,
+      "source_label": "ta",
+      "category": "aksara",
+      "display_name": "ta",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/ta"
+    },
+    {
+      "class_id": 24,
+      "source_label": "u",
+      "category": "aksara",
+      "display_name": "u",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/u"
+    },
+    {
+      "class_id": 25,
+      "source_label": "va",
+      "category": "aksara",
+      "display_name": "va",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/va"
+    },
+    {
+      "class_id": 26,
+      "source_label": "wa",
+      "category": "aksara",
+      "display_name": "wa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/wa"
+    },
+    {
+      "class_id": 27,
+      "source_label": "xa",
+      "category": "aksara",
+      "display_name": "xa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/xa"
+    },
+    {
+      "class_id": 28,
+      "source_label": "ya",
+      "category": "aksara",
+      "display_name": "ya",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/ya"
+    },
+    {
+      "class_id": 29,
+      "source_label": "za",
+      "category": "aksara",
+      "display_name": "za",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "sunda/dataset_gabung_fix/za"
+    }
+  ],
+  "bali": [
+    {
+      "class_id": 0,
+      "source_label": "aksara swalalita ba kembang",
+      "category": "swalalita",
+      "display_name": "aksara swalalita ba kembang",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA SWALALITA ALL/aksara swalalita ba kembang"
+    },
+    {
+      "class_id": 1,
+      "source_label": "aksara swalalita calaca",
+      "category": "swalalita",
+      "display_name": "aksara swalalita calaca",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA SWALALITA ALL/aksara swalalita calaca"
+    },
+    {
+      "class_id": 2,
+      "source_label": "aksara swalalita damadu",
+      "category": "swalalita",
+      "display_name": "aksara swalalita damadu",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA SWALALITA ALL/aksara swalalita damadu"
+    },
+    {
+      "class_id": 3,
+      "source_label": "aksara swalalita gagora",
+      "category": "swalalita",
+      "display_name": "aksara swalalita gagora",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA SWALALITA ALL/aksara swalalita gagora"
+    },
+    {
+      "class_id": 4,
+      "source_label": "aksara swalalita jhajera",
+      "category": "swalalita",
+      "display_name": "aksara swalalita jhajera",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA SWALALITA ALL/aksara swalalita jhajera"
+    },
+    {
+      "class_id": 5,
+      "source_label": "aksara swalalita khakantia",
+      "category": "swalalita",
+      "display_name": "aksara swalalita khakantia",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA SWALALITA ALL/aksara swalalita khakantia"
+    },
+    {
+      "class_id": 6,
+      "source_label": "aksara swalalita narambat",
+      "category": "swalalita",
+      "display_name": "aksara swalalita narambat",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA SWALALITA ALL/aksara swalalita narambat"
+    },
+    {
+      "class_id": 7,
+      "source_label": "aksara swalalita phakapal",
+      "category": "swalalita",
+      "display_name": "aksara swalalita phakapal",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA SWALALITA ALL/aksara swalalita phakapal"
+    },
+    {
+      "class_id": 8,
+      "source_label": "aksara swalalita sasaga",
+      "category": "swalalita",
+      "display_name": "aksara swalalita sasaga",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA SWALALITA ALL/aksara swalalita sasaga"
+    },
+    {
+      "class_id": 9,
+      "source_label": "aksara swalalita sasapa",
+      "category": "swalalita",
+      "display_name": "aksara swalalita sasapa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA SWALALITA ALL/aksara swalalita sasapa"
+    },
+    {
+      "class_id": 10,
+      "source_label": "aksara swalalita talatik",
+      "category": "swalalita",
+      "display_name": "aksara swalalita talatik",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA SWALALITA ALL/aksara swalalita talatik"
+    },
+    {
+      "class_id": 11,
+      "source_label": "aksara swalalita tatawa",
+      "category": "swalalita",
+      "display_name": "aksara swalalita tatawa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA SWALALITA ALL/aksara swalalita tatawa"
+    },
+    {
+      "class_id": 12,
+      "source_label": "aksara wyajana ba",
+      "category": "wyajana",
+      "display_name": "aksara wyajana ba",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana ba"
+    },
+    {
+      "class_id": 13,
+      "source_label": "aksara wyajana ca",
+      "category": "wyajana",
+      "display_name": "aksara wyajana ca",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana ca"
+    },
+    {
+      "class_id": 14,
+      "source_label": "aksara wyajana da",
+      "category": "wyajana",
+      "display_name": "aksara wyajana da",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana da"
+    },
+    {
+      "class_id": 15,
+      "source_label": "aksara wyajana ga",
+      "category": "wyajana",
+      "display_name": "aksara wyajana ga",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana ga"
+    },
+    {
+      "class_id": 16,
+      "source_label": "aksara wyajana ha",
+      "category": "wyajana",
+      "display_name": "aksara wyajana ha",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana ha"
+    },
+    {
+      "class_id": 17,
+      "source_label": "aksara wyajana ja",
+      "category": "wyajana",
+      "display_name": "aksara wyajana ja",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana ja"
+    },
+    {
+      "class_id": 18,
+      "source_label": "aksara wyajana ka",
+      "category": "wyajana",
+      "display_name": "aksara wyajana ka",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana ka"
+    },
+    {
+      "class_id": 19,
+      "source_label": "aksara wyajana la",
+      "category": "wyajana",
+      "display_name": "aksara wyajana la",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana la"
+    },
+    {
+      "class_id": 20,
+      "source_label": "aksara wyajana ma",
+      "category": "wyajana",
+      "display_name": "aksara wyajana ma",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana ma"
+    },
+    {
+      "class_id": 21,
+      "source_label": "aksara wyajana na",
+      "category": "wyajana",
+      "display_name": "aksara wyajana na",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana na"
+    },
+    {
+      "class_id": 22,
+      "source_label": "aksara wyajana nga",
+      "category": "wyajana",
+      "display_name": "aksara wyajana nga",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana nga"
+    },
+    {
+      "class_id": 23,
+      "source_label": "aksara wyajana nya",
+      "category": "wyajana",
+      "display_name": "aksara wyajana nya",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana nya"
+    },
+    {
+      "class_id": 24,
+      "source_label": "aksara wyajana pa",
+      "category": "wyajana",
+      "display_name": "aksara wyajana pa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana pa"
+    },
+    {
+      "class_id": 25,
+      "source_label": "aksara wyajana ra",
+      "category": "wyajana",
+      "display_name": "aksara wyajana ra",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana ra"
+    },
+    {
+      "class_id": 26,
+      "source_label": "aksara wyajana sa",
+      "category": "wyajana",
+      "display_name": "aksara wyajana sa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana sa"
+    },
+    {
+      "class_id": 27,
+      "source_label": "aksara wyajana ta",
+      "category": "wyajana",
+      "display_name": "aksara wyajana ta",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana ta"
+    },
+    {
+      "class_id": 28,
+      "source_label": "aksara wyajana wa",
+      "category": "wyajana",
+      "display_name": "aksara wyajana wa",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana wa"
+    },
+    {
+      "class_id": 29,
+      "source_label": "aksara wyajana ya",
+      "category": "wyajana",
+      "display_name": "aksara wyajana ya",
+      "unicode_sequence": null,
+      "mapping_status": "unverified",
+      "mapping_source": null,
+      "relative_leaf_path": "bali/AKSARA WYAJANA ALL/aksara wyajana ya"
+    }
+  ]
+}

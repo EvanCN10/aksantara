@@ -1,0 +1,11 @@
+# Local verification environment; Kaggle uses its compatible preinstalled torch pair.
+numpy==2.5.2
+Pillow==12.3.0
+torch==2.14.0
+torchvision==0.29.0
+scikit-learn==1.9.0
+scipy==1.18.1
+ImageHash==4.3.2
+onnx==1.23.0
+onnxruntime==1.30.0
+onnxscript==0.7.2
