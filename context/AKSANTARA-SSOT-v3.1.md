@@ -14,8 +14,8 @@
 | **Deskripsi Formal** | Platform edukasi multi-modal berbasis AI klasifikasi dan perangkat kinestetik (Phygital) untuk melatih, mengevaluasi, dan merevitalisasi aksara daerah Nusantara — mendukung latihan digital (Web Mode via AI Canvas) maupun media sensorik fisik (Hardware Mode via Aksantara Tactile Pad), terintegrasi dengan Narrative Story Mode berbasis cerita rakyat dan jembatan pelestarian manuskrip kuno. |
 | **Tema Lomba** | **Education** (revitalisasi literasi aksara daerah melalui pendekatan digital AI dan perangkat fisik kinestetik) |
 | **Masalah Inti** | Indonesia memiliki >700 bahasa dan puluhan aksara daerah, namun generasi muda mengalami krisis literasi aksara non-Latin. Riset UGM (2026) mencatat aksara Nusantara berisiko punah karena metode ajar yang membosankan, minimnya alat peraga interaktif di sekolah, dan pendekatan digital yang kaku. Aksantara mengunci fokus implementasi pada **Trinitas Aksara Nusantara (Lontara, Sunda, Bali)** sebagai representasi paleografi Indonesia. |
-| **Solusi Inti** | Platform berbasis **4 Pilar AI** lewat **2 Mode Penggunaan**: **Web Mode** (latihan digital responsif via Universal Web Canvas & AI Shape/Topology Classifier fine-tuned dari benchmark NusaAksara) dan **Hardware Mode / Aksantara Tactile Pad** (perangkat IoT kinestetik multi-slot NFC/RFID untuk mini game susun aksara fisik), diperkaya **Narrative Story Mode (Pilar 3)** berbasis cerita rakyat dengan branching roleplay lokal, serta **Human-in-the-Loop Digitalisasi Manuskrip (Pilar 4)**. |
-| **Diferensiasi (Moat Produk)** | (1) **AI Shape & Diacritic Topology Classifier**: Evaluasi bentuk akhir aksara berbasis CNN/ViT yang dilatih pada benchmark akademis **NusaAksara (ACL 2025)**, bebas dari bias urutan goresan kaku (*no artificial stroke order penalty*), dilengkapi verifikasi spasial tanda vokalisasi (*rarangken / pangangge*), (2) **Phygital Kinesthetic Console (IoT Anti-Gimik)**: Integrasi tactile learning kartu fisik NFC via Web Serial API (zero-latency, plug-and-play), menjembatani pembelajaran sensorik anak tanpa *screen fatigue*, (3) **Fokus Trinitas Aksara Nusantara (Lontara, Sunda, Bali)**: 3 karakter paleografi kontras (geometris sudut, konsisten-ngalagena, kurvalinier kompleks) dengan dukungan Unicode penuh di luar Aksara Jawa yang sudah saturasi, (4) **Unifikasi Dataset & Zero Trajectory Overhead**: 100% memanfaatkan benchmark NusaAksara untuk Web Canvas dan Pilar 4 tanpa perlu merekam ribuan data trajektori manual, (5) **Narrative Hybrid Story Beats**: Gamifikasi cerita rakyat dengan branching aman panggung demo (zero-failure) diperkaya variasi persona LLM lokal. |
+| **Solusi Inti** | Platform berbasis **4 Pilar AI** lewat **2 Mode Penggunaan**: **Web Mode** (Universal Web Canvas dan classifier citra karakter per aksara) dan **Hardware Mode / Aksantara Tactile Pad** (kartu NFC/RFID via Web Serial), diperkaya **Narrative Story Mode** dan **Human-in-the-Loop Digitalisasi Manuskrip**. Classifier canvas memakai data karakter berizin; NusaAksara adalah data baris untuk OCR. |
+| **Diferensiasi (Moat Produk)** | (1) Evaluasi bentuk akhir tanpa penalti urutan goresan; prediksi kelas tidak membuktikan ketepatan posisi diakritik. (2) Konsol fisik NFC/RFID via USB tanpa ketergantungan WiFi. (3) Fokus Lontara/Sunda/Bali dengan mapping Unicode yang harus dikurasi. (4) Pipeline citra statis dengan dataset karakter dan dataset baris terpisah. (5) Cerita rakyat dengan branching deterministik; keluaran model tetap memerlukan validasi. |
 | **Target Tim** | Finalis Grand Final FMIPA UGM (1 November 2026) dengan implementasi yang utuh, fungsional di panggung, dan defensible secara teknis saat diuji juri. |
 
 ---
@@ -70,24 +70,24 @@ Kompetitor eksisting mencakup **Arutala** (OCR scan-translate pasif Aksara Jawa)
 
 ### 3.1 Peta Dataset ke Komponen (Unifikasi Modalitas Data)
 
-Dengan mengeliminasi kebutuhan DTW urutan temporal, Aksantara mencapai **unifikasi dataset**: seluruh modul AI beroperasi pada modalitas citra statis yang sama.
+Menghilangkan DTW menyamakan **modalitas citra statis**, bukan label atau unit anotasi. Classifier karakter dan OCR baris menggunakan dataset/task terpisah; baris NusaAksara tidak menjadi karakter training tanpa anotasi segmentasi.
 
 | Komponen | Jenis Data yang Dibutuhkan | Dataset yang Dipakai |
 |---|---|---|
-| **Pilar 1 — Web Canvas AI Classifier** | Citra statis binarized/grayscale per karakter aksara | **NusaAksara** (fine-tuned classifier untuk Lontara, Sunda, dan Bali) + Data augmentasi canvas sintetis. |
-| **Pilar 2 — Katalog & Font Referensi** | Citra statis karakter aksara & Unicode glyph | **NusaAksara** + Google Noto Sans (Buginese, Sundanese, Balinese). |
+| **Pilar 1 — Web Canvas AI Classifier** | Citra grayscale per karakter, holdout tulisan manusia | Sumber karakter Kaggle yang lolos izin dan audit, ditambah tulisan manusia ber-consent. MobileNet/EfficientNet pretrained ImageNet; multi-family diuji sesuai `docs/plans/01_aksantara_training_plan.md`. |
+| **Pilar 2 — Katalog & Font Referensi** | Unicode glyph dan mapping fonetis terkurasi | Mapping kurator + Google Noto Sans; source_label classifier tidak otomatis menjadi Unicode. |
 | **Hardware Mode — Tactile Pad Cards** | Pemetaan UID NFC tag ke fonetik & karakter Unicode | Matriks Pemetaan Konfigurasi Lokal (JSON mapping kartu fisik ke aksara). |
 | **Pilar 4 — OCR/Transliterasi Manuskrip** | Citra naskah kuno beranotasi | **NusaAksara** + **dataset manuskrip Mendeley/BINUS** (British Library EAP). |
 
 **Jawaban defensif untuk juri:**
-> *"Kami mengadopsi prinsip efisiensi rekayasa model AI. Karena aksara daerah dinilai berdasarkan keutuhan bentuk fonetis dan bukan urutan goresan, kami menstandarisasi seluruh pipeline AI menggunakan benchmark akademis NusaAksara (ACL 2025). Baik core canvas evaluator di Web Mode maupun model transliterasi naskah kuno di Pilar 4 memanfaatkan fondasi model visi komputer yang sama, sehingga hemat komputasi dan konsisten."*
+> *"Canvas dinilai dari citra bentuk akhir tanpa urutan goresan. Dataset karakter untuk classifier dan benchmark baris NusaAksara untuk OCR dipisahkan sesuai unit anotasinya. Probabilitas kelas bukan skor kualitas tulisan atau bukti validasi diakritik. Kualitas, domain tulisan manusia, latensi dan hak release dibuktikan sebelum deployment."*
 
 ### 3.2 Dataset Citra Statis: NusaAksara (ACL 2025)
 
 - **Sumber:** Benchmark akademis **ACL 2025** (peneliti MBZUAI & Monash University Indonesia).
 - **Cakupan Total:** 8 aksara daerah di Indonesia.
 - **Scope Aksantara:** Terkonsolidasi penuh pada **Trinitas Aksara Nusantara: Lontara, Sunda, dan Bali**.
-- **Modalitas:** Citra statis & transliterasi teks.
+- **Modalitas:** Citra **baris** dan transliterasi teks, bukan checkpoint pretrained atau karakter tersegmentasi.
 - **Akses:** Publik di HuggingFace (`NusaAksara/NusaAksara`).
 
 ### 3.3 Validitas Pedagogis: Mengapa Menghilangkan DTW & Mengadopsi Klasifikasi Bentuk?
@@ -114,12 +114,12 @@ Dengan mengeliminasi kebutuhan DTW urutan temporal, Aksantara mencapai **unifika
 flowchart TD
     A["✍️ Universal Web Canvas\n(Stylus / Touchscreen / Mouse)"] --> B["Capture Stroke via PointerEvent API\nRendering visual real-time"]
     B --> C["Trigger Evaluasi:\nTombol Periksa / Stillness Timeout (1.5s)"]
-    C --> D["Image Preprocessing:\nBounding box crop, resize 64x64/128x128, normalisasi binarisasi"]
-    D --> E["AI Classifier Engine\n(NusaAksara Fine-Tuned Model via ONNX Web / API)"]
-    E --> F["Ekstraksi Top-1 Class Prediction\n+ Confidence Score (0-100%)"]
-    F --> G{"Prediksi sesuai target aksara\n& skor > ambang batas?"}
-    G -->|Tepat| H["🟢 Status: Akurat\nHighlight hijau + Animasi sukses + Skor bertambah"]
-    G -->|Salah Bentuk| I["🔴 Status: Belum Sesuai\nOverlay siluet referensi + Petunjuk bagian yang kurang"]
+    C --> D["Preprocessing canvas-gray-v1:\nSeluruh komponen, grayscale 128, normalisasi ImageNet"]
+    D --> E["Classifier karakter per aksara\nONNX Runtime Web WASM lokal"]
+    E --> F["Top-3 source_label\n+ probabilitas kelas terkalibrasi"]
+    F --> G{"Mapping/threshold terverifikasi\n& seluruh gate release lolos?"}
+    G -->|Ya| H["Feedback kelas sesuai kebijakan kurikulum\nBukan skor geometris atau validator topology"]
+    G -->|Tidak| I["Status eksperimen / perlu review\nTanpa klaim otomatis tulisan benar"]
     H --> J["Supabase Progress Log"]
     I --> J
     J --> K["Mini Game / Story Branching Reaction"]
@@ -161,7 +161,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    J["📜 Manuskrip Kuno Bersejarah\n(British Library EAP / Koleksi Lokal)"] --> K["Model OCR / Transliterasi\n(Berbagi basis backbone model dengan Web Classifier)"]
+    J["📜 Manuskrip Kuno Bersejarah\n(British Library EAP / Koleksi Lokal)"] --> K["Model OCR / Transliterasi\nTask baris terpisah dari classifier karakter"]
     K --> L["Prediksi Awal Transliterasi AI"]
     L --> M["Siswa Mahir: Koreksi Interaktif\n(Modul Latihan Tingkat Mahir)"]
     M --> N["Active Learning Dataset Buffer"]
@@ -177,7 +177,7 @@ flowchart TD
 | **Frontend Framework** | Next.js 16.x (App Router) | Arsitektur modern, React Server Components |
 | **UI Library & Styling** | React 19.x, Tailwind CSS v4.x, Lucide Icons | Desain responsif, clean token, komponen kartu adaptif |
 | **Input Web Mode** | **Universal Web Canvas** (Native `PointerEvent` API) | Dukungan stylus, touch jari ponsel/tablet, mouse laptop. 60–120Hz sub-pixel |
-| **Model Klasifikasi AI** | Lightweight CNN / MobileNet fine-tuned NusaAksara | Evaluasi citra canvas via ONNX Runtime Web (on-device) atau Edge API (<50ms) |
+| **Model Klasifikasi AI** | CNN / MobileNet / EfficientNet / hybrid spatial attention, sumber karakter berizin | ONNX Runtime Web lokal, model aksara aktif saja; target warm end-to-end p95 <50ms dan ≤15MiB harus diukur, bukan klaim yang sudah tercapai. |
 | **Perangkat Keras IoT** | ESP32 / Arduino + Modul RFID RC522 / PN532 | Konsol fisik murah (~Rp128.000 COGS) dengan dudukan kartu |
 | **Konektivitas Hardware** | **Web Serial API** (USB Direct) | Plug-and-play langsung dari browser tanpa driver tambahan & zero dependensi WiFi |
 | **Media Fisik Kinestetik** | 30 Kartu/Balok Akrilik ber-RFID Tag 13.56 MHz | Memuat simbol konsonan dasar dan tanda diakritik Trinitas Aksara |
@@ -193,8 +193,8 @@ flowchart TD
 
 | Pilar | Nama | Deskripsi Inti | Modalitas Data / Model |
 |---|---|---|---|
-| **Pilar 1** | Precision AI Writing Coach | Evaluasi bentuk akhir aksara di Web Canvas menggunakan AI Classifier + validasi posisi diakritik | Citra binarized canvas dinormalisasi (NusaAksara) |
-| **Pilar 2** | Trinitas Aksara Nusantara | Kurikulum terstruktur 3 aksara dengan kontras visual tinggi: Lontara (sudut), Sunda (modular), Bali (kurvalinier) | Benchmark NusaAksara (ACL 2025) & Unicode standard |
+| **Pilar 1** | Precision AI Writing Coach | Classifier bentuk akhir; validasi posisi diakritik memerlukan validator tersendiri, bukan top-1 classifier | Citra karakter grayscale, crop all-component, tensor NCHW ImageNet-normalized |
+| **Pilar 2** | Trinitas Aksara Nusantara | Kurikulum 3 aksara dengan mapping yang disetujui kurator | Unicode/font terkurasi; label sumber belum merupakan mapping terverifikasi |
 | **Pilar 3** | Gamified Engagement Layer | **Story Mode** (kisah rakyat dengan tantangan cabang) dan **Tactile Phygital Arena** (mini game kartu IoT) | Game state JSON + LLM dialog + Web Serial IoT |
 | **Pilar 4** | Human-in-the-Loop Preservasi | Prediksi OCR naskah kuno dikoreksi siswa mahir dan divalidasi ahli filologi | Citra manuskrip kuno (EAP / Mendeley) |
 
@@ -266,7 +266,7 @@ flowchart TD
 |---|---|---|
 | **00:00–00:15** | Cuplikan naskah lontar kuno & data krisis kepunahan aksara daerah pada generasi muda | Urgensi pelestarian Trinitas Aksara Nusantara (Lontara, Sunda, Bali) melalui inovasi pembelajaran relevan. |
 | **00:15–00:25** | Tampilan UI Aksantara: pilihan Web Mode (Digital AI) & Hardware Mode (Tactile Pad) | Solusi Phygital: mempertemukan ketajaman evaluasi AI digital dengan stimulasi kinestetik fisik. |
-| **00:25–00:55** | **Demo Web Mode:** Menulis di Universal Web Canvas (stylus/touch), klik periksa, model AI Classifier mengevaluasi instan (<50ms), highlight visual akurasi bentuk dan posisi diakritik | Evaluasi bentuk aksara cerdas berbasis model AI terlatih NusaAksara yang adil tanpa bias urutan goresan kaku. |
+| **00:25–00:55** | **Demo Web Mode (setelah gate lolos):** Menulis canvas, periksa prediksi source_label/top-3/probabilitas dan latensi aktual | Model karakter berizin dengan real-canvas holdout; tidak mengklaim topology atau kualitas tulisan dari confidence kelas. |
 | **00:55–01:25** | **Demo Hardware Mode:** Menghubungkan Tactile Pad via Web Serial (USB), kartu fisik aksara diletakkan di pad, game merespon instan dengan audio pelafalan dan memicu cabang cerita | Pengalaman sensorik kinestetik anak untuk menyusun kata dan meramu aksara tanpa kelelahan layar. |
 | **01:25–01:45** | **Demo Narrative Mode & Pilar 4:** Tampilan cabang cerita rakyat lokal interaktif dan modul koreksi transliterasi naskah kuno | Pembelajaran kontekstual berbasis budaya dan kontribusi nyata pada pelestarian manuskrip kuno. |
 | **01:45–02:00** | Dashboard guru, model bisnis kemitraan sekolah, repositori open-source | Penutup dan komitmen Aksantara untuk masa depan literasi budaya Nusantara. |
@@ -277,7 +277,7 @@ flowchart TD
 
 | Peran | Fokus Utama | Tanggung Jawab Teknis |
 |---|---|---|
-| **AI & Embedded Hardware Lead** | Machine Learning, Model Serving, IoT Firmware | Fine-tuning model klasifikasi citra berbasis NusaAksara, optimasi ONNX/API, firmware ESP32 RFID Reader, integrasi Web Serial API. |
+| **AI & Embedded Hardware Lead** | Machine Learning, Model Serving, IoT Firmware | Eksperimen classifier karakter berizin, backbone pretrained ImageNet, optimasi ONNX lokal, OCR baris NusaAksara sebagai task terpisah, firmware dan Web Serial. |
 | **Frontend & Web Experience Lead** | Next.js, Canvas, State Engine | Pengembangan Universal Web Canvas (PointerEvent), rendering UI aksara, hybrid story state machine, integrasi Supabase. |
 | **Product & Business Lead** | Riset Budaya, Kurasi Kurikulum, Pitching | Penyelarasan materi Trinitas Aksara dengan buku Muatan Lokal, penulisan skenario Story Mode, unit economics deck, proposal. |
 | **Multimedia & UI/UX Designer** | Figma, Desain Fisik, Video Demo | Desain visual bertema etnik modern, enclosure fisik Tactile Pad, produksi video demo 120 detik, slide presentasi final. |
@@ -288,14 +288,14 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    F1["FASE 1 (10-11 Okt)\nFondasi & Model AI\n• Setup Next.js 16 + Tailwind\n• Pipeline inferensi classifier NusaAksara\n• Setup firmware ESP32 RC522\n• Uji Web Serial API di browser"] --> F2["FASE 2 (12-13 Okt)\nCore Web & Phygital Play\n• Universal Web Canvas + Snapshot Evaluator\n• Mini game Ramu Mantra berbasis IoT\n• Implementasi JSON Story State Machine\n• Feedback visual akurasi & diakritik"]
+    F1["FASE 1 (10-11 Okt)\nFondasi & Model AI\n• Setup Next.js 16 + Tailwind\n• Audit/split classifier karakter berizin\n• Setup firmware ESP32 RC522\n• Uji Web Serial API di browser"] --> F2["FASE 2 (12-13 Okt)\nCore Web & Phygital Play\n• Universal Web Canvas + Snapshot Evaluator\n• Mini game Ramu Mantra berbasis IoT\n• Implementasi JSON Story State Machine\n• Feedback kelas, validator diakritik terpisah"]
     F2 --> F3["FASE 3 (14-15 Okt)\nNarrative & Polish\n• Integrasi 3 Cerita Rakyat Trinitas Aksara\n• Modul Manuskrip Kuno Pilar 4\n• Dashboard Guru & analitik progres\n• Deployment Vercel & testing end-to-end"]
     F3 --> F4["FASE 4 (16 Okt)\nFinalisasi & Submission\n• Rekam & edit Video Demo YouTube ≤120s\n• Finalisasi Pitch Deck PDF\n• Dokumentasi README repositori publik\n• Submit seluruh berkas sebelum 23.59 WIB"]
 ```
 
 ### 9.1 Checklist Fase 1 — Fondasi & Model AI (10–11 Oktober)
 - [ ] Inisialisasi repositori Next.js 16 + Tailwind CSS v4
-- [ ] Unduh dan siapkan subset data Lontara, Sunda, dan Bali dari benchmark NusaAksara (ACL 2025)
+- [ ] Audit data karakter Lontara/Sunda/Bali berizin dan koleksi real-canvas ber-consent; NusaAksara baris tetap untuk OCR.
 - [ ] Setup pipeline inferensi model klasifikasi citra aksara (ONNX Web / FastAPI endpoint)
 - [ ] Uji coba komunikasi ESP32 RC522 ke browser via Web Serial API (baca UID tag NFC langsung di console web)
 - [ ] Verifikasi keterbacaan font web Google Noto Sans (Buginese, Sundanese, Balinese)

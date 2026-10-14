@@ -34,6 +34,7 @@ build/
 develop-eggs/
 dist/
 downloads/
+docs/USAGE.*
 eggs/
 .eggs/
 lib/
@@ -87,3 +88,19 @@ Thumbs.db
 # --- Local Assistant Configuration ---
 /.agents/
 /.omp/
+
+# Generated classifier experiments and local runtime
+/ai/runs/
+/ai/artifacts/
+/ai/notebooks/*
+!/ai/notebooks/0*.ipynb
+
+# Colab MCP session tokens and transient command mailbox
+/ai/harness/colab_bridge_state.json
+/ai/harness/colab_command.json
+/ai/harness/colab_command_result.json
+
+# Local development documentation and AI usage records
+/docs/usage.md
+/docs/USAGE.md
+/docs/AI_USAGE.md
