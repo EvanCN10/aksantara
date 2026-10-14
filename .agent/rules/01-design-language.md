@@ -21,7 +21,7 @@ Gunakan token warna spesifik berikut pada CSS tokens / Tailwind v4 `@theme`:
 - **Crimson Sangkur (Error / Remedial):** `#E76F51` (evaluasi belum presisi / koreksi).
 
 ## 3. Tipografi & Hierarki Font
-- **Heading / Display:** `Plus Jakarta Sans` atau `Outfit` (font modern geometris berkarakter kontemporer Indonesia).
+- **Font Utama (Heading / Display / Brand):** `Philosopher` dari Google Fonts (karakter kurvalinier elegan, klasik, dan sarat filosofi budaya Nusantara).
 - **Body / Interface:** `Inter` atau `Geist Sans` (keterbacaan tinggi pada ukuran kecil dan panel data).
 - **Font Aksara Daerah (Wajib):**
   - Aksara Lontara: `Noto Sans Buginese`
