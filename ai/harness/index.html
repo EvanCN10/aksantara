@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Aksantara — Laboratorium Canvas</title>
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./canvas.js"></script>
+</head>
+<body>
+<header><p class="eyebrow">AKSANTARA / LABORATORIUM LOKAL</p><h1>Bentuk akhir,<br>bukan urutan goresan.</h1><p>Alat pengumpulan tulisan manusia dan pengukuran model ONNX. Bukan penilaian kualitas tulisan atau validasi paleografi.</p></header>
+<main>
+<section class="paper" aria-labelledby="canvas-title">
+  <h2 id="canvas-title">Kanvas tulisan</h2>
+  <p id="canvas-help">Tulis dengan mouse, sentuhan, atau stylus. Lebar tinta 6 CSS px. Gambar diekspor 512 × 512; referensi font tidak digunakan sebagai sampel.</p>
+  <canvas id="canvas" aria-label="Kanvas untuk menulis aksara" aria-describedby="canvas-help target-description">Browser Anda memerlukan dukungan canvas. Pengumpulan tulisan memerlukan perangkat penunjuk; kontrol lain dapat diakses dengan keyboard.</canvas>
+  <p id="target-description">Pilih source label di panel eksperimen. Mapping Unicode belum terverifikasi.</p>
+  <div class="controls"><button id="undo" type="button">Urungkan</button><button id="clear" type="button">Bersihkan</button><button id="check" type="button" hidden>Periksa model</button></div>
+</section>
+<section class="panel" aria-labelledby="experiment-title">
+  <h2 id="experiment-title">Kontrak eksperimen</h2>
+  <label>Mode<select id="mode"><option value="collection">Koleksi tanpa skor model</option><option value="inference">Inferensi & benchmark lokal</option></select></label>
+  <label>Aksara<select id="script"><option value="lontara">Lontara</option><option value="sunda">Sunda</option><option value="bali">Bali</option></select></label>
+  <label>Source label<select id="label"></select></label>
+  <p>Label sumber dipertahankan apa adanya. Label ini bukan mapping aksara yang telah disetujui kurator.</p>
+  <div id="collection">
+    <label>Writer ID pseudonim<input id="writer" placeholder="writer-01" autocomplete="off" pattern="[A-Za-z0-9_-]+"></label>
+    <label>Session ID<input id="session" autocomplete="off" pattern="[A-Za-z0-9_-]+"></label>
+    <label>Device ID pseudonim<input id="device" placeholder="tablet-01" autocomplete="off" pattern="[A-Za-z0-9_-]+"></label>
+    <label>Partition writer<select id="partition"><option value="train">Train (4 writer)</option><option value="selection">Selection (2 writer)</option><option value="calibration">Calibration (2 writer)</option><option value="test">Test (2 writer)</option></select></label>
+    <fieldset><legend>Persetujuan kontribusi</legend>
+      <label class="checkbox"><input id="consent-training" type="checkbox">Saya memberi izin penggunaan tulisan untuk training.</label>
+      <label class="checkbox"><input id="consent-research" type="checkbox">Saya memberi izin evaluasi riset sesuai partition.</label>
+      <label class="checkbox"><input id="consent-upload" type="checkbox">Saya memberi izin upload dataset private ke Kaggle.</label>
+    </fieldset>
+    <p>Gunakan ID acak; jangan masukkan nama atau identitas pribadi. Minimum: 10 writer/aksara, 2 tulisan/kelas/writer. Satu writer harus tetap di partition yang sama di semua sesi dan perangkat.</p>
+    <button id="export" type="button">Siapkan PNG + metadata</button>
+    <div id="downloads" aria-label="Unduhan sampel"></div>
+    <p>Simpan kedua berkas dengan nama yang sama di <code>datasets/canvas_capture/</code>. Audit server memeriksa consent, writer-disjoint dan hash; download ini tidak otomatis mengimpor dataset.</p>
+  </div>
+  <div id="inference" hidden>
+    <label>Direktori paket kandidat/release<input id="package" placeholder="/artifacts/release/lontara/"></label>
+    <button id="load" type="button">Muat ulang paket</button>
+    <p>WASM CPU, satu thread, ORT 1.22.0. Tidak ada CDN, server prediksi, atau skor fallback. Paket asli dan semua hash wajib tersedia.</p>
+    <label>Manifest fixture held-out<input id="fixture" placeholder="/artifacts/release/lontara/benchmark-fixture.json"></label>
+    <label>OS aktual<input id="os" placeholder="Windows 11"></label>
+    <label>CPU aktual<input id="cpu" placeholder="Model CPU workstation"></label>
+    <label>RAM aktual<input id="ram" placeholder="16 GiB"></label>
+    <label>Evidence benchmark FP32 acuan (opsional untuk INT8)<input id="fp32-reference" placeholder="/runs/browser-benchmark-fp32.json"></label>
+    <label class="checkbox"><input id="offline" type="checkbox">Akses jaringan eksternal telah saya nonaktifkan; server localhost tetap aktif.</label>
+    <button id="benchmark" type="button">Benchmark 20 + 200</button>
+    <button id="download-benchmark" type="button" disabled>Unduh evidence benchmark</button>
+  </div>
+  <details><summary>Parity preprocessing Python / JS</summary><label>Direktori fixture<input id="parity-path" value="/runs/preprocess-check/"></label><label>Ukuran kontrak evidence<select id="parity-size"><option value="128">128 × 128</option><option value="224">224 × 224</option></select></label><button id="parity" type="button">Bandingkan tensor fixture</button><button id="download-parity" type="button" disabled>Unduh evidence parity</button></details>
+</section>
+<section class="evidence" aria-labelledby="evidence-title"><h2 id="evidence-title">Evidence & status</h2><p id="status" role="status" aria-live="polite">Memuat label lokal. Mode koleksi tidak memuat model.</p><pre id="result" aria-label="Hasil dan evidence eksperimen"></pre></section>
+</main>
+</body>
+</html>

@@ -1,0 +1,134 @@
+{
+  "script": "lontara",
+  "title": "Aksantara | Modul 02: Turnamen Multi-Arsitektur & Pengklasifikasi Aksara Lontara",
+  "num_classes": 114,
+  "timestamp": 1791977238.1169353,
+  "training": {
+    "run_id": "seed42-1791972512454400349",
+    "max_epochs": 50,
+    "patience": 7,
+    "selection_metric": "macro_f1",
+    "historical_checkpoints_included": false
+  },
+  "champion": {
+    "model": "ResNet-18",
+    "raw_name": "resnet18",
+    "macro_f1": 0.9982412170777821,
+    "top1_acc": 0.997979797979798,
+    "top3_acc": 0.997979797979798,
+    "min_recall": 0.9,
+    "conf_gap": 0.3535568118095398,
+    "mean_conf_correct": 0.9965494275093079,
+    "mean_conf_wrong": 0.6429926156997681,
+    "accuracy": 0.997979797979798,
+    "latency_p95_ms": 15.229868400138,
+    "fp32_latency_p95_ms": 14.471264100120605,
+    "size_mb": 10.833964347839355,
+    "fp32_size_mb": 42.849050521850586,
+    "int8_size_mb": 10.833964347839355
+  },
+  "leaderboard": [
+    {
+      "model": "ResNet-18",
+      "raw_name": "resnet18",
+      "pretrained": true,
+      "macro_f1": 0.9982412170777821,
+      "top1_acc": 0.997979797979798,
+      "top3_acc": 0.997979797979798,
+      "min_recall": 0.9,
+      "conf_gap": 0.3535568118095398,
+      "accuracy": 0.997979797979798,
+      "params_m": 11.234994,
+      "size_mb": 42.85810089111328,
+      "latency_ms": 26.03629310010546,
+      "best_epoch": 11,
+      "epochs_run": 18,
+      "checkpoint_path": "/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/aksantara-runs/tournaments/lontara/seed42-1791972512454400349/resnet18/best.pt"
+    },
+    {
+      "model": "EfficientNet-B0",
+      "raw_name": "efficient",
+      "pretrained": true,
+      "macro_f1": 0.9978614798559398,
+      "top1_acc": 0.997979797979798,
+      "top3_acc": 1.0,
+      "min_recall": 0.9,
+      "conf_gap": 0.1891074776649475,
+      "accuracy": 0.997979797979798,
+      "params_m": 4.153582,
+      "size_mb": 15.844657897949219,
+      "latency_ms": 24.024660400300483,
+      "best_epoch": 7,
+      "epochs_run": 14,
+      "checkpoint_path": "/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/aksantara-runs/tournaments/lontara/seed42-1791972512454400349/efficient/best.pt"
+    },
+    {
+      "model": "MobileNetV3-Small",
+      "raw_name": "mobile",
+      "pretrained": true,
+      "macro_f1": 0.9909509286240589,
+      "top1_acc": 0.9929292929292929,
+      "top3_acc": 0.998989898989899,
+      "min_recall": 0.5,
+      "conf_gap": 0.4326910376548767,
+      "accuracy": 0.9929292929292929,
+      "params_m": 1.634706,
+      "size_mb": 6.235908508300781,
+      "latency_ms": 12.333354149859586,
+      "best_epoch": 11,
+      "epochs_run": 18,
+      "checkpoint_path": "/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/aksantara-runs/tournaments/lontara/seed42-1791972512454400349/mobile/best.pt"
+    },
+    {
+      "model": "Custom CNN-4Layer",
+      "raw_name": "cnn",
+      "pretrained": false,
+      "macro_f1": 0.8106020912453976,
+      "top1_acc": 0.8252525252525252,
+      "top3_acc": 0.9666666666666667,
+      "min_recall": 0.0,
+      "conf_gap": 0.29606497287750244,
+      "accuracy": 0.8252525252525252,
+      "params_m": 0.108402,
+      "size_mb": 0.41352081298828125,
+      "latency_ms": 14.897589799784317,
+      "best_epoch": 33,
+      "epochs_run": 40,
+      "checkpoint_path": "/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/aksantara-runs/tournaments/lontara/seed42-1791972512454400349/cnn/best.pt"
+    }
+  ],
+  "critical_classes": [
+    {
+      "class_id": 79,
+      "label": "Nya",
+      "recall": 0.9,
+      "support": 10
+    },
+    {
+      "class_id": 99,
+      "label": "Su",
+      "recall": 0.9,
+      "support": 10
+    },
+    {
+      "class_id": 0,
+      "label": "A",
+      "recall": 1.0,
+      "support": 10
+    },
+    {
+      "class_id": 1,
+      "label": "Ba",
+      "recall": 1.0,
+      "support": 10
+    },
+    {
+      "class_id": 2,
+      "label": "Be",
+      "recall": 1.0,
+      "support": 10
+    }
+  ],
+  "onnx_path": "/content/aksantara-runtime/ai/runs/onnx_exports/lontara/lontara-champion.onnx",
+  "onnx_int8_path": "/content/aksantara-runtime/ai/runs/onnx_exports/lontara/lontara-champion-int8.onnx"
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "script": "bali",
+  "architecture": "efficient",
+  "format": "fp32",
+  "num_classes": 30,
+  "input_name": "input",
+  "output_name": "logits",
+  "model_sha256": "39a0f325d5549a2d3906a75a10d1ff54ef83f2a772295b2d9f3c0282f7d81adc",
+  "model_bytes": 16173918,
+  "preprocessing": {
+    "preprocessing_version": "canvas-gray-v1",
+    "size": 128,
+    "layout": "NCHW",
+    "channels": 3,
+    "dtype": "float32",
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "alpha": "white-composite",
+    "luminance": "integer-299-587-114-round-half-up",
+    "polarity": "invert-if-perimeter-median-less-than-127.5",
+    "foreground": "otsu-less-or-equal-first-maximum",
+    "padding_factor": 1.4,
+    "bbox": "inclusive-all-components",
+    "square_side": "ceil(1.4*max(bbox_width,bbox_height))",
+    "square_origin": "(min+max+1-side)/2",
+    "outside": "white",
+    "resize": "bilinear-half-pixel-square-clamp-white-source-neighbors",
+    "network_input": "grayscale-not-binarized",
+    "uniform": "empty"
+  },
+  "labels_file": "labels.json",
+  "training": {
+    "run_id": "seed42-1791978654289139796",
+    "max_epochs": 50,
+    "patience": 7,
+    "selection_metric": "macro_f1",
+    "historical_checkpoints_included": false
+  },
+  "selection_macro_f1": 0.9937321937321938,
+  "release_status": "private-experiment",
+  "probabilities_calibrated": false,
+  "unicode_mapping_verified": false
+}

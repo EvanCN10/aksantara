@@ -1,0 +1,12 @@
+{
+  "labels_path": "ai/configs/labels.json",
+  "provenance_path": "ai/configs/provenance.json",
+  "seed": 42,
+  "split": {"seed":42,"ratios":{"train":0.7,"selection":0.1,"calibration":0.05,"test":0.15}},
+  "partitions": {"train":0.7,"selection":0.1,"calibration":0.05,"test":0.15},
+  "preprocessing": {"version":"canvas-gray-v1","size":128,"mean":[0.485,0.456,0.406],"std":[0.229,0.224,0.225]},
+  "training": {"batch_size":64,"effective_batch_size":64,"weight_decay":0.0001,"gradient_clip":1.0,"transfer_epochs":5,"finetune_epochs":30,"scratch_epochs":35,"patience":7,"min_delta":0.0001,"deadline_seconds":3300},
+  "loss_choice": {},
+  "canvas": {"minimum_writers":10,"samples_per_class_per_writer":2,"writer_partitions":{"train":4,"selection":2,"calibration":2,"test":2}},
+  "release": {"max_bytes":15728640,"max_warm_p95_ms":50,"minimum_canvas_macro_f1":0.95,"minimum_class_recall":0.8,"runtime_version":"1.22.0"}
+}
