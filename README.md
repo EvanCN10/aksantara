@@ -132,6 +132,22 @@ Artefak generated berada di ignored `ai/runs/`, `ai/artifacts/`, `ai/notebooks/`
 
 Tiga kandidat spesialis FP32 tersedia di `ai/deployment/models/<script>/model.onnx`, dengan urutan `labels.json`, kontrak preprocessing dan SHA-256 di `manifest.json`, serta hasil run di `evaluation.json`. Input adalah float32 NCHW `[N, 3, 128, 128]`, grayscale canonical yang dinormalisasi ImageNet. Bobot dipakai untuk eksperimen privat; izin publikasi, kalibrasi, mapping Unicode, kualitas tulisan manusia dan benchmark browser belum disahkan. Combined/INT8 tetap di artefak eksperimen ignored.
 
+Backend privat menjalankan ketiga spesialis melalui ONNX Runtime CPU dengan session yang di-cache dan kontrak model diverifikasi saat startup:
+
+```bash
+# Dari root repository, environment Python terpisah dari training.
+python -m pip install -r ai/deployment/requirements.txt
+python -m uvicorn ai.deployment.server:app --host 127.0.0.1 --port 8000
+
+# Terminal kedua:
+npm --prefix web ci
+npm --prefix web run dev
+```
+
+`GET http://127.0.0.1:8000/health` melaporkan kesiapan model. Web meneruskan PNG melalui `POST /api/ai/classify` ke `POST /predict`; `AI_CLASSIFIER_URL` adalah konfigurasi **server-only**, default `http://127.0.0.1:8000`. Inference mengabaikan urutan goresan dan memakai preprocessing canonical di backend. UI menampilkan Top-3 label sumber/probabilitas, status perlu review dan target yang belum didukung; tidak ada fallback skor acak atau pemberian XP/penguasaan dari probabilitas eksperimen. Kanvas kosong atau citra invalid ditolak; service offline menghasilkan error 503 yang terlihat.
+
+Jika web di-host terpisah, backend Python juga harus dijalankan di host yang dapat dijangkau web dan `AI_CLASSIFIER_URL` diatur sesuai alamatnya. Integrasi lokal ini bukan izin publikasi model atau bukti latensi browser/WASM memenuhi anggaran.
+
 Studi Colab empat classifier (tiga specialist + satu gabungan 174 kelas) memakai **satu ZIP runtime terpisah** dari dataset. Dari root repo jalankan `python ai/colab_notebook.py`, lalu upload `ai/notebooks/aksantara-colab-runtime.zip` ke folder Google Drive `Colab Notebooks/dataset-joints-1/` bersama `canvas_classifier.zip` yang teramati di Drive. Buka notebook Drive Aksantara yang sudah digunakan: notebook memuat pengantar Markdown, lima cell kode konfigurasi/bootstrap/dataset/preflight/launch, dan satu cell Progress yang bisa dijalankan ulang. Pastikan GPU dan otorisasi Drive berhasil. ZIP runtime dipin SHA256 oleh cell konfigurasi; jangan jalankan cell dari build yang berbeda dengan ZIP yang diupload. Jika mount gagal, selesaikan dialog izin Drive lalu ulangi cell setup; jika modul `ai.*` dari bundle berbeda sudah diimport, restart runtime dan ulangi dari cell pertama.
 
 `ai.colab_experiments.preflight(DATA_ROOT)` memverifikasi byte source dan split asli; `launch(DATA_ROOT, SAVE_ROOT, RUNTIME_SHA256)` memulai **satu worker background**, bukan training selesai. Jalankan ulang cell **Progress** untuk snapshot status serta delapan epoch terakhir; tidak ada polling otomatis atau log besar di browser. Tujuh treatment berurutan: Sunda ordinary; Lontara, Bali, dan gabungan masing-masing ordinary/weighted. Snapshot checksum disimpan per attempt di Drive; worker memulihkan attempt published saat VM baru memakai identitas runtime/data/recipe yang sama. Status `completed` hanya setelah empat checkpoint lengkap dan `comparison.json` tersedia. Perbandingan selection bersifat provisional: baseline specialist memakai *script-known routing*, gabungan memprediksi 174 kelas tanpa informasi aksara; bukan skor test/handwriting atau izin release.
