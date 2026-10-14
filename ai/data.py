@@ -10,11 +10,12 @@ import re
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Iterable
-
-import imagehash
+try:
+    import imagehash
+except ImportError:
+    imagehash = None
 import numpy as np
 from PIL import Image, ImageOps
-
 from ai.preprocess import canonical_gray, preprocess_image
 
 ROOTS = {
@@ -70,6 +71,33 @@ def _labels(path: Path) -> dict:
             if not isinstance(record.get("category"), str) or record.get("mapping_status") not in ("unverified", "verified"):
                 raise ValueError(f"Invalid category/mapping status for {script} in {path}")
     return value
+
+def load_labels(path: Path | str) -> list[dict]:
+    data = _load_json(Path(path))
+    if isinstance(data, dict):
+        result = []
+        for script_name, class_list in data.items():
+            for c in class_list:
+                item = dict(c)
+                item["script"] = script_name
+                item["id"] = f"{script_name}_{c.get('class_id')}"
+                item["class_id"] = c.get("class_id")
+                item["label"] = c.get("source_label", c.get("display_name", str(c.get("class_id"))))
+                result.append(item)
+        return result
+    return data if isinstance(data, list) else []
+
+
+def load_split_manifest(path: Path | str, partition: str = "train") -> list[dict]:
+    data = _load_json(Path(path))
+    samples = data.get("samples", []) if isinstance(data, dict) else (data if isinstance(data, list) else [])
+    result = []
+    for s in samples:
+        if s.get("partition") == partition:
+            item = dict(s)
+            item["label_id"] = f"{s.get('script')}_{s.get('class_id')}"
+            result.append(item)
+    return result
 
 
 class _Union:
@@ -141,7 +169,7 @@ def _decode(path: Path, sample: dict) -> None:
             sample["pixel_sha256"] = hashlib.sha256(
                 str(rgb.size).encode() + b"\0RGB\0" + rgb.tobytes()).hexdigest()
             gray = canonical_gray(image)
-            sample["phash"] = str(imagehash.phash(Image.fromarray(gray.astype(np.uint8)), hash_size=8))
+            sample["phash"] = str(imagehash.phash(Image.fromarray(gray.astype(np.uint8)), hash_size=8)) if imagehash else ""
             result = preprocess_image(image)
             sample["preprocessing"] = result["metadata"]
             sample["decode_status"] = "ok"

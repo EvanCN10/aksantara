@@ -1,7 +1,11 @@
+[CmdletBinding(PositionalBinding=$false)]
 param(
-    [string]$Notebook = "1JVcqD9t1u0M8CfQFjHgSBf4as56hCcTk",
+    [string]$Script = "",
+    [string]$Notebook = "",
     [switch]$NoBrowser,
-    [double]$Timeout = 180.0
+    [double]$Timeout = 180.0,
+    [Parameter(ValueFromRemainingArguments=$true)]
+    [string[]]$ExtraArgs
 )
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -11,10 +15,20 @@ $uvArgs = @(
     "run",
     "--with", "git+https://github.com/googlecolab/colab-mcp",
     "python", $bridgeScript,
-    "--notebook", $Notebook,
     "--timeout", $Timeout
 )
 
+if ($Script) {
+    $uvArgs += @("--script", $Script)
+}
+
+if ($Notebook -and -not $Notebook.StartsWith("-")) {
+    $uvArgs += @("--notebook", $Notebook)
+}
+
+if ($ExtraArgs) {
+    $uvArgs += $ExtraArgs
+}
 if ($NoBrowser) {
     $uvArgs += "--no-browser"
 }

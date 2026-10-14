@@ -23,7 +23,6 @@ MAX_MCP_MESSAGE_BYTES = 32 * 1024 * 1024
 MAX_CELL_SOURCE_BYTES = 16 * 1024
 MAX_RESULT_BYTES = 64 * 1024
 
-
 class ToolFailure(Exception):
     def __init__(self, message: str, result: dict, inserted: int | None = None):
         super().__init__(message)
@@ -121,21 +120,53 @@ class NotebookWebSocketServer(ColabWebSocketServer):
         return self
 
 
-DEFAULT_NOTEBOOK_ID = "1JVcqD9t1u0M8CfQFjHgSBf4as56hCcTk"
+DEFAULT_NOTEBOOK_ID = "scratch"
+TARGETS_FILE = Path(__file__).resolve().parents[1] / "configs/colab_targets.json"
 STATE_FILE = Path(__file__).resolve().parent / "colab_bridge_state.json"
-NOTEBOOK_PATH = Path(__file__).resolve().parents[1] / "notebooks/aksantara-colab.ipynb"
+NOTEBOOK_PATH = Path(__file__).resolve().parents[1] / "notebooks/01_sunda_classifier.ipynb"
 COMMAND_FILE = Path(__file__).resolve().parent / "colab_command.json"
 COMMAND_RESULT_FILE = Path(__file__).resolve().parent / "colab_command_result.json"
+
+
+def load_colab_targets() -> dict:
+    if TARGETS_FILE.is_file():
+        try:
+            return json.loads(TARGETS_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
 
 
 def write_json(path: Path, payload: dict) -> None:
     temporary = path.with_suffix(".tmp")
     temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    for _ in range(10):
+        try:
+            temporary.replace(path)
+            return
+        except PermissionError:
+            time.sleep(0.05)
     temporary.replace(path)
+
+
+def sanitize_structured(value):
+    if isinstance(value, dict):
+        new_d = {}
+        for k, val in value.items():
+            if isinstance(val, str) and len(val) > 1024 and ("image/" in k or k in ("image/png", "image/jpeg")):
+                new_d[k] = f"<{k} {len(val)} chars>"
+            else:
+                new_d[k] = sanitize_structured(val)
+        return new_d
+    elif isinstance(value, list):
+        return [sanitize_structured(x) for x in value]
+    return value
 
 
 def serialize_result(result) -> dict:
     structured = getattr(result, "structured_content", None)
+    if structured is not None:
+        structured = sanitize_structured(structured)
     if encoded_size(structured) > MAX_RESULT_BYTES:
         raise ValueError(f"MCP result exceeds {MAX_RESULT_BYTES} UTF-8 bytes; inspect a single small cell")
     content = []
@@ -299,10 +330,16 @@ def parse_notebook_id(target: str) -> str:
     return target
 
 
-async def run_bridge(notebook_target: str, auto_open: bool = True, timeout: float = 180.0):
+async def run_bridge(
+    notebook_target: str,
+    notebook_path: Path | None = None,
+    auto_open: bool = True,
+    timeout: float = 180.0,
+):
+    global NOTEBOOK_PATH
+    if notebook_path is not None:
+        NOTEBOOK_PATH = notebook_path
     notebook_id = parse_notebook_id(notebook_target)
-
-    # Never kill another notebook's MCP session or auto-insert unrelated cells.
 
     # 2. Start WebSocket Server
     server = NotebookWebSocketServer()
@@ -402,10 +439,18 @@ async def run_bridge(notebook_target: str, auto_open: bool = True, timeout: floa
 def main():
     parser = argparse.ArgumentParser(description="Aksantara Google Colab MCP Bridge")
     parser.add_argument(
+        "--script",
+        "-s",
+        choices=["sunda", "lontara", "bali", "combined"],
+        help="Target Aksantara script (resolves notebook file and Colab ID from configs/colab_targets.json)",
+    )
+    parser.add_argument(
         "--notebook",
         "-n",
-        default=DEFAULT_NOTEBOOK_ID,
-        help=f"Google Colab Drive Notebook ID or URL (default: {DEFAULT_NOTEBOOK_ID})",
+        nargs="?",
+        const="scratch",
+        default=None,
+        help=f"Google Colab Drive Notebook ID or URL (default: from colab_targets.json or {DEFAULT_NOTEBOOK_ID})",
     )
     parser.add_argument(
         "--no-browser",
@@ -422,11 +467,28 @@ def main():
 
     args = parser.parse_args()
 
+    target_nb = args.notebook or DEFAULT_NOTEBOOK_ID
+    target_path = NOTEBOOK_PATH
+
+    if args.script:
+        targets = load_colab_targets()
+        info = targets.get(args.script, {})
+        configured_id = info.get("colab_url_or_id", "").strip()
+        if configured_id and not args.notebook:
+            target_nb = configured_id
+        elif not configured_id and not args.notebook:
+            print(f"[*] Info: colab_url_or_id untuk '{args.script}' belum diisi di ai/configs/colab_targets.json.")
+            print(f"[*] Membuka Colab scratch. Anda dapat mengupload {info.get('notebook_file')} ke Drive.")
+        if info.get("notebook_file"):
+            resolved = Path(__file__).resolve().parents[2] / info["notebook_file"]
+            if resolved.is_file():
+                target_path = resolved
 
     try:
         asyncio.run(
             run_bridge(
-                notebook_target=args.notebook,
+                notebook_target=target_nb,
+                notebook_path=target_path,
                 auto_open=not args.no_browser,
                 timeout=args.timeout,
             )

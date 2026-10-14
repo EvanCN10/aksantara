@@ -1,0 +1,30 @@
+{
+  "sunda": {
+    "script": "sunda",
+    "title": "Turnamen Multi-Arsitektur & Pengklasifikasi Aksara Sunda",
+    "notebook_file": "ai/notebooks/01_sunda_classifier.ipynb",
+    "colab_url_or_id": "1G2ZQmzDqrSVeQWAjcx8yoUeY8jzu5nj0",
+    "target_classes": 30
+  },
+  "lontara": {
+    "script": "lontara",
+    "title": "Turnamen Multi-Arsitektur & Pengklasifikasi Aksara Lontara",
+    "notebook_file": "ai/notebooks/02_lontara_classifier.ipynb",
+    "colab_url_or_id": "17CECOqabIedJjDu_lUK9DPw5cvrzI0B3",
+    "target_classes": 114
+  },
+  "bali": {
+    "script": "bali",
+    "title": "Turnamen Multi-Arsitektur & Pengklasifikasi Aksara Bali",
+    "notebook_file": "ai/notebooks/03_bali_classifier.ipynb",
+    "colab_url_or_id": "134op-PzdPtd__pHdGMBWO96Tf7baIDU0",
+    "target_classes": 30
+  },
+  "combined": {
+    "script": "combined",
+    "title": "Turnamen Multi-Arsitektur & Pengklasifikasi Universal 174-Kelas",
+    "notebook_file": "ai/notebooks/04_combined_174_classifier.ipynb",
+    "colab_url_or_id": "16hK9NuOxfuqmNDyFGHe6Ijl__TzmSm9k",
+    "target_classes": 174
+  }
+}
