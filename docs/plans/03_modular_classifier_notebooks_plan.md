@@ -79,13 +79,18 @@ Untuk memenuhi kebutuhan laporan teknis dan presentasi juri JOINTS UGM 2026, set
 - Inisialisasi head klasifikasi sesuai jumlah kelas target (30 untuk Sunda/Bali, 114 untuk Lontara, 174 untuk Combined).
 - Tabel ringkasan arsitektur: Total Parameters, Trainable Parameters, Estimated FLOPs, Estimated Memory.
 
-### Stage 4: Interactive Training / Fast-Load Mode
-Menyediakan dua mode fleksibel bagi pengguna:
-1. **Mode A (Fast-Load Existing Winner):** Langsung memuat bobot `best.pt` yang sudah terlatih dari Drive dalam hitungan detik. Menghemat kuota GPU dan waktu eksekusi.
-2. **Mode B (Train From Scratch / Fine-Tune):**
-   - Live training loop dengan progress bar (`tqdm`).
-   - Plot dinamis interaktif per epoch: *Training Loss vs Selection Loss* dan *Selection Macro-F1*.
-   - Early stopping otomatis dengan patience 7 epoch.
+### Stage 4: Turnamen Training dengan Early Stopping
+- Keempat notebook memakai maksimum **50 epoch** per kandidat dan **patience 7**, berdasarkan **selection Macro-F1**. Skor yang sama tidak mereset patience.
+- Semua kandidat dibangun ulang dengan seed 42 dan konfigurasi pretraining masing-masing; checkpoint MobileNet historis tidak dimuat dan tidak ikut leaderboard.
+- Setiap peningkatan selection Macro-F1 menyimpan `best.pt` beserta arsitektur, urutan label, seed, epoch, dan skor. Riwayat loss/F1 aktual disimpan ke `history.json` setiap epoch; tidak ada kurva sintetis.
+- Checkpoint terbaik dipulihkan sebelum evaluasi akhir, pemilihan champion, dan ekspor ONNX.
+- Setiap eksekusi Stage 4 membuat direktori run baru: `aksantara-runs/tournaments/<script>/<run_id>/<architecture>/` di Drive pada Colab, atau `ai/runs/tournaments/<script>/<run_id>/<architecture>/` secara lokal.
+- Ringkasan Stage 7 mencatat protokol training, jumlah epoch aktual, epoch terbaik, dan lokasi checkpoint. Partisi test tidak dipakai untuk pemilihan model.
+- Hasil turnamen lama dengan training empat epoch tetap historis; peringkat baru membutuhkan eksekusi ulang Stage 4–7.
+- Stage 5 notebook menampilkan leaderboard/kurva dari run aktif. Pada Combined, tabel spesialis vs universal memakai Macro-F1 dari prediksi champion pada selection yang dikelompokkan menurut ground-truth aksara, dengan salah lintas aksara tetap dihitung salah; tidak ada angka estimasi hardcoded.
+- Skor spesialis berasal dari ringkasan ekspor bertimestamp terbaru yang tersedia di Drive atau `ai/runs`, disertai path sumber dan metadata training. Ringkasan yang hilang ditandai tidak tersedia. Perbandingan bersifat deskriptif: kesamaan split/preprocessing dan protokol training antar-run belum terbukti, khususnya ringkasan Sunda lama tanpa metadata training.
+- Setiap notebook menyediakan sel akhir **Refresh Perbandingan Tersimpan — Tanpa Training**, mandiri dari state Stage 1–7. Sel memakai stdlib, meminta mount Drive hanya bila perlu, lalu membaca ringkasan terbaru dan `selection_by_script` Combined. Tidak memuat model atau mengulang training; ringkasan/data yang tidak tersedia dilaporkan sebagai error, bukan skor palsu.
+- Stage 7 Combined menyimpan `selection_by_script` untuk refresh berikutnya. Ringkasan Combined lama sudah diperkaya melalui inferensi ONNX tersimpan pada selection dengan urutan label checkpoint; Macro-F1 keseluruhan terverifikasi sama dengan run tersimpan.
 
 ### Stage 5: Deep Paleographic Error Diagnostics (Visual Analysis)
 - **Heatmap Confusion Matrix Interaktif:** Matriks normalisasi per kelas menggunakan Seaborn/Matplotlib resolusi tinggi.
@@ -97,6 +102,8 @@ Menyediakan dua mode fleksibel bagi pengguna:
 - Uji numerik *bit-parity* antara PyTorch tensor dan ONNX Runtime CPU pada seluruh partisi seleksi (toleransi error $\le 10^{-4}$ dan kecocokan Top-1 $\ge 99.9\%$).
 - Kuantisasi statis INT8 QDQ (`int8/<script>-classifier.onnx`) menggunakan sampel kalibrasi partisi training.
 - Komparasi ukuran: FP32 MB vs INT8 MB (target: $\le 15$ MB).
+- Implementasi notebook menggabungkan ekspor, kuantisasi, dan sandbox di Stage 7. Di Colab, Stage 7 memasang `onnx`/`onnxruntime` yang belum tersedia dan memuat ulang visualizer agar benchmark tidak memakai status import opsional lama (`ort=None`); tidak membutuhkan restart atau training ulang.
+- Gate notebook Stage 7 memakai seluruh selection partition nyata, bukan noise acak: output finite dan bentuk identik, selisih logit absolut `<0.05`, serta Top-1 cocok 100%. Batas absolut notebook tidak diubah; ini belum membuktikan target release `1e-4` di atas atau parity browser/WASM.
 
 ### Stage 7: In-Notebook Inference & Latency Sandbox
 - Widget interaktif untuk menguji inferensi satu citra (baik dari dataset maupun goresan simulasi).

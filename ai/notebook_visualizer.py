@@ -414,33 +414,39 @@ def plot_multi_model_comparison(
 
     models = [r.get("model", f"Model {i}") for i, r in enumerate(comparison_rows)]
     f1_scores = [r.get("macro_f1", 0.0) * (100.0 if r.get("macro_f1", 0.0) <= 1.0 else 1.0) for r in comparison_rows]
-    accuracies = [r.get("accuracy", 0.0) * (100.0 if r.get("accuracy", 0.0) <= 1.0 else 1.0) for r in comparison_rows]
+    accuracies = [r.get("top1_acc", r.get("accuracy", 0.0)) * (100.0 if r.get("top1_acc", r.get("accuracy", 0.0)) <= 1.0 else 1.0) for r in comparison_rows]
+    has_top3 = any("top3_acc" in r for r in comparison_rows)
+    top3_scores = [r.get("top3_acc", 0.0) * (100.0 if r.get("top3_acc", 0.0) <= 1.0 else 1.0) for r in comparison_rows]
     latencies = [r.get("latency_ms", 0.0) for r in comparison_rows]
     sizes = [r.get("size_mb", 0.0) for r in comparison_rows]
 
     x = np.arange(len(models))
-    width = 0.35
 
-    # Panel 1: Performance metrics
-    bars1 = ax_perf.bar(x - width / 2, f1_scores, width, label="Selection Macro-F1 (%)", color="#2563eb")
-    bars2 = ax_perf.bar(x + width / 2, accuracies, width, label="Accuracy (%)", color="#10b981")
+    if has_top3:
+        width = 0.25
+        bars1 = ax_perf.bar(x - width, f1_scores, width, label="Macro-F1 (%)", color="#2563eb")
+        bars2 = ax_perf.bar(x, accuracies, width, label="Top-1 Accuracy (%)", color="#10b981")
+        bars3 = ax_perf.bar(x + width, top3_scores, width, label="Top-3 Pedagogical Hint (%)", color="#f59e0b")
+        all_bars = [bars1, bars2, bars3]
+    else:
+        width = 0.35
+        bars1 = ax_perf.bar(x - width / 2, f1_scores, width, label="Selection Macro-F1 (%)", color="#2563eb")
+        bars2 = ax_perf.bar(x + width / 2, accuracies, width, label="Accuracy (%)", color="#10b981")
+        all_bars = [bars1, bars2]
+
     ax_perf.set_xticks(x)
     ax_perf.set_xticklabels(models, rotation=25, ha="right", fontsize=9, fontweight="bold")
     ax_perf.set_ylabel("Score (%)")
-    ax_perf.set_ylim(0, 105)
-    ax_perf.set_title("Performance Comparison (F1 vs Accuracy)", fontsize=11, fontweight="bold")
+    ax_perf.set_ylim(0, 108)
+    ax_perf.set_title("Performance & Pedagogical Tolerance", fontsize=11, fontweight="bold")
     ax_perf.grid(axis="y", linestyle=":", alpha=0.6)
-    ax_perf.legend(loc="lower right")
+    ax_perf.legend(loc="lower right", fontsize=8)
 
-    for bar in bars1:
-        h = bar.get_height()
-        ax_perf.annotate(f"{h:.1f}%", xy=(bar.get_x() + bar.get_width() / 2, h),
-                         xytext=(0, 2), textcoords="offset points", ha="center", va="bottom", fontsize=8)
-    for bar in bars2:
-        h = bar.get_height()
-        ax_perf.annotate(f"{h:.1f}%", xy=(bar.get_x() + bar.get_width() / 2, h),
-                         xytext=(0, 2), textcoords="offset points", ha="center", va="bottom", fontsize=8)
-
+    for bar_group in all_bars:
+        for bar in bar_group:
+            h = bar.get_height()
+            ax_perf.annotate(f"{h:.1f}%", xy=(bar.get_x() + bar.get_width() / 2, h),
+                             xytext=(0, 2), textcoords="offset points", ha="center", va="bottom", fontsize=7.5)
     # Panel 2: Deployment efficiency & latency
     bars3 = ax_cost.bar(x - width / 2, sizes, width, label="Model Size (MB)", color="#f59e0b")
     bars4 = ax_cost.bar(x + width / 2, latencies, width, label="Inference Latency (ms)", color="#8b5cf6")

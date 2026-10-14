@@ -121,14 +121,16 @@ Model didukung: `cnn`, `mobile`, `efficient`, `hybrid`, `mobile-scratch`, `resne
 #### Notebook Interaktif Modular (Jupyter & Colab)
 
 Tersedia 4 notebook modular interaktif di `ai/notebooks/` untuk inspeksi langsung, visualisasi data paleografi, dan evaluasi diagnostik:
-- [`01_sunda_classifier.ipynb`](ai/notebooks/01_sunda_classifier.ipynb): 30 kelas Ngalagena & Rarangken (Macro-F1 95.44%).
-- [`02_lontara_classifier.ipynb`](ai/notebooks/02_lontara_classifier.ipynb): 114 kelas geometris sudut tajam & analisis *Loss Weighting* (Macro-F1 47.47%).
-- [`03_bali_classifier.ipynb`](ai/notebooks/03_bali_classifier.ipynb): 30 kelas kurvalinier, ligatur & gantungan (Macro-F1 87.06%).
-- [`04_combined_174_classifier.ipynb`](ai/notebooks/04_combined_174_classifier.ipynb): 174 kelas universal tanpa petunjuk aksara, analisis Heatmap 3×3 Lintas Aksara, dan komparasi *Specialist vs Combined* (Macro-F1 59.21%).
+- [`01_sunda_classifier.ipynb`](ai/notebooks/01_sunda_classifier.ipynb): 30 kelas, champion EfficientNet-B0, selection Macro-F1 **100.00%** (180 sampel).
+- [`02_lontara_classifier.ipynb`](ai/notebooks/02_lontara_classifier.ipynb): 114 kelas, champion ResNet-18, selection Macro-F1 **99.82%** (990 sampel).
+- [`03_bali_classifier.ipynb`](ai/notebooks/03_bali_classifier.ipynb): 30 kelas, champion EfficientNet-B0, selection Macro-F1 **99.37%** (167 sampel).
+- [`04_combined_174_classifier.ipynb`](ai/notebooks/04_combined_174_classifier.ipynb): 174 kelas, champion ResNet-18, selection Macro-F1 **99.83%** (1,337 sampel).
 
-Seluruh notebook dilengkapi alur 7-stage universal: *Setup & GPU*, *Visual EDA*, *Model Factory*, *Fast-Load Checkpoint / Live Train*, *Paleographic Error Diagnostics (Confusion Matrix & Misclassified Gallery)*, *ONNX Export & INT8 Quantization*, dan *Inference Sandbox & Latency Benchmark*. Dokumen perencanaan lengkap tersimpan di [`docs/plans/`](docs/plans/).
+Notebook memakai maksimum 50 epoch, early stopping patience 7 berdasarkan selection Macro-F1, pemulihan checkpoint terbaik, history aktual, dan ekspor FP32/INT8. Sel akhir refresh perbandingan membaca hasil tersimpan tanpa training ulang. Skor selection bukan frozen test atau bukti generalisasi tulisan canvas.
 
 Artefak generated berada di ignored `ai/runs/`, `ai/artifacts/`, `ai/notebooks/`. `report` mencatat pending/blocked/observed runs, bukan membuat metrics yang belum ada. Frozen labels berjumlah 114/30/30, termasuk `Ke`/`Ke_` dan `ae`/`e`; semuanya belum merupakan mapping Unicode terverifikasi.
+
+Tiga kandidat spesialis FP32 tersedia di `ai/deployment/models/<script>/model.onnx`, dengan urutan `labels.json`, kontrak preprocessing dan SHA-256 di `manifest.json`, serta hasil run di `evaluation.json`. Input adalah float32 NCHW `[N, 3, 128, 128]`, grayscale canonical yang dinormalisasi ImageNet. Bobot dipakai untuk eksperimen privat; izin publikasi, kalibrasi, mapping Unicode, kualitas tulisan manusia dan benchmark browser belum disahkan. Combined/INT8 tetap di artefak eksperimen ignored.
 
 Studi Colab empat classifier (tiga specialist + satu gabungan 174 kelas) memakai **satu ZIP runtime terpisah** dari dataset. Dari root repo jalankan `python ai/colab_notebook.py`, lalu upload `ai/notebooks/aksantara-colab-runtime.zip` ke folder Google Drive `Colab Notebooks/dataset-joints-1/` bersama `canvas_classifier.zip` yang teramati di Drive. Buka notebook Drive Aksantara yang sudah digunakan: notebook memuat pengantar Markdown, lima cell kode konfigurasi/bootstrap/dataset/preflight/launch, dan satu cell Progress yang bisa dijalankan ulang. Pastikan GPU dan otorisasi Drive berhasil. ZIP runtime dipin SHA256 oleh cell konfigurasi; jangan jalankan cell dari build yang berbeda dengan ZIP yang diupload. Jika mount gagal, selesaikan dialog izin Drive lalu ulangi cell setup; jika modul `ai.*` dari bundle berbeda sudah diimport, restart runtime dan ulangi dari cell pertama.
 
