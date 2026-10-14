@@ -1,0 +1,134 @@
+{
+  "script": "sunda",
+  "title": "Aksantara | Modul 01: Turnamen Multi-Arsitektur & Pengklasifikasi Aksara Sunda",
+  "num_classes": 30,
+  "timestamp": 1791989979.2351089,
+  "training": {
+    "run_id": "seed42-1791988951125369183",
+    "max_epochs": 50,
+    "patience": 7,
+    "selection_metric": "macro_f1",
+    "historical_checkpoints_included": false
+  },
+  "champion": {
+    "model": "EfficientNet-B0",
+    "raw_name": "efficient",
+    "macro_f1": 1.0,
+    "top1_acc": 1.0,
+    "top3_acc": 1.0,
+    "min_recall": 1.0,
+    "conf_gap": 0.9953786134719849,
+    "mean_conf_correct": 0.9953786134719849,
+    "mean_conf_wrong": 0.0,
+    "accuracy": 1.0,
+    "latency_p95_ms": 25.10030515003336,
+    "fp32_latency_p95_ms": 5.750391749859318,
+    "size_mb": 4.606522560119629,
+    "fp32_size_mb": 15.424650192260742,
+    "int8_size_mb": 4.606522560119629
+  },
+  "leaderboard": [
+    {
+      "model": "EfficientNet-B0",
+      "raw_name": "efficient",
+      "pretrained": true,
+      "macro_f1": 1.0,
+      "top1_acc": 1.0,
+      "top3_acc": 1.0,
+      "min_recall": 1.0,
+      "conf_gap": 0.9953786134719849,
+      "accuracy": 1.0,
+      "params_m": 4.045978,
+      "size_mb": 15.434181213378906,
+      "latency_ms": 32.625988099903225,
+      "best_epoch": 9,
+      "epochs_run": 16,
+      "checkpoint_path": "/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/aksantara-runs/tournaments/sunda/seed42-1791988951125369183/efficient/best.pt"
+    },
+    {
+      "model": "ResNet-18",
+      "raw_name": "resnet18",
+      "pretrained": true,
+      "macro_f1": 0.9891774891774892,
+      "top1_acc": 0.9888888888888889,
+      "top3_acc": 1.0,
+      "min_recall": 0.8333333333333334,
+      "conf_gap": 0.18687433004379272,
+      "accuracy": 0.9888888888888889,
+      "params_m": 11.191902,
+      "size_mb": 42.69371795654297,
+      "latency_ms": 27.312202199902906,
+      "best_epoch": 5,
+      "epochs_run": 12,
+      "checkpoint_path": "/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/aksantara-runs/tournaments/sunda/seed42-1791988951125369183/resnet18/best.pt"
+    },
+    {
+      "model": "MobileNetV3-Small",
+      "raw_name": "mobile",
+      "pretrained": true,
+      "macro_f1": 0.9835830835830837,
+      "top1_acc": 0.9833333333333333,
+      "top3_acc": 1.0,
+      "min_recall": 0.8333333333333334,
+      "conf_gap": 0.24195319414138794,
+      "accuracy": 0.9833333333333333,
+      "params_m": 1.548606,
+      "size_mb": 5.907463073730469,
+      "latency_ms": 6.657274699887239,
+      "best_epoch": 23,
+      "epochs_run": 30,
+      "checkpoint_path": "/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/aksantara-runs/tournaments/sunda/seed42-1791988951125369183/mobile/best.pt"
+    },
+    {
+      "model": "Custom CNN-4Layer",
+      "raw_name": "cnn",
+      "pretrained": false,
+      "macro_f1": 0.25723722573722574,
+      "top1_acc": 0.28888888888888886,
+      "top3_acc": 0.6055555555555555,
+      "min_recall": 0.0,
+      "conf_gap": 0.05775816738605499,
+      "accuracy": 0.28888888888888886,
+      "params_m": 0.097566,
+      "size_mb": 0.37218475341796875,
+      "latency_ms": 11.999258350022043,
+      "best_epoch": 16,
+      "epochs_run": 23,
+      "checkpoint_path": "/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/aksantara-runs/tournaments/sunda/seed42-1791988951125369183/cnn/best.pt"
+    }
+  ],
+  "critical_classes": [
+    {
+      "class_id": 0,
+      "label": "a",
+      "recall": 1.0,
+      "support": 6
+    },
+    {
+      "class_id": 1,
+      "label": "ae",
+      "recall": 1.0,
+      "support": 6
+    },
+    {
+      "class_id": 2,
+      "label": "ba",
+      "recall": 1.0,
+      "support": 6
+    },
+    {
+      "class_id": 3,
+      "label": "ca",
+      "recall": 1.0,
+      "support": 6
+    },
+    {
+      "class_id": 4,
+      "label": "da",
+      "recall": 1.0,
+      "support": 6
+    }
+  ],
+  "onnx_path": "/content/aksantara-runtime/ai/runs/onnx_exports/sunda/sunda-champion.onnx",
+  "onnx_int8_path": "/content/aksantara-runtime/ai/runs/onnx_exports/sunda/sunda-champion-int8.onnx"
+}
