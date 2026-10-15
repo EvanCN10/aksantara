@@ -13,7 +13,7 @@ export default function PublikLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative min-h-screen bg-[#0c1a2c] text-[#F6F2E9]">
+    <div className="relative min-h-screen text-[#F6F2E9]">
       <Navbar />
       {children}
     </div>

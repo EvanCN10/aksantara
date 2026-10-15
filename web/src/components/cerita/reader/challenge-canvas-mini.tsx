@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { ShinyButton } from '@/components/ui/shiny-button';
+import { playSuccessGamelan } from '@/lib/audio/sound-effects';
 
 interface ChallengeCanvasMiniProps {
   targetGlif: {
@@ -52,70 +53,85 @@ export function ChallengeCanvasMini({
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const [strokes, setStrokes] = useState<Point[][]>([]);
+  const strokesRef = useRef<Point[][]>([]);
+  strokesRef.current = strokes;
+
   const isDrawingRef = useRef(false);
   const currentStrokeRef = useRef<Point[]>([]);
 
   const [isVerified, setIsVerified] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
 
-  // Redraw canvas
-  const redraw = useCallback(
-    (ctx: CanvasRenderingContext2D, strokeList: Point[][]) => {
-      const dpr = window.devicePixelRatio || 1;
-      const width = ctx.canvas.width / dpr;
-      const height = ctx.canvas.height / dpr;
+  // Redraw canvas with all completed strokes
+  const redraw = useCallback((ctx: CanvasRenderingContext2D, strokeList: Point[][]) => {
+    const dpr = window.devicePixelRatio || 1;
+    const width = ctx.canvas.width / dpr;
+    const height = ctx.canvas.height / dpr;
 
-      ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, width, height);
 
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.strokeStyle = '#ffd261';
-      ctx.lineWidth = 6;
-      ctx.shadowColor = 'rgba(255, 210, 97, 0.45)';
-      ctx.shadowBlur = 6;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#ffd261';
+    ctx.lineWidth = 6;
+    ctx.shadowColor = 'rgba(255, 210, 97, 0.45)';
+    ctx.shadowBlur = 6;
 
-      strokeList.forEach((stroke) => {
-        if (stroke.length < 1) return;
+    strokeList.forEach((stroke) => {
+      if (stroke.length < 1) return;
+
+      if (stroke.length === 1) {
         ctx.beginPath();
-        ctx.moveTo(stroke[0].x, stroke[0].y);
-        for (let i = 1; i < stroke.length; i++) {
-          ctx.lineTo(stroke[i].x, stroke[i].y);
-        }
-        ctx.stroke();
-      });
-    },
-    []
-  );
+        ctx.arc(stroke[0].x, stroke[0].y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffd261';
+        ctx.fill();
+        return;
+      }
 
-  const resizeCanvas = useCallback(() => {
+      ctx.beginPath();
+      ctx.moveTo(stroke[0].x, stroke[0].y);
+      for (let i = 1; i < stroke.length; i++) {
+        ctx.lineTo(stroke[i].x, stroke[i].y);
+      }
+      ctx.stroke();
+    });
+  }, []);
+
+  // Setup canvas size based on container dimensions only (NO dependency on strokes!)
+  const setupCanvasSize = useCallback(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
 
     const rect = container.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
+    if (rect.width === 0 || rect.height === 0) return;
 
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
 
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      ctx.scale(dpr, dpr);
-      redraw(ctx, strokes);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      redraw(ctx, strokesRef.current);
     }
-  }, [redraw, strokes]);
+  }, [redraw]);
 
+  // Handle window/container resize
   useEffect(() => {
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    return () => window.removeEventListener('resize', resizeCanvas);
-  }, [resizeCanvas]);
+    setupCanvasSize();
+    window.addEventListener('resize', setupCanvasSize);
+    return () => window.removeEventListener('resize', setupCanvasSize);
+  }, [setupCanvasSize]);
 
+  // Redraw whenever strokes state changes (does NOT change canvas buffer dimensions)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    if (ctx) redraw(ctx, strokes);
+    if (ctx) {
+      redraw(ctx, strokes);
+    }
   }, [strokes, redraw]);
 
   const getCanvasCoords = (e: React.PointerEvent<HTMLCanvasElement>): Point => {
@@ -133,13 +149,20 @@ export function ChallengeCanvasMini({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    canvas.setPointerCapture(e.pointerId);
+    try {
+      canvas.setPointerCapture(e.pointerId);
+    } catch {
+      // safe fallback if capture unsupported
+    }
+
     isDrawingRef.current = true;
     const pt = getCanvasCoords(e);
     currentStrokeRef.current = [pt];
 
     const ctx = canvas.getContext('2d');
     if (ctx) {
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
       ctx.fillStyle = '#ffd261';
       ctx.beginPath();
       ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
@@ -153,10 +176,10 @@ export function ChallengeCanvasMini({
     if (!canvas) return;
 
     const pt = getCanvasCoords(e);
-    currentStrokeRef.current.push(pt);
+    const stroke = currentStrokeRef.current;
+    stroke.push(pt);
 
     const ctx = canvas.getContext('2d');
-    const stroke = currentStrokeRef.current;
     if (ctx && stroke.length >= 2) {
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
@@ -175,23 +198,49 @@ export function ChallengeCanvasMini({
   const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (!isDrawingRef.current) return;
     isDrawingRef.current = false;
-    try {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    } catch {
-      // release
+
+    const canvas = canvasRef.current;
+    if (canvas) {
+      try {
+        if (canvas.hasPointerCapture(e.pointerId)) {
+          canvas.releasePointerCapture(e.pointerId);
+        }
+      } catch {
+        // safe fallback
+      }
     }
 
     if (currentStrokeRef.current.length > 0) {
-      setStrokes((prev) => [...prev, [...currentStrokeRef.current]]);
+      const completedStroke = [...currentStrokeRef.current];
       currentStrokeRef.current = [];
+      setStrokes((prev) => [...prev, completedStroke]);
+    }
+  };
+
+  const handlePointerCancel = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    isDrawingRef.current = false;
+    currentStrokeRef.current = [];
+    const canvas = canvasRef.current;
+    if (canvas) {
+      try {
+        if (canvas.hasPointerCapture(e.pointerId)) {
+          canvas.releasePointerCapture(e.pointerId);
+        }
+      } catch {
+        // safe fallback
+      }
     }
   };
 
   const handleUndo = () => {
+    isDrawingRef.current = false;
+    currentStrokeRef.current = [];
     setStrokes((prev) => (prev.length > 0 ? prev.slice(0, prev.length - 1) : []));
   };
 
   const handleClear = () => {
+    isDrawingRef.current = false;
+    currentStrokeRef.current = [];
     setStrokes([]);
   };
 
@@ -205,26 +254,8 @@ export function ChallengeCanvasMini({
       setIsVerified(true);
       onCanvasCompleted();
 
-      // Audio feedback
-      try {
-        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-        if (AudioCtx) {
-          const ctx = new AudioCtx();
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3); // A5
-          gain.gain.setValueAtTime(0.15, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start();
-          osc.stop(ctx.currentTime + 0.4);
-        }
-      } catch {
-        // audio fallback
-      }
+      // Professional acoustic feedback
+      playSuccessGamelan();
     }, 800);
   };
 
@@ -275,6 +306,7 @@ export function ChallengeCanvasMini({
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerCancel}
           onPointerLeave={handlePointerUp}
           className="relative z-10 w-full h-full cursor-crosshair touch-none"
           style={{ touchAction: 'none' }}
@@ -319,7 +351,7 @@ export function ChallengeCanvasMini({
           </div>
         ) : (
           <ShinyButton
-            label={isVerifying ? 'Memeriksa Goresan...' : 'Verifikasi Goresan ⚡'}
+            label={isVerifying ? 'Memeriksa Goresan...' : 'Verifikasi Goresan'}
             onClick={handleVerify}
             className={`py-2 px-4 text-xs font-bold ${
               strokes.length > 0 && !isVerifying

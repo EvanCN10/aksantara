@@ -8,6 +8,7 @@ export interface SiswaProfile {
   nisn: string;
   email: string;
   avatar: string;
+  avatarUrl?: string;
   level: number;
   gelarBudaya: string;
   totalXp: number;
@@ -39,7 +40,7 @@ export interface StoryProgressSummary {
   maxBintang: number;
   babSelesai: number;
   totalBab: number;
-  karakterPendamping: { nama: string; avatar: string };
+  karakterPendamping: { nama: string; avatar: string; avatarUrl?: string };
 }
 
 export interface HardwareRecordSummary {
@@ -67,7 +68,8 @@ export const DEFAULT_SISWA_PROFILE: SiswaProfile = {
   nama: 'Raden Arya Nusantara',
   nisn: '008492019',
   email: 'arya.nusantara@sekolah.id',
-  avatar: '🧙‍♂️',
+  avatar: 'RA',
+  avatarUrl: '/images/characters/avatar-siswa-default.webp',
   level: 3,
   gelarBudaya: 'Juru Tulis Madya Parahyangan',
   totalXp: 1250,
@@ -136,7 +138,11 @@ export const STORY_PROGRESS_LIST: StoryProgressSummary[] = [
     maxBintang: 9,
     babSelesai: 2,
     totalBab: 3,
-    karakterPendamping: { nama: 'Sawerigading', avatar: '🌊' },
+    karakterPendamping: {
+      nama: 'Sawerigading',
+      avatar: 'SG',
+      avatarUrl: '/images/characters/char-sawerigading.webp',
+    },
   },
   {
     eposSlug: 'lutung-kasarung',
@@ -147,7 +153,11 @@ export const STORY_PROGRESS_LIST: StoryProgressSummary[] = [
     maxBintang: 9,
     babSelesai: 3,
     totalBab: 3,
-    karakterPendamping: { nama: 'Sang Guruminda', avatar: '🐒' },
+    karakterPendamping: {
+      nama: 'Sang Guruminda',
+      avatar: 'GM',
+      avatarUrl: '/images/characters/char-lutung-kasarung.webp',
+    },
   },
   {
     eposSlug: 'calon-arang',
@@ -158,7 +168,11 @@ export const STORY_PROGRESS_LIST: StoryProgressSummary[] = [
     maxBintang: 9,
     babSelesai: 1,
     totalBab: 3,
-    karakterPendamping: { nama: 'Maharesi Mpu Bharadah', avatar: '📿' },
+    karakterPendamping: {
+      nama: 'Maharesi Mpu Bharadah',
+      avatar: 'MB',
+      avatarUrl: '/images/characters/char-mpu-bharadah.webp',
+    },
   },
 ];
 
@@ -166,7 +180,7 @@ export const HARDWARE_RECORD_LIST: HardwareRecordSummary[] = [
   {
     gameJenis: 'ramu-mantra',
     judul: 'Ramu Mantra (Syllable Crafter)',
-    icon: '🧪',
+    icon: 'FlaskConical',
     skorTertinggi: 250,
     totalSesiDimainkan: 8,
     akurasiRataRata: 96,
@@ -175,7 +189,7 @@ export const HARDWARE_RECORD_LIST: HardwareRecordSummary[] = [
   {
     gameJenis: 'speed-match',
     judul: 'Aksara Cepat Tanggap (Speed Match)',
-    icon: '⚡',
+    icon: 'Zap',
     skorTertinggi: 340,
     totalSesiDimainkan: 12,
     akurasiRataRata: 92,
@@ -188,7 +202,7 @@ export const CULTURAL_BADGE_LIST: CulturalBadge[] = [
     id: 'badge-1',
     judul: 'Penoreh Dluwang Pertama',
     deskripsi: 'Menyelesaikan goresan aksara Sunda pertama di Universal Web Canvas dengan akurasi di atas 90%.',
-    icon: '📜',
+    icon: 'ScrollText',
     kategori: 'kanvas',
     diperolehPada: '10 Okt 2026',
     tier: 'emas',
@@ -197,7 +211,7 @@ export const CULTURAL_BADGE_LIST: CulturalBadge[] = [
     id: 'badge-2',
     judul: 'Nakhoda Samudra Luwu',
     deskripsi: 'Menuntaskan pelayaran Bab 1 Epos I La Galigo bersama Sawerigading.',
-    icon: '⛵',
+    icon: 'Compass',
     kategori: 'cerita',
     diperolehPada: '11 Okt 2026',
     tier: 'emas',
@@ -206,7 +220,7 @@ export const CULTURAL_BADGE_LIST: CulturalBadge[] = [
     id: 'badge-3',
     judul: 'Tangan Emas Kinestetik',
     deskripsi: 'Menyelesaikan 5 ronde berturut-turut mini-game Ramu Mantra tanpa salah slot kartu.',
-    icon: '🎛️',
+    icon: 'Cpu',
     kategori: 'hardware',
     diperolehPada: '12 Okt 2026',
     tier: 'perak',
@@ -215,7 +229,7 @@ export const CULTURAL_BADGE_LIST: CulturalBadge[] = [
     id: 'badge-4',
     judul: 'Harmoni Jagat Dewata',
     deskripsi: 'Membuka rahasia rontal suci Calon Arang dan merapalkan aksara Bali Tri Hita Karana.',
-    icon: '🌺',
+    icon: 'Sparkles',
     kategori: 'cerita',
     diperolehPada: '13 Okt 2026',
     tier: 'emas',

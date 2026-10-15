@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { DAFTAR_KARAKTER, getKarakterById } from '@/data/cerita/karakter';
 import { DAFTAR_EPOS, type CeritaEpos } from '@/data/cerita/epos';
@@ -72,7 +73,22 @@ export default function PilihCeritaPage() {
   }, []);
 
   return (
-    <main className="relative min-h-screen bg-[#0c1a2c] text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col justify-between">
+    <main className="relative min-h-screen text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col justify-between">
+      {/* Visual Thematic Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#060d16]" aria-hidden="true">
+        <Image
+          src="/images/ui/backgrounds/bg-katalog-cerita.webp"
+          alt="Perpustakaan Epos Nusantara"
+          fill
+          priority={true}
+          quality={90}
+          sizes="100vw"
+          className="object-cover object-center filter brightness-[0.45] contrast-[1.05] saturate-[1.05]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060d16] via-[#060d16]/70 to-[#060d16]/40" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(6,13,22,0.75)_100%)]" />
+      </div>
+
       {/* Ambient background glows */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute top-[-10%] left-1/4 w-[750px] h-[380px] bg-[radial-gradient(ellipse_at_center,rgba(255,210,97,0.12),transparent_70%)] blur-3xl" />
@@ -81,14 +97,15 @@ export default function PilihCeritaPage() {
       </div>
 
       {/* ====================================================================
-          1. STICKY GAMIFICATION APP BAR
+          1. STICKY GAMIFICATION APP BAR (Choreographed Entrance)
           ==================================================================== */}
       <header className="sticky top-0 z-30 w-full backdrop-blur-xl bg-[#0c1a2c]/85 border-b border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.35)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
           {/* Back to Mulai */}
           <Link
             href="/mulai"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/70 hover:text-white transition-all text-xs font-medium cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/70 hover:text-white transition-all text-xs font-medium cursor-pointer animate-emerge-up"
+            style={{ animationDelay: '60ms' }}
           >
             <ArrowLeftIcon className="w-3.5 h-3.5" />
             <span>Menu Belajar</span>
@@ -97,21 +114,30 @@ export default function PilihCeritaPage() {
           {/* Gamification Progress Counters */}
           <div className="flex items-center gap-2 sm:gap-4 text-xs font-mono">
             {/* Stars */}
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30 text-[#ffd261]">
-              <StarIcon className="w-3.5 h-3.5" />
+            <div
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30 text-[#ffd261] animate-emerge-scale"
+              style={{ animationDelay: '100ms' }}
+            >
+              <StarIcon className="w-3.5 h-3.5 text-[#ffd261] animate-pulse" />
               <span className="font-bold">{totalEarnedStars}/{totalMaxStars}</span>
               <span className="hidden sm:inline text-[10px] text-white/50">Bintang</span>
             </div>
 
             {/* Narrative XP */}
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300">
+            <div
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 animate-emerge-scale"
+              style={{ animationDelay: '180ms' }}
+            >
               <SparklesIcon className="w-3.5 h-3.5 text-[#ffd261]" />
               <span className="font-bold">+450 XP</span>
             </div>
 
             {/* Streak */}
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-300">
-              <FlameIcon className="w-3.5 h-3.5 text-rose-400" />
+            <div
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-300 animate-emerge-scale"
+              style={{ animationDelay: '260ms' }}
+            >
+              <FlameIcon className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
               <span className="font-bold">3 Hari</span>
             </div>
           </div>
@@ -125,17 +151,23 @@ export default function PilihCeritaPage() {
         
         {/* Page Title & Narrative Hook */}
         <div className="text-center max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30 text-[#ffd261] text-xs font-semibold mb-2 shadow-[0_0_12px_rgba(255,210,97,0.15)]">
-            <SparklesIcon className="w-3.5 h-3.5" />
+          <div
+            className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30 text-[#ffd261] text-xs font-semibold mb-2 shadow-[0_0_12px_rgba(255,210,97,0.15)] animate-emerge-up"
+            style={{ animationDelay: '120ms' }}
+          >
+            <SparklesIcon className="w-3.5 h-3.5 text-[#ffd261] animate-pulse" />
             <span>Petualangan Epos &amp; Sastra Kuno</span>
           </div>
           <h1
-            className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-[#ffd261] via-[#F6F2E9] to-[#D4A373] bg-clip-text text-transparent leading-tight"
-            style={{ fontFamily: 'var(--font-philosopher)' }}
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-[#ffd261] via-[#F6F2E9] to-[#D4A373] bg-clip-text text-transparent leading-tight animate-emerge-up"
+            style={{ fontFamily: 'var(--font-philosopher)', animationDelay: '200ms' }}
           >
             Jelajahi Epos &amp; Kisah Nusantara
           </h1>
-          <p className="mt-2 text-xs sm:text-sm text-white/70 leading-relaxed">
+          <p
+            className="mt-2 text-xs sm:text-sm text-white/70 leading-relaxed animate-emerge-up"
+            style={{ animationDelay: '280ms' }}
+          >
             Setiap cerita rakyat menyimpan misteri dan keagungan aksara masa lampau. Pilih pemandu kisahmu, pecahkan tantangan menulis, dan tuntaskan setiap bab epos!
           </p>
         </div>
@@ -143,16 +175,21 @@ export default function PilihCeritaPage() {
         {/* ================================================================
             3. COMPANION CHARACTER ROSTER & SPEECH BUBBLE
             ================================================================ */}
-        <CharacterRoster
-          characters={DAFTAR_KARAKTER}
-          selectedCharacterId={selectedCharId}
-          onSelectCharacter={handleSelectCharacter}
-        />
+        <div className="animate-emerge-scale" style={{ animationDelay: '360ms' }}>
+          <CharacterRoster
+            characters={DAFTAR_KARAKTER}
+            selectedCharacterId={selectedCharId}
+            onSelectCharacter={handleSelectCharacter}
+          />
+        </div>
 
         {/* ================================================================
             4. SCRIPT FILTER TABS
             ================================================================ */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 border-b border-white/10 pb-3">
+        <div
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 border-b border-white/10 pb-3 animate-emerge-up"
+          style={{ animationDelay: '460ms' }}
+        >
           <div className="flex items-center gap-2">
             <span className="text-xs uppercase tracking-wider font-semibold text-[#ffd261]">
               Daftar Petualangan Epos
@@ -185,7 +222,7 @@ export default function PilihCeritaPage() {
                   onClick={() => setActiveFilter(tab.id)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#ffd261] text-[#0c1a2c] font-bold shadow-[0_0_12px_rgba(255,210,97,0.3)]'
+                      ? 'bg-[#ffd261] text-[#0c1a2c] font-bold shadow-[0_0_12px_rgba(255,210,97,0.3)] scale-[1.02]'
                       : 'text-white/60 hover:text-white hover:bg-white/5'
                   }`}
                 >
@@ -205,14 +242,19 @@ export default function PilihCeritaPage() {
             Daftar Kampanye Cerita Epos
           </h2>
 
-          {filteredStories.map((epos) => {
+          {filteredStories.map((epos, idx) => {
             const companion = getKarakterById(epos.karakterId);
             return (
-              <StoryCampaignCard
+              <div
                 key={epos.id}
-                epos={epos}
-                companion={companion}
-              />
+                style={{ '--stagger': idx } as React.CSSProperties}
+                className="stagger-item animate-emerge-up"
+              >
+                <StoryCampaignCard
+                  epos={epos}
+                  companion={companion}
+                />
+              </div>
             );
           })}
         </section>

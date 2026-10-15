@@ -3,6 +3,7 @@
 import React, { useState, Suspense } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Lock, AlertTriangle, Info, User, GraduationCap } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { createClient } from '@/lib/supabase/client';
 
@@ -197,9 +198,10 @@ function AuthPageContent() {
           src="/images/ui/landing-page/auth/image.png"
           alt="Eksplorasi Aksara Nusantara"
           fill
-          priority
+          priority={true}
+          quality={90}
           sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-cover object-center filter brightness-[0.88] contrast-[1.05]"
+          className="object-cover object-center filter brightness-[0.88] contrast-[1.05] animate-bg-zoom-in"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a2c] via-[#0c1a2c]/35 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-[#0c1a2c]/20 lg:to-[#0c1a2c]" />
@@ -243,7 +245,7 @@ function AuthPageContent() {
             {/* Banner Notifikasi Redirect / Proteksi Rute */}
             {redirectTarget && (
               <div className="p-3 rounded-xl bg-[#ffd261]/10 border border-[#ffd261]/30 text-[#ffd261] text-xs flex items-center gap-2 mt-2">
-                <span>🔐</span>
+                <Lock className="w-4 h-4 text-[#ffd261] shrink-0" />
                 <span>
                   Halaman tujuan Anda (<span className="font-mono font-semibold">{redirectTarget}</span>) memerlukan sesi aktif.
                 </span>
@@ -252,14 +254,14 @@ function AuthPageContent() {
 
             {unauthorizedNotice === 'guru_only' && (
               <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2 mt-2">
-                <span>⚠️</span>
+                <AlertTriangle className="w-4 h-4 text-amber-300 shrink-0" />
                 <span>Portal Pengampu hanya dapat diakses dengan akun peran Pendidik / Guru.</span>
               </div>
             )}
 
             {errorNotice && (
               <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs flex items-center gap-2 mt-2">
-                <span>ℹ️</span>
+                <Info className="w-4 h-4 text-blue-300 shrink-0" />
                 <span>{errorNotice}</span>
               </div>
             )}
@@ -270,9 +272,9 @@ function AuthPageContent() {
             <button
               type="button"
               onClick={() => setMode('login')}
-              className={`flex-1 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all ${
+              className={`flex-1 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 cursor-pointer ${
                 mode === 'login'
-                  ? 'bg-gradient-to-r from-[#ffd261] to-[#D4A373] text-[#0c1a2c] shadow-md'
+                  ? 'bg-gradient-to-r from-[#ffd261] to-[#D4A373] text-[#0c1a2c] shadow-[0_0_16px_rgba(255,210,97,0.3)] font-bold'
                   : 'text-white/70 hover:text-white'
               }`}
             >
@@ -281,9 +283,9 @@ function AuthPageContent() {
             <button
               type="button"
               onClick={() => setMode('register')}
-              className={`flex-1 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all ${
+              className={`flex-1 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 cursor-pointer ${
                 mode === 'register'
-                  ? 'bg-gradient-to-r from-[#ffd261] to-[#D4A373] text-[#0c1a2c] shadow-md'
+                  ? 'bg-gradient-to-r from-[#ffd261] to-[#D4A373] text-[#0c1a2c] shadow-[0_0_16px_rgba(255,210,97,0.3)] font-bold'
                   : 'text-white/70 hover:text-white'
               }`}
             >
@@ -300,13 +302,15 @@ function AuthPageContent() {
               <button
                 type="button"
                 onClick={() => setRole('siswa')}
-                className={`p-3 rounded-xl border text-left transition flex items-center gap-3 ${
+                className={`p-3 rounded-xl border text-left transition-all duration-300 hover:scale-[1.02] cursor-pointer flex items-center gap-3 ${
                   role === 'siswa'
-                    ? 'border-[#ffd261] bg-[#ffd261]/10 text-white shadow-inner'
-                    : 'border-white/10 bg-black/20 text-white/60 hover:border-white/20'
+                    ? 'border-[#ffd261] bg-[#ffd261]/15 text-white shadow-[0_0_18px_rgba(255,210,97,0.2)]'
+                    : 'border-white/10 bg-black/20 text-white/60 hover:border-white/20 hover:text-white/80'
                 }`}
               >
-                <span className="text-2xl">👑</span>
+                <div className="w-10 h-10 rounded-xl bg-[#ffd261]/10 border border-[#ffd261]/30 flex items-center justify-center shrink-0">
+                  <User className="w-5 h-5 text-[#ffd261]" />
+                </div>
                 <div>
                   <p className="text-xs font-bold text-white">Siswa / Pelajar</p>
                   <p className="text-[10px] text-white/50">Kanvas, Cerita, Hardware</p>
@@ -316,13 +320,15 @@ function AuthPageContent() {
               <button
                 type="button"
                 onClick={() => setRole('guru')}
-                className={`p-3 rounded-xl border text-left transition flex items-center gap-3 ${
+                className={`p-3 rounded-xl border text-left transition-all duration-300 hover:scale-[1.02] cursor-pointer flex items-center gap-3 ${
                   role === 'guru'
-                    ? 'border-[#ffd261] bg-[#ffd261]/10 text-white shadow-inner'
-                    : 'border-white/10 bg-black/20 text-white/60 hover:border-white/20'
+                    ? 'border-[#ffd261] bg-[#ffd261]/15 text-white shadow-[0_0_18px_rgba(255,210,97,0.2)]'
+                    : 'border-white/10 bg-black/20 text-white/60 hover:border-white/20 hover:text-white/80'
                 }`}
               >
-                <span className="text-2xl">🏛️</span>
+                <div className="w-10 h-10 rounded-xl bg-[#ffd261]/10 border border-[#ffd261]/30 flex items-center justify-center shrink-0">
+                  <GraduationCap className="w-5 h-5 text-[#ffd261]" />
+                </div>
                 <div>
                   <p className="text-xs font-bold text-white">Pendidik / Guru</p>
                   <p className="text-[10px] text-white/50">Analitik Kelas & Rapor</p>
@@ -334,7 +340,7 @@ function AuthPageContent() {
           {/* Form Input */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === 'register' && (
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 animate-cascade-fade-up">
                 <label className="text-xs font-medium text-white/80">Nama Lengkap</label>
                 <input
                   type="text"
@@ -343,7 +349,7 @@ function AuthPageContent() {
                   onChange={handleInputChange}
                   required
                   placeholder="Misal: Raden Arya Nusantara"
-                  className="w-full bg-[#060d16] border border-white/20 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-[#ffd261] transition"
+                  className="w-full bg-[#060d16] border border-white/20 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-[#ffd261] focus:ring-2 focus:ring-[#ffd261]/20 transition-all"
                 />
               </div>
             )}
@@ -357,7 +363,7 @@ function AuthPageContent() {
                 onChange={handleInputChange}
                 required
                 placeholder="nama@aksantara.id"
-                className="w-full bg-[#060d16] border border-white/20 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-[#ffd261] transition"
+                className="w-full bg-[#060d16] border border-white/20 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-[#ffd261] focus:ring-2 focus:ring-[#ffd261]/20 transition-all"
               />
             </div>
 
@@ -371,12 +377,12 @@ function AuthPageContent() {
                   onChange={handleInputChange}
                   required
                   placeholder="Minimal 6 karakter"
-                  className="w-full bg-[#060d16] border border-white/20 rounded-xl pl-4 pr-10 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-[#ffd261] transition"
+                  className="w-full bg-[#060d16] border border-white/20 rounded-xl pl-4 pr-10 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-[#ffd261] focus:ring-2 focus:ring-[#ffd261]/20 transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 transition cursor-pointer"
                 >
                   {showPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
                 </button>
@@ -384,7 +390,7 @@ function AuthPageContent() {
             </div>
 
             {mode === 'register' && (
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 animate-cascade-fade-up">
                 <label className="text-xs font-medium text-white/80">Konfirmasi Kata Sandi</label>
                 <div className="relative">
                   <input
@@ -394,12 +400,12 @@ function AuthPageContent() {
                     onChange={handleInputChange}
                     required
                     placeholder="Ketik ulang kata sandi"
-                    className="w-full bg-[#060d16] border border-white/20 rounded-xl pl-4 pr-10 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-[#ffd261] transition"
+                    className="w-full bg-[#060d16] border border-white/20 rounded-xl pl-4 pr-10 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-[#ffd261] focus:ring-2 focus:ring-[#ffd261]/20 transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 transition"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 transition cursor-pointer"
                   >
                     {showConfirmPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
                   </button>
@@ -411,7 +417,7 @@ function AuthPageContent() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 py-3 px-4 rounded-xl font-semibold text-xs sm:text-sm text-white bg-gradient-to-r from-[#c2410c] via-[#ea580c] to-[#d97706] hover:from-[#ea580c] hover:to-[#f59e0b] shadow-lg shadow-[#ea580c]/30 border border-white/20 transition-all hover:scale-[1.01] active:scale-[0.98] cursor-pointer"
+              className="w-full mt-2 py-3 px-4 rounded-xl font-semibold text-xs sm:text-sm text-white bg-gradient-to-r from-[#c2410c] via-[#ea580c] to-[#d97706] hover:from-[#ea580c] hover:to-[#f59e0b] shadow-[0_4px_20px_rgba(234,88,12,0.35)] hover:shadow-[0_6px_28px_rgba(234,88,12,0.5)] border border-white/20 transition-all duration-300 hover:scale-[1.01] active:scale-[0.98] cursor-pointer"
             >
               {isLoading
                 ? 'Memproses...'

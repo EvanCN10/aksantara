@@ -91,3 +91,15 @@ Thumbs.db
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
+
+# --- Figma Local Tooling & Automation Bridge ---
+figma-bridge/
+figma-export/
+*.figma.js
+
+# --- Temporary, Scratch & Local Logs ---
+scratch/
+temp/
+tmp/
+*.log
+

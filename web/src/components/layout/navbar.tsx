@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { User, GraduationCap } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 
 interface NavbarProps {
@@ -124,7 +125,11 @@ export function Navbar({ isStarted: isStartedProp }: NavbarProps) {
                 href={user.role === 'guru' ? '/guru/dashboard' : '/profil'}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-[#ffd261]/30 text-white text-xs md:text-sm font-medium transition-all hover:scale-105 drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
               >
-                <span>{user.avatar}</span>
+                {user.role === 'guru' ? (
+                  <GraduationCap className="w-4 h-4 text-[#ffd261] shrink-0" />
+                ) : (
+                  <User className="w-4 h-4 text-[#ffd261] shrink-0" />
+                )}
                 <span className="max-w-[120px] sm:max-w-[160px] truncate font-semibold text-[#ffd261]">
                   {user.role === 'guru' ? 'Dashboard Guru' : user.nama.split(' ')[0]}
                 </span>

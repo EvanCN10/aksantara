@@ -139,7 +139,7 @@ export function AiEvaluationPanel({
                   type="button"
                   onClick={onPlayPronunciation}
                   title={`Dengarkan pelafalan ${glif.label}`}
-                  className="p-1 rounded-full bg-white/5 hover:bg-[#ffd261]/20 text-[#ffd261] border border-white/10 hover:border-[#ffd261]/40 transition-all cursor-pointer"
+                  className="p-1.5 rounded-full bg-white/5 hover:bg-[#ffd261]/20 active:scale-90 text-[#ffd261] border border-white/10 hover:border-[#ffd261]/40 transition-all cursor-pointer"
                 >
                   <VolumeIcon className="w-3.5 h-3.5" />
                 </button>
@@ -176,7 +176,7 @@ export function AiEvaluationPanel({
 
         {/* ================================================================
             2. AI EVALUATION SECTION
-            ================================================================ */}
+        ================================================================ */}
         <div className="border-t border-white/10 pt-4 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#ffd261]">
@@ -192,12 +192,12 @@ export function AiEvaluationPanel({
 
           {/* STATE A: EVALUATION RESULT VIEW */}
           {evaluationResult ? (
-            <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-400">
               {/* Score Gauge Card */}
-              <div className="rounded-xl border border-[#ffd261]/30 bg-gradient-to-r from-[#ffd261]/15 via-white/[0.03] to-transparent p-4 flex items-center justify-between">
+              <div className="rounded-xl border border-[#ffd261]/30 bg-gradient-to-r from-[#ffd261]/15 via-white/[0.03] to-transparent p-4 flex items-center justify-between shadow-[0_0_20px_rgba(255,210,97,0.15)]">
                 <div>
                   <span className="text-[10px] font-medium text-white/60 block">Akurasi Bentuk Glif</span>
-                  <div className="text-3xl font-extrabold text-[#ffd261] font-mono">
+                  <div className="text-3xl font-extrabold text-[#ffd261] font-mono animate-score-pop">
                     {evaluationResult.score}%
                   </div>
                   <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1 mt-0.5">
@@ -285,7 +285,7 @@ export function AiEvaluationPanel({
                     ? 'Memindai Goresan AI...'
                     : strokeCount === 0
                     ? 'Buat Goresan Terlebih Dahulu'
-                    : 'Periksa AI (Evaluasi) ⚡'
+                    : 'Periksa AI (Evaluasi)'
                 }
                 onClick={onEvaluate}
                 className={`w-full py-3 text-sm font-semibold transition-all ${

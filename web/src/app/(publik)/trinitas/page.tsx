@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { ShinyButton } from '@/components/ui/shiny-button';
@@ -433,12 +434,21 @@ export default function TrinitasAksaraPage() {
   };
 
   return (
-    <main className="relative min-h-screen bg-[#0c1a2c] text-[#F6F2E9] overflow-x-hidden selection:bg-[#ffd261]/20 selection:text-[#ffd261]">
-      {/* Background Ambience & Radial Glow */}
-      <div
-        className="absolute inset-0 bg-gradient-to-b from-[#0c1a2c] via-[#0c1a2c] to-[#060b14]"
-        aria-hidden="true"
-      />
+    <main className="relative min-h-screen text-[#F6F2E9] overflow-x-hidden selection:bg-[#ffd261]/20 selection:text-[#ffd261]">
+      {/* Visual Thematic Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#060d16]" aria-hidden="true">
+        <Image
+          src="/images/ui/backgrounds/bg-trinitas.webp"
+          alt="Trinitas Aksara Nusantara"
+          fill
+          priority={true}
+          quality={90}
+          sizes="100vw"
+          className="object-cover object-center filter brightness-[0.75] contrast-[1.05] saturate-[1.10] animate-bg-zoom-in"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a2c] via-[#0c1a2c]/35 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(12,26,44,0.65)_100%)]" />
+      </div>
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[640px]"
         style={{
@@ -450,25 +460,32 @@ export default function TrinitasAksaraPage() {
 
       <div className="relative z-10">
         {/* =========================================
-            1. HERO SECTION
+            1. HERO SECTION (Choreographed Entrance)
             ========================================= */}
         <section className="mx-auto max-w-5xl px-6 pt-28 md:pt-36 pb-12 text-center">
-          <div className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border border-[#D4A373]/35 bg-[#0D0E12]/90 text-[#D4A373] shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
-            <SparklesIcon className="h-3.5 w-3.5 text-[#ffd261]" />
+          <div
+            className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border border-[#D4A373]/35 bg-[#0D0E12]/90 text-[#D4A373] shadow-[0_4px_16px_rgba(0,0,0,0.4)] animate-emerge-up"
+            style={{ animationDelay: '80ms' }}
+          >
+            <SparklesIcon className="h-3.5 w-3.5 text-[#ffd261] animate-pulse" />
             Paleografi &amp; Digitalisasi Budaya
           </div>
 
           <h1
-            className="mt-6 text-4xl sm:text-5xl md:text-6xl font-bold leading-tight bg-gradient-to-t from-[#ffd261] via-[#FFF2D6] to-[#FFFFFF] bg-clip-text text-transparent"
+            className="mt-6 text-4xl sm:text-5xl md:text-6xl font-bold leading-tight bg-gradient-to-t from-[#ffd261] via-[#FFF2D6] to-[#FFFFFF] bg-clip-text text-transparent animate-emerge-up"
             style={{
               fontFamily: 'var(--font-philosopher), serif',
               filter: 'drop-shadow(0 4px 14px rgba(0, 0, 0, 0.85))',
+              animationDelay: '180ms',
             }}
           >
             Harmoni Trinitas Aksara Nusantara
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-sm md:text-base text-[#F6F2E9]/80 leading-relaxed font-light">
+          <p
+            className="mx-auto mt-6 max-w-2xl text-sm md:text-base text-[#F6F2E9]/80 leading-relaxed font-light animate-emerge-up"
+            style={{ animationDelay: '280ms' }}
+          >
             Aksantara mengunci fokus pada tiga aksara dengan karakteristik paleografi kontras:
             Lontara dengan geometri maritim bersudut tajam, Sunda dengan ngalagena modular teratur,
             dan Bali dengan kurvalinier kompleks warisan naskah lontar. Ketiganya menjadi tolok ukur
@@ -479,7 +496,10 @@ export default function TrinitasAksaraPage() {
         {/* =========================================
             2. AKSARA TAB SELECTOR
             ========================================= */}
-        <section className="mx-auto max-w-5xl px-6">
+        <section
+          className="mx-auto max-w-5xl px-6 animate-emerge-scale"
+          style={{ animationDelay: '360ms' }}
+        >
           <div
             role="tablist"
             aria-label="Pilihan Aksara Nusantara"
@@ -495,12 +515,18 @@ export default function TrinitasAksaraPage() {
                   aria-selected={isAktif}
                   type="button"
                   onClick={() => handleTabChange(key)}
-                  className={`flex-1 rounded-xl px-5 py-3.5 text-left transition-all duration-300 cursor-pointer ${
+                  className={`relative flex-1 rounded-xl px-5 py-3.5 text-left transition-all duration-300 cursor-pointer overflow-hidden ${
                     isAktif
-                      ? 'bg-gradient-to-r from-[#cf5600] to-[#9a3412] text-white shadow-[0_4px_20px_rgba(207,86,0,0.35)] border border-[#ffd261]/35'
+                      ? 'bg-gradient-to-r from-[#cf5600] to-[#9a3412] text-white shadow-[0_4px_20px_rgba(207,86,0,0.35)] border border-[#ffd261]/40'
                       : 'text-[#F6F2E9]/65 hover:bg-white/[0.04] hover:text-[#F6F2E9] border border-transparent'
                   }`}
                 >
+                  {isAktif && (
+                    <span
+                      className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-[#ffd261] to-transparent"
+                      aria-hidden="true"
+                    />
+                  )}
                   <div className="flex items-center justify-between">
                     <span
                       className="text-lg font-bold tracking-wide"
@@ -529,112 +555,134 @@ export default function TrinitasAksaraPage() {
             ========================================= */}
         <section className="mx-auto max-w-5xl px-6 py-12">
           <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] items-start">
-            {/* Kartu Glif Utama dengan Ornate Frame */}
-            <OrnateFrame className="aspect-auto bg-[#0c1a2c]/60 backdrop-blur-xl">
-              <div className="flex flex-col gap-6 p-6 sm:p-8 w-full">
-                {/* Header Aksara Aktif */}
-                <div>
-                  <div className="flex items-center justify-between gap-3">
-                    <h2
-                      className="text-2xl sm:text-3xl font-bold text-[#ffd261]"
-                      style={{ fontFamily: 'var(--font-philosopher), serif' }}
-                    >
-                      {data.nama}
-                    </h2>
-                    <span className="text-xs font-semibold px-3 py-1 rounded-full border border-[#D4A373]/35 bg-[#141721] text-[#D4A373]">
-                      {data.asalSingkat}
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#D4A373] mt-2 tracking-wide font-medium">
-                    {data.asal}
-                  </p>
-                  <p className="text-sm text-[#F6F2E9]/75 mt-3 leading-relaxed">
-                    {data.karakterVisual}
-                  </p>
-                </div>
-
-                {/* Spotlight Glif Terpilih */}
-                <div className="relative rounded-2xl border border-[#D4A373]/30 bg-gradient-to-b from-[#141721]/90 to-[#0A0C12]/95 p-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-                  <div
-                    className="pointer-events-none absolute inset-0 rounded-2xl"
-                    style={{
-                      background:
-                        'radial-gradient(circle at 50% 40%, rgba(255, 210, 97, 0.12) 0%, transparent 70%)',
-                    }}
-                    aria-hidden="true"
-                  />
-                  <div className="relative z-10 flex flex-col items-center">
-                    <span className="text-7xl sm:text-8xl md:text-9xl text-[#ffd261] font-normal leading-none drop-shadow-[0_4px_16px_rgba(255,210,97,0.35)] select-none">
-                      {glifAktif.simbol}
-                    </span>
-                    <div className="mt-4 flex items-center gap-3">
-                      <span
-                        className="text-2xl font-bold text-[#F6F2E9]"
+            {/* Kartu Glif Utama dengan Ornate Frame & Sheen */}
+            <div
+              className="animate-emerge-up sheen-sweep rounded-2xl"
+              style={{ animationDelay: '460ms' }}
+            >
+              <OrnateFrame className="aspect-auto bg-[#0c1a2c]/60 backdrop-blur-xl">
+                <div className="flex flex-col gap-6 p-6 sm:p-8 w-full">
+                  {/* Header Aksara Aktif */}
+                  <div>
+                    <div className="flex items-center justify-between gap-3">
+                      <h2
+                        className="text-2xl sm:text-3xl font-bold text-[#ffd261]"
                         style={{ fontFamily: 'var(--font-philosopher), serif' }}
                       >
-                        {glifAktif.label}
-                      </span>
-                      <span className="text-xs font-mono px-2.5 py-0.5 rounded-md bg-[#D4A373]/15 text-[#D4A373] border border-[#D4A373]/25">
-                        {glifAktif.ipa}
+                        {data.nama}
+                      </h2>
+                      <span className="text-xs font-semibold px-3 py-1 rounded-full border border-[#D4A373]/35 bg-[#141721] text-[#D4A373]">
+                        {data.asalSingkat}
                       </span>
                     </div>
-                    <span className="text-xs text-[#D4A373] font-medium mt-1">
-                      {glifAktif.artikulasi}
-                    </span>
-                    <p className="text-xs text-[#F6F2E9]/70 mt-2 max-w-md leading-relaxed">
-                      {glifAktif.catatan}
+                    <p className="text-xs text-[#D4A373] mt-2 tracking-wide font-medium">
+                      {data.asal}
+                    </p>
+                    <p className="text-sm text-[#F6F2E9]/75 mt-3 leading-relaxed">
+                      {data.karakterVisual}
                     </p>
                   </div>
-                </div>
 
-                {/* Grid 8 Glif Selektor Interaktif */}
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-xs uppercase tracking-[0.2em] text-[#D4A373] font-semibold">
-                      Pilih Glif Konsonan
-                    </p>
-                    <span className="text-[11px] text-[#F6F2E9]/50">
-                      Klik simbol untuk melihat detail
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
-                    {data.glif.map((g, idx) => {
-                      const isSelected = idx === selectedGlifIndex;
-                      return (
-                        <button
-                          key={g.label}
-                          type="button"
-                          onClick={() => setSelectedGlifIndex(idx)}
-                          aria-label={`Pilih aksara ${g.label} (${g.simbol})`}
-                          className={`flex flex-col items-center justify-center rounded-xl py-3 px-2 transition-all duration-200 cursor-pointer ${
-                            isSelected
-                              ? 'border border-[#ffd261] bg-[#ffd261]/15 text-[#ffd261] shadow-[0_0_16px_rgba(255,210,97,0.25)] scale-105'
-                              : 'border border-[#D4A373]/25 bg-black/40 text-[#F6F2E9] hover:bg-white/5 hover:border-[#D4A373]/50'
-                          }`}
+                  {/* Spotlight Glif Terpilih dengan Sacred Bloom & Re-Ink Transition */}
+                  <div className="relative rounded-2xl border border-[#D4A373]/30 bg-gradient-to-b from-[#141721]/90 to-[#0A0C12]/95 p-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] overflow-hidden">
+                    <div
+                      className="pointer-events-none absolute inset-0 rounded-2xl animate-pulse"
+                      style={{
+                        background:
+                          'radial-gradient(circle at 50% 40%, rgba(255, 210, 97, 0.16) 0%, transparent 70%)',
+                        animationDuration: '4s',
+                      }}
+                      aria-hidden="true"
+                    />
+                    <div className="relative z-10 flex flex-col items-center">
+                      <span
+                        key={`${aktif}-${glifAktif.label}`}
+                        className="text-7xl sm:text-8xl md:text-9xl text-[#ffd261] font-normal leading-none select-none inline-block animate-ink-settle animate-sacred-breath"
+                      >
+                        {glifAktif.simbol}
+                      </span>
+                      <div className="mt-4 flex items-center gap-3">
+                        <span
+                          className="text-2xl font-bold text-[#F6F2E9]"
+                          style={{ fontFamily: 'var(--font-philosopher), serif' }}
                         >
-                          <span className="text-3xl sm:text-4xl leading-tight select-none">
-                            {g.simbol}
-                          </span>
-                          <span className="text-[11px] font-medium opacity-80 mt-1">
-                            {g.label}
-                          </span>
-                        </button>
-                      );
-                    })}
+                          {glifAktif.label}
+                        </span>
+                        <span className="text-xs font-mono px-2.5 py-0.5 rounded-md bg-[#D4A373]/15 text-[#D4A373] border border-[#D4A373]/25">
+                          {glifAktif.ipa}
+                        </span>
+                      </div>
+                      <span className="text-xs text-[#D4A373] font-medium mt-1">
+                        {glifAktif.artikulasi}
+                      </span>
+                      <p className="text-xs text-[#F6F2E9]/70 mt-2 max-w-md leading-relaxed">
+                        {glifAktif.catatan}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Grid 8 Glif Selektor Interaktif (Choreographed Staggered Delay) */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#D4A373] font-semibold">
+                        Pilih Glif Konsonan
+                      </p>
+                      <span className="text-[11px] text-[#F6F2E9]/50">
+                        Klik simbol untuk melihat detail
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
+                      {data.glif.map((g, idx) => {
+                        const isSelected = idx === selectedGlifIndex;
+                        return (
+                          <button
+                            key={g.label}
+                            type="button"
+                            onClick={() => setSelectedGlifIndex(idx)}
+                            aria-label={`Pilih aksara ${g.label} (${g.simbol})`}
+                            style={{ '--stagger': idx } as React.CSSProperties}
+                            className={`stagger-item animate-emerge-scale flex flex-col items-center justify-center rounded-xl py-3 px-2 transition-all duration-200 cursor-pointer ${
+                              isSelected
+                                ? 'border border-[#ffd261] bg-[#ffd261]/20 text-[#ffd261] shadow-[0_0_18px_rgba(255,210,97,0.3)] scale-105'
+                                : 'border border-[#D4A373]/25 bg-black/40 text-[#F6F2E9] hover:bg-white/10 hover:border-[#D4A373]/60 hover:scale-102 active:scale-98'
+                            }`}
+                          >
+                            <span className="text-3xl sm:text-4xl leading-tight select-none">
+                              {g.simbol}
+                            </span>
+                            <span className="text-[11px] font-medium opacity-80 mt-1">
+                              {g.label}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </OrnateFrame>
+              </OrnateFrame>
+            </div>
 
             {/* Kolom Kanan: Diakritik & Validasi Model AI */}
             <div className="flex flex-col gap-6">
-              {/* Vokalisasi & Diakritik */}
-              <div className="rounded-2xl border border-[#D4A373]/25 bg-[rgba(20,23,33,0.92)] p-6 sm:p-7 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-                <div className="flex items-center gap-2 mb-1">
-                  <Volume2Icon className="h-4 w-4 text-[#ffd261]" />
-                  <p className="text-xs uppercase tracking-[0.2em] text-[#D4A373] font-semibold">
-                    Vokalisasi &amp; Diakritik
-                  </p>
+              {/* Vokalisasi & Diakritik (dengan Resonansi Akustik Wave) */}
+              <div
+                className="animate-emerge-up sheen-sweep rounded-2xl border border-[#D4A373]/25 bg-[rgba(20,23,33,0.92)] p-6 sm:p-7 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+                style={{ animationDelay: '560ms' }}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2">
+                    <Volume2Icon className="h-4 w-4 text-[#ffd261]" />
+                    <p className="text-xs uppercase tracking-[0.2em] text-[#D4A373] font-semibold">
+                      Vokalisasi &amp; Diakritik
+                    </p>
+                  </div>
+                  {/* Living Acoustic Resonance Waves */}
+                  <div className="flex items-center gap-1 h-5 px-2 py-0.5 rounded-full bg-[#D4A373]/10 border border-[#D4A373]/20" aria-label="Resonansi Akustik">
+                    <span className="w-1 bg-[#ffd261] rounded-full inline-block" style={{ animation: 'acousticWave 1.4s ease-in-out infinite', animationDelay: '0ms' }} />
+                    <span className="w-1 bg-[#ffd261] rounded-full inline-block" style={{ animation: 'acousticWave 1.4s ease-in-out infinite', animationDelay: '200ms' }} />
+                    <span className="w-1 bg-[#ffd261] rounded-full inline-block" style={{ animation: 'acousticWave 1.4s ease-in-out infinite', animationDelay: '400ms' }} />
+                    <span className="w-1 bg-[#ffd261] rounded-full inline-block" style={{ animation: 'acousticWave 1.4s ease-in-out infinite', animationDelay: '100ms' }} />
+                  </div>
                 </div>
                 <p className="text-sm text-[#F6F2E9]/65 mb-5">
                   Sistem penanda vokal dan penutup suku kata pada konsonan {data.nama}
@@ -657,7 +705,10 @@ export default function TrinitasAksaraPage() {
               </div>
 
               {/* Rationale Tantangan AI Classifier */}
-              <div className="rounded-2xl border border-[#D4A373]/25 bg-[rgba(20,23,33,0.92)] p-6 sm:p-7 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+              <div
+                className="animate-emerge-up sheen-sweep rounded-2xl border border-[#D4A373]/25 bg-[rgba(20,23,33,0.92)] p-6 sm:p-7 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+                style={{ animationDelay: '640ms' }}
+              >
                 <div className="flex items-center gap-2 mb-3">
                   <CpuIcon className="h-4 w-4 text-[#ffd261]" />
                   <p className="text-xs uppercase tracking-[0.2em] text-[#D4A373] font-semibold">
@@ -690,7 +741,10 @@ export default function TrinitasAksaraPage() {
         {/* =========================================
             4. MATRIKS KOMPARASI PALEOGRAFI
             ========================================= */}
-        <section className="mx-auto max-w-5xl px-6 py-12">
+        <section
+          className="mx-auto max-w-5xl px-6 py-12 animate-emerge-up"
+          style={{ animationDelay: '720ms' }}
+        >
           <div className="flex items-center justify-center gap-2.5 mb-8">
             <LayersIcon className="h-5 w-5 text-[#ffd261]" />
             <h2
@@ -701,7 +755,7 @@ export default function TrinitasAksaraPage() {
             </h2>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-[#D4A373]/25 bg-[rgba(20,23,33,0.92)] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+          <div className="overflow-x-auto rounded-2xl border border-[#D4A373]/25 bg-[rgba(20,23,33,0.92)] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] sheen-sweep">
             <table className="w-full min-w-[680px] text-left text-sm">
               <thead>
                 <tr className="border-b border-[#D4A373]/25 bg-black/30">
@@ -787,8 +841,11 @@ export default function TrinitasAksaraPage() {
         {/* =========================================
             5. KAJIAN PEDAGOGIS: MENGAPA BUKAN URUTAN GORESAN?
             ========================================= */}
-        <section className="mx-auto max-w-4xl px-6 py-12">
-          <div className="rounded-2xl border border-[#D4A373]/25 bg-[rgba(20,23,33,0.92)] p-8 sm:p-10 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+        <section
+          className="mx-auto max-w-4xl px-6 py-12 animate-emerge-up"
+          style={{ animationDelay: '800ms' }}
+        >
+          <div className="rounded-2xl border border-[#D4A373]/25 bg-[rgba(20,23,33,0.92)] p-8 sm:p-10 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] sheen-sweep">
             <div className="flex items-center gap-3 mb-5">
               <ScrollTextIcon className="h-5 w-5 text-[#ffd261]" />
               <h2

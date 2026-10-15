@@ -1,6 +1,6 @@
-# AKSANTARA — Panduan Integrasi Teknis AI, IoT & Database
+# AKSANTARA - Panduan Integrasi Teknis AI, IoT & Database
 ### Handover Guide untuk AI Engineer & Embedded Hardware Engineer
-> **Kompetisi:** Hackathon JOINTS UGM 2026 — Tema: Education  
+> **Kompetisi:** Hackathon JOINTS UGM 2026 - Tema: Education  
 > **Target:** Grand Final FMIPA UGM (1 November 2026)  
 > **Status Frontend & Web Engine:** 100% Siap Terintegrasi (*Production Ready*)
 
@@ -10,12 +10,12 @@
 
 Aksantara dibangun di atas arsitektur **4 Pilar AI** dan **2 Mode Penggunaan (Web & Hardware)** yang berfokus pada **Trinitas Aksara Nusantara (Lontara, Sunda, Bali)**:
 
-1. **Pilar 1 — Precision AI Writing Coach (Web Mode):** Evaluasi goresan tulisan tangan siswa pada *Universal Web Canvas* berbasis model klasifikasi bentuk (*Shape & Diacritic Topology Classifier*).
-2. **Pilar 2 — Trinitas Aksara Nusantara (Katalog & Standar):** Kurikulum terstruktur paleografi aksara Lontara (sudut geometris), Sunda (modular ngalagena), dan Bali (kurvalinier).
-3. **Pilar 3 — Gamified Phygital & Narrative Layer:**
+1. **Pilar 1 - Precision AI Writing Coach (Web Mode):** Evaluasi goresan tulisan tangan siswa pada *Universal Web Canvas* berbasis model klasifikasi bentuk (*Shape & Diacritic Topology Classifier*).
+2. **Pilar 2 - Trinitas Aksara Nusantara (Katalog & Standar):** Kurikulum terstruktur paleografi aksara Lontara (sudut geometris), Sunda (modular ngalagena), dan Bali (kurvalinier).
+3. **Pilar 3 - Gamified Phygital & Narrative Layer:**
    - **Hardware Mode:** Mini-game kinestetik (*Ramu Mantra* & *Speed Match*) menggunakan konsol fisik *Aksantara Tactile Pad* (ESP32 + RFID Reader via Web Serial API).
    - **Narrative Story Mode:** Petualangan cerita rakyat lokal (*Sawerigading*, *Lutung Kasarung*, *Calon Arang*) dengan dialog diperkaya LLM (*Gemini AI*).
-4. **Pilar 4 — Preservasi Manuskrip Kuno:** Human-in-the-loop OCR transliterasi naskah lontar bersejarah.
+4. **Pilar 4 - Preservasi Manuskrip Kuno:** Human-in-the-loop OCR transliterasi naskah lontar bersejarah.
 
 ---
 
@@ -45,7 +45,7 @@ Seluruh kontrak interface dan endpoint AI telah disiapkan di lapisan Next.js. An
 
 ### A. Pilar 1: Model Klasifikasi Goresan Kanvas (ONNX Web / API)
 
-#### Opsi 1: On-Device ONNX Web (Rekomendasi Utama — Zero Latency <50ms & Bebas Kuota API)
+#### Opsi 1: On-Device ONNX Web (Rekomendasi Utama - Zero Latency <50ms & Bebas Kuota API)
 1. Export model CNN / MobileNet / ResNet fine-tuned NusaAksara Anda ke format ONNX:
    - Format file: `nusaaksara_trinitas.onnx`
    - Letakkan di: `web/public/models/nusaaksara_trinitas.onnx`

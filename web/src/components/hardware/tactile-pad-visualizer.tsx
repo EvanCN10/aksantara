@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import Image from 'next/image';
 import type { SerialConnectionStatus, RfidCardData, TipeSlot } from '@/lib/serial/tactile-serial-types';
 
 interface TactilePadVisualizerProps {
@@ -103,31 +104,45 @@ export function TactilePadVisualizer({
           </div>
 
           <div
-            className={`w-full aspect-[4/3] rounded-2xl border-2 flex flex-col items-center justify-center p-4 transition-all duration-300 relative ${
+            className={`w-full aspect-[4/3] rounded-2xl border-2 flex flex-col items-center justify-center p-4 transition-all duration-300 relative overflow-hidden ${
               slotKonsonan
                 ? 'bg-gradient-to-br from-[#ffd261]/15 via-black/40 to-black/60 border-[#ffd261] shadow-[0_0_30px_rgba(255,210,97,0.2)]'
                 : 'border-dashed border-white/20 bg-black/20 hover:border-white/35'
             }`}
           >
             {slotKonsonan ? (
-              <div className="text-center animate-in zoom-in-95 duration-200">
-                <span
-                  className="text-5xl sm:text-6xl text-[#ffd261] drop-shadow-[0_0_16px_rgba(255,210,97,0.5)] block mb-1"
-                  style={{ fontFamily: 'var(--font-philosopher)' }}
-                >
-                  {slotKonsonan.simbol}
-                </span>
-                <span className="text-xs font-bold text-white uppercase tracking-wider block">
-                  {slotKonsonan.label} ({slotKonsonan.latin})
-                </span>
-                <span className="text-[10px] font-mono text-white/50 block mt-0.5">
-                  UID: {slotKonsonan.uid}
-                </span>
-              </div>
+              <>
+                <div className="absolute inset-0 z-0 pointer-events-none opacity-25 mix-blend-screen">
+                  <Image
+                    src="/images/hardware/card-acrylic-texture.webp"
+                    alt="Tekstur Kartu Akrilik"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="text-center relative z-10 animate-rfid-snap">
+                  <span
+                    className="text-5xl sm:text-6xl text-[#ffd261] drop-shadow-[0_0_16px_rgba(255,210,97,0.5)] block mb-1"
+                    style={{ fontFamily: 'var(--font-philosopher)' }}
+                  >
+                    {slotKonsonan.simbol}
+                  </span>
+                  <span className="text-xs font-bold text-white uppercase tracking-wider block">
+                    {slotKonsonan.label} ({slotKonsonan.latin})
+                  </span>
+                  <span className="text-[10px] font-mono text-white/50 block mt-0.5">
+                    UID: {slotKonsonan.uid}
+                  </span>
+                </div>
+              </>
             ) : (
               <div className="text-center text-white/35">
-                <div className="w-10 h-10 mx-auto rounded-full border border-dashed border-white/25 flex items-center justify-center mb-2 text-lg">
-                  🃏
+                <div className="w-10 h-10 mx-auto rounded-xl border border-dashed border-white/25 flex items-center justify-center mb-2">
+                  <svg className="w-5 h-5 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <rect width="16" height="20" x="4" y="2" rx="2" />
+                    <line x1="8" y1="6" x2="16" y2="6" />
+                    <line x1="12" y1="18" x2="12" y2="18.01" />
+                  </svg>
                 </div>
                 <p className="text-xs font-medium">Tempelkan Kartu Konsonan</p>
                 <p className="text-[10px] font-mono mt-0.5 opacity-60">(Ka, Ga, Ta, Ba)</p>
@@ -154,31 +169,43 @@ export function TactilePadVisualizer({
           </div>
 
           <div
-            className={`w-full aspect-[4/3] rounded-2xl border-2 flex flex-col items-center justify-center p-4 transition-all duration-300 relative ${
+            className={`w-full aspect-[4/3] rounded-2xl border-2 flex flex-col items-center justify-center p-4 transition-all duration-300 relative overflow-hidden ${
               slotDiakritik
                 ? 'bg-gradient-to-br from-[#38bdf8]/15 via-black/40 to-black/60 border-[#38bdf8] shadow-[0_0_30px_rgba(56,189,248,0.2)]'
                 : 'border-dashed border-white/20 bg-black/20 hover:border-white/35'
             }`}
           >
             {slotDiakritik ? (
-              <div className="text-center animate-in zoom-in-95 duration-200">
-                <span
-                  className="text-5xl sm:text-6xl text-[#38bdf8] drop-shadow-[0_0_16px_rgba(56,189,248,0.5)] block mb-1"
-                  style={{ fontFamily: 'var(--font-philosopher)' }}
-                >
-                  {slotDiakritik.simbol}
-                </span>
-                <span className="text-xs font-bold text-white uppercase tracking-wider block">
-                  {slotDiakritik.label}
-                </span>
-                <span className="text-[10px] font-mono text-white/50 block mt-0.5">
-                  UID: {slotDiakritik.uid}
-                </span>
-              </div>
+              <>
+                <div className="absolute inset-0 z-0 pointer-events-none opacity-25 mix-blend-screen">
+                  <Image
+                    src="/images/hardware/card-acrylic-texture.webp"
+                    alt="Tekstur Kartu Akrilik"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="text-center relative z-10 animate-rfid-snap">
+                  <span
+                    className="text-5xl sm:text-6xl text-[#38bdf8] drop-shadow-[0_0_16px_rgba(56,189,248,0.5)] block mb-1"
+                    style={{ fontFamily: 'var(--font-philosopher)' }}
+                  >
+                    {slotDiakritik.simbol}
+                  </span>
+                  <span className="text-xs font-bold text-white uppercase tracking-wider block">
+                    {slotDiakritik.label}
+                  </span>
+                  <span className="text-[10px] font-mono text-white/50 block mt-0.5">
+                    UID: {slotDiakritik.uid}
+                  </span>
+                </div>
+              </>
             ) : (
               <div className="text-center text-white/35">
-                <div className="w-10 h-10 mx-auto rounded-full border border-dashed border-white/25 flex items-center justify-center mb-2 text-lg">
-                  ✨
+                <div className="w-10 h-10 mx-auto rounded-xl border border-dashed border-white/25 flex items-center justify-center mb-2">
+                  <svg className="w-5 h-5 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" />
+                  </svg>
                 </div>
                 <p className="text-xs font-medium">Tempelkan Kartu Diakritik</p>
                 <p className="text-[10px] font-mono mt-0.5 opacity-60">(Panghulu, Tetta, Ulu)</p>
@@ -189,7 +216,13 @@ export function TactilePadVisualizer({
       </div>
 
       {/* 3. Combined Syllable Real-Time Display */}
-      <div className="rounded-2xl bg-black/50 border border-white/10 p-4 sm:p-5 flex items-center justify-between">
+      <div
+        className={`rounded-2xl bg-black/50 border p-4 sm:p-5 flex items-center justify-between transition-all duration-300 ${
+          slotKonsonan && slotDiakritik
+            ? 'border-[#ffd261]/60 shadow-[0_0_28px_rgba(255,210,97,0.3)] animate-runic-synthesis'
+            : 'border-white/10'
+        }`}
+      >
         <div>
           <span className="text-[10px] font-mono text-white/45 uppercase tracking-widest block mb-0.5">
             Suku Kata Terbentuk
@@ -199,7 +232,7 @@ export function TactilePadVisualizer({
               className="text-2xl sm:text-3xl font-bold text-white"
               style={{ fontFamily: 'var(--font-philosopher)' }}
             >
-              {sukuKataGabungan ? sukuKataGabungan : '—'}
+              {sukuKataGabungan ? sukuKataGabungan : '-'}
             </span>
             {latinGabungan && (
               <span className="text-sm font-semibold text-[#ffd261] px-2 py-0.5 rounded-md bg-[#ffd261]/10 border border-[#ffd261]/20">

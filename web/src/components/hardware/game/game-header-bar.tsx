@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Timer } from 'lucide-react';
 
 interface GameHeaderBarProps {
   gameTitle: string;
@@ -59,11 +60,11 @@ export function GameHeaderBar({
             <div
               className={`px-3 py-1 rounded-xl border text-xs font-mono font-bold flex items-center gap-1.5 transition-colors ${
                 timeLeft <= 5
-                  ? 'bg-rose-500/20 border-rose-500/50 text-rose-300 animate-pulse'
+                  ? 'bg-rose-500/25 border-rose-500/60 text-rose-300 animate-urgent-timer'
                   : 'bg-white/5 border-white/10 text-[#ffd261]'
               }`}
             >
-              <span>⏱️</span>
+              <Timer className="w-3.5 h-3.5" />
               <span>{timeLeft}s</span>
             </div>
           )}

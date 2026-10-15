@@ -3,6 +3,7 @@
 import React from 'react';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { GlifKritisItem } from '@/data/guru/guru-data';
+import { AlertTriangle, Target } from 'lucide-react';
 
 interface TrinitasMasteryCardProps {
   glifKritisList: GlifKritisItem[];
@@ -60,12 +61,13 @@ export const TrinitasMasteryCard: React.FC<TrinitasMasteryCardProps> = ({
         </span>
       </div>
 
-      {/* 3 Bars Kemahiran Aksara */}
+      {/* 3 Bars Kemahiran Aksara with Staggered Entrance */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {aksaraMastery.map((aksara) => (
+        {aksaraMastery.map((aksara, idx) => (
           <div
             key={aksara.id}
-            className="bg-[#060d16]/80 rounded-xl p-4 border border-white/10 flex flex-col justify-between relative overflow-hidden"
+            className="bg-[#060d16]/80 rounded-xl p-4 border border-white/10 flex flex-col justify-between relative overflow-hidden animate-cascade-fade-up hover:border-white/20 transition-all duration-300 hover:scale-[1.01]"
+            style={{ animationDelay: `${idx * 90}ms` }}
           >
             <div className="flex items-center justify-between mb-3">
               <div>
@@ -77,10 +79,10 @@ export const TrinitasMasteryCard: React.FC<TrinitasMasteryCardProps> = ({
               </span>
             </div>
 
-            {/* Progress Bar */}
+            {/* Progress Bar with Ease-Out Animation */}
             <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden mb-2">
               <div
-                className={`h-full rounded-full bg-gradient-to-r ${aksara.warna} transition-all duration-700`}
+                className={`h-full rounded-full bg-gradient-to-r ${aksara.warna} transition-all duration-1000 ease-out`}
                 style={{ width: `${aksara.persen}%` }}
               />
             </div>
@@ -97,7 +99,7 @@ export const TrinitasMasteryCard: React.FC<TrinitasMasteryCardProps> = ({
       <div className="pt-2">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span className="text-amber-400">⚠️</span>
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
               Hotspot Glif Kritis: Area Memerlukan Penguatan Pembelajaran
             </h3>
@@ -106,15 +108,16 @@ export const TrinitasMasteryCard: React.FC<TrinitasMasteryCardProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {glifKritisList.map((item) => (
+          {glifKritisList.map((item, idx) => (
             <div
               key={item.glif}
-              className="bg-amber-950/20 border border-amber-500/30 rounded-xl p-4 hover:border-amber-400/60 transition group flex flex-col justify-between"
+              className="bg-amber-950/20 border border-amber-500/30 rounded-xl p-4 hover:border-amber-400/60 transition-all duration-300 hover:scale-[1.01] group flex flex-col justify-between animate-cascade-fade-up"
+              style={{ animationDelay: `${180 + idx * 80}ms` }}
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2.5">
-                    <span className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-xl font-serif text-[#ffd261]">
+                    <span className={`w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-xl font-serif text-[#ffd261] ${idx === 0 ? 'animate-beacon-alert' : ''}`}>
                       {item.glif}
                     </span>
                     <div>
@@ -133,9 +136,9 @@ export const TrinitasMasteryCard: React.FC<TrinitasMasteryCardProps> = ({
 
               <button
                 onClick={() => onTugaskanGlif(item.namaGlif)}
-                className="w-full text-xs font-semibold py-2 px-3 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 transition flex items-center justify-center gap-1.5"
+                className="w-full text-xs font-semibold py-2 px-3 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 transition-all flex items-center justify-center gap-1.5 cursor-pointer hover:scale-[1.01] active:scale-[0.98]"
               >
-                <span>🎯</span>
+                <Target className="w-3.5 h-3.5" />
                 <span>Tugaskan Remedi Glif Ini</span>
               </button>
             </div>

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Printer, AlertTriangle, Target, Sliders, BookOpen, Star, Scroll } from 'lucide-react';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { SiswaDetailData } from '@/data/guru/guru-data';
 
@@ -70,7 +71,7 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
             onClick={onCetakRapor}
             className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[#ffd261] bg-[#ffd261]/10 hover:bg-[#ffd261]/20 border border-[#ffd261]/30 transition flex items-center gap-1.5 hover:scale-105 active:scale-95"
           >
-            <span>🖨️</span>
+            <Printer className="w-3.5 h-3.5" />
             <span>Cetak Rapor</span>
           </button>
         </div>
@@ -80,7 +81,7 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
       <OrnateFrame className="bg-[#0c1a2c]/90 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-[#ffd261]/30 shadow-2xl">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           <div className="flex items-start gap-4 md:gap-6">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-[#ffd261]/20 to-[#D4A373]/10 border-2 border-[#ffd261]/60 flex items-center justify-center text-3xl md:text-4xl shadow-inner shrink-0">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-[#ffd261]/20 to-[#D4A373]/10 border-2 border-[#ffd261]/60 flex items-center justify-center font-bold text-xl md:text-2xl text-[#ffd261] shadow-inner shrink-0">
               {siswa.avatar}
             </div>
             <div>
@@ -107,7 +108,7 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
 
               {siswa.perluRemedi && siswa.glifKendala && (
                 <div className="mt-3 p-3 rounded-xl bg-red-950/30 border border-red-500/30 flex items-start gap-2.5">
-                  <span className="text-red-400 text-sm mt-0.5">⚠️</span>
+                  <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
                   <div>
                     <span className="text-xs font-bold text-red-300 uppercase tracking-wider">
                       Status Bimbingan: Perlu Remedi Goresan
@@ -129,7 +130,7 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
         <div className="bg-[#0c1a2c]/75 backdrop-blur-md rounded-xl p-5 border border-white/10">
           <div className="flex items-center justify-between text-xs text-white/60 uppercase tracking-wider font-medium">
             <span>Pilar 1: AI Writing</span>
-            <span className="text-amber-400 text-base">🎯</span>
+            <Target className="w-4 h-4 text-amber-400" />
           </div>
           <div className="mt-3">
             <div className={`text-2xl md:text-3xl font-bold font-mono ${
@@ -147,7 +148,7 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
         <div className="bg-[#0c1a2c]/75 backdrop-blur-md rounded-xl p-5 border border-white/10">
           <div className="flex items-center justify-between text-xs text-white/60 uppercase tracking-wider font-medium">
             <span>Pilar 3: Hardware Pad</span>
-            <span className="text-purple-400 text-base">🎛️</span>
+            <Sliders className="w-4 h-4 text-purple-400" />
           </div>
           <div className="mt-3">
             <div className="text-2xl md:text-3xl font-bold text-white font-mono">
@@ -163,11 +164,13 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
         <div className="bg-[#0c1a2c]/75 backdrop-blur-md rounded-xl p-5 border border-white/10">
           <div className="flex items-center justify-between text-xs text-white/60 uppercase tracking-wider font-medium">
             <span>Pilar 3: Epos Cerita</span>
-            <span className="text-amber-400 text-base">📖</span>
+            <BookOpen className="w-4 h-4 text-amber-400" />
           </div>
           <div className="mt-3">
-            <div className="text-2xl md:text-3xl font-bold text-white font-mono">
-              ★ {siswa.eposBintang}/9 <span className="text-sm font-normal text-white/50">Bab</span>
+            <div className="text-2xl md:text-3xl font-bold text-white font-mono flex items-center gap-1.5">
+              <Star className="w-4 h-4 text-amber-400 fill-amber-400 inline" />
+              <span>{siswa.eposBintang}/9</span>
+              <span className="text-sm font-normal text-white/50">Bab</span>
             </div>
             <p className="text-xs text-amber-300 mt-1">
               3 Epos Daerah Terjelajahi
@@ -179,7 +182,7 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
         <div className="bg-[#0c1a2c]/75 backdrop-blur-md rounded-xl p-5 border border-white/10">
           <div className="flex items-center justify-between text-xs text-white/60 uppercase tracking-wider font-medium">
             <span>Pilar 4: Preservasi</span>
-            <span className="text-emerald-400 text-base">📜</span>
+            <Scroll className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="mt-3">
             <div className="text-2xl md:text-3xl font-bold text-white font-mono">

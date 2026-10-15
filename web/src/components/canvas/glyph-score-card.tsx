@@ -12,6 +12,7 @@ interface GlyphScoreCardProps {
   score: number;
   status: 'dikuasai' | 'latihan';
   catatan: string;
+  index?: number;
 }
 
 function CheckCircleIcon({ className = 'w-3.5 h-3.5' }: { className?: string }) {
@@ -31,11 +32,15 @@ export function GlyphScoreCard({
   score,
   status,
   catatan,
+  index = 0,
 }: GlyphScoreCardProps) {
   const isMastered = status === 'dikuasai' || score >= 88;
 
   return (
-    <div className="relative rounded-2xl border border-white/10 hover:border-[#ffd261]/40 bg-[#0c1a2c]/80 hover:bg-[#0c1a2c] p-4 sm:p-5 transition-all duration-300 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_30px_rgba(255,210,97,0.12)] group">
+    <div
+      style={{ animationDelay: `${index * 60}ms` }}
+      className="relative rounded-2xl border border-white/10 hover:border-[#ffd261]/40 bg-[#0c1a2c]/80 hover:bg-[#0c1a2c] p-4 sm:p-5 transition-all duration-300 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_30px_rgba(255,210,97,0.12)] group animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
+    >
       {/* Top row: Status Badge & Score Percentage */}
       <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3">
         <span

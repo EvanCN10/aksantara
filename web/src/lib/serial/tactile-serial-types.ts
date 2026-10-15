@@ -1,5 +1,5 @@
 // ============================================================================
-// AKSANTARA TACTILE PAD — SERIAL & RFID CONTRACT TYPES
+// AKSANTARA TACTILE PAD - SERIAL & RFID CONTRACT TYPES
 // ============================================================================
 
 export type SerialConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'simulated';

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { ShinyButton } from '@/components/ui/shiny-button';
@@ -166,7 +167,22 @@ export default function MulaiPage() {
   };
 
   return (
-    <main className="relative min-h-screen lg:h-screen lg:max-h-screen lg:overflow-hidden bg-[#0c1a2c] text-[#F6F2E9] flex flex-col justify-between selection:bg-[#ffd261]/20 selection:text-[#ffd261]">
+    <main className="relative min-h-screen lg:h-screen lg:max-h-screen lg:overflow-hidden text-[#F6F2E9] flex flex-col justify-between selection:bg-[#ffd261]/20 selection:text-[#ffd261]">
+      {/* Visual Thematic Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#060d16]" aria-hidden="true">
+        <Image
+          src="/images/ui/backgrounds/bg-portal-mulai.webp"
+          alt="Portal Gerbang Aksara"
+          fill
+          priority={true}
+          quality={90}
+          sizes="100vw"
+          className="object-cover object-center filter brightness-[0.50] contrast-[1.05] saturate-[1.05] animate-bg-zoom-in"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060d16] via-[#060d16]/70 to-[#060d16]/40" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(6,13,22,0.75)_100%)]" />
+      </div>
+
       {/* Ambient background glows */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute top-[-15%] left-1/2 -translate-x-1/2 w-[700px] h-[360px] bg-[radial-gradient(ellipse_at_center,rgba(255,210,97,0.12),transparent_70%)] blur-3xl" />
@@ -176,7 +192,7 @@ export default function MulaiPage() {
 
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex-1 flex flex-col justify-between gap-4">
         {/* =========================================
-            HEADER & STEP INDICATOR
+            HEADER & STEP INDICATOR (Choreographed Entrance)
             ========================================= */}
         <header className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
@@ -185,23 +201,27 @@ export default function MulaiPage() {
               type="button"
               onClick={() => router.push('/')}
               aria-label="Kembali ke Beranda"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/70 hover:text-white transition-all text-xs font-medium cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/70 hover:text-white transition-all text-xs font-medium cursor-pointer animate-emerge-up"
+              style={{ animationDelay: '80ms' }}
             >
               <ArrowLeftIcon className="w-3.5 h-3.5" />
               <span>Beranda</span>
             </button>
 
             {/* Stepper indicator */}
-            <div className="flex items-center gap-2 sm:gap-3 text-xs">
+            <div
+              className="flex items-center gap-2 sm:gap-3 text-xs animate-emerge-up"
+              style={{ animationDelay: '140ms' }}
+            >
               <div
                 className={`flex items-center gap-1.5 font-medium transition-colors ${
                   selectedAksara ? 'text-[#ffd261]' : 'text-white/80'
                 }`}
               >
                 <span
-                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-transform duration-300 ${
                     selectedAksara
-                      ? 'bg-[#ffd261] text-[#0c1a2c]'
+                      ? 'bg-[#ffd261] text-[#0c1a2c] scale-110 shadow-[0_0_12px_#ffd261]'
                       : 'bg-white/10 text-white/80 border border-white/20'
                   }`}
                 >
@@ -210,12 +230,12 @@ export default function MulaiPage() {
                 <span>Pilih Aksara</span>
               </div>
               <div
-                className={`w-6 sm:w-10 h-0.5 rounded-full transition-colors ${
+                className={`w-6 sm:w-10 h-0.5 rounded-full transition-colors duration-300 ${
                   selectedAksara ? 'bg-[#ffd261]/70' : 'bg-white/15'
                 }`}
               />
               <div
-                className={`flex items-center gap-1.5 font-medium transition-colors ${
+                className={`flex items-center gap-1.5 font-medium transition-colors duration-300 ${
                   selectedJalur
                     ? 'text-[#ffd261]'
                     : selectedAksara
@@ -224,9 +244,9 @@ export default function MulaiPage() {
                 }`}
               >
                 <span
-                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-transform duration-300 ${
                     selectedJalur
-                      ? 'bg-[#ffd261] text-[#0c1a2c]'
+                      ? 'bg-[#ffd261] text-[#0c1a2c] scale-110 shadow-[0_0_12px_#ffd261]'
                       : selectedAksara
                       ? 'bg-white/10 text-white/80 border border-white/20'
                       : 'bg-white/5 text-white/40 border border-white/10'
@@ -240,9 +260,12 @@ export default function MulaiPage() {
           </div>
 
           {/* Title and subtitle */}
-          <div className="text-center max-w-2xl mx-auto mt-0.5">
+          <div
+            className="text-center max-w-2xl mx-auto mt-0.5 animate-emerge-up"
+            style={{ animationDelay: '200ms' }}
+          >
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30 text-[#ffd261] text-xs font-medium mb-1.5 shadow-[0_0_12px_rgba(255,210,97,0.15)]">
-              <SparklesIcon className="w-3.5 h-3.5" />
+              <SparklesIcon className="w-3.5 h-3.5 animate-pulse" />
               <span>Mulai Perjalanan Aksara</span>
             </div>
             <h1
@@ -265,22 +288,23 @@ export default function MulaiPage() {
             Pilihan Aksara Nusantara
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-            {AKSARA_LIST.map((item) => {
+            {AKSARA_LIST.map((item, idx) => {
               const isSelected = selectedAksara === item.id;
               return (
                 <div
                   key={item.id}
                   onClick={() => setSelectedAksara(item.id)}
-                  className={`group relative rounded-2xl cursor-pointer transition-all duration-300 text-left ${
+                  style={{ '--stagger': idx } as React.CSSProperties}
+                  className={`stagger-item animate-emerge-scale group relative rounded-2xl cursor-pointer transition-all duration-300 text-left sheen-sweep ${
                     isSelected
-                      ? 'scale-[1.02] shadow-[0_0_30px_rgba(255,210,97,0.22)]'
-                      : 'hover:scale-[1.01] hover:shadow-[0_0_20px_rgba(255,210,97,0.08)] opacity-90 hover:opacity-100'
+                      ? 'scale-[1.02] shadow-[0_0_32px_rgba(255,210,97,0.28)] ring-2 ring-[#ffd261]'
+                      : 'hover:scale-[1.01] hover:shadow-[0_0_20px_rgba(255,210,97,0.12)] opacity-85 hover:opacity-100'
                   }`}
                 >
                   <OrnateFrame
                     className={`rounded-2xl transition-all duration-300 ${
                       isSelected
-                        ? 'bg-gradient-to-b from-[#ffd261]/15 via-white/[0.04] to-transparent ring-2 ring-[#ffd261]'
+                        ? 'bg-gradient-to-b from-[#ffd261]/20 via-[#0c1a2c]/80 to-[#0A0C12]/95'
                         : 'bg-white/[0.03] group-hover:bg-white/[0.06]'
                     }`}
                   >
@@ -291,9 +315,9 @@ export default function MulaiPage() {
                           {item.glifCount}
                         </span>
                         <div
-                          className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${
+                          className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${
                             isSelected
-                              ? 'bg-[#ffd261] text-[#0c1a2c] shadow-[0_0_12px_#ffd261]'
+                              ? 'bg-[#ffd261] text-[#0c1a2c] shadow-[0_0_12px_#ffd261] scale-110'
                               : 'border border-white/20 text-transparent group-hover:border-white/40'
                           }`}
                         >
@@ -303,7 +327,13 @@ export default function MulaiPage() {
 
                       {/* Center: Unicode Script Display */}
                       <div className="my-1.5 sm:my-2 text-center">
-                        <div className="text-3xl sm:text-4xl font-normal tracking-wide text-[#ffd261] drop-shadow-[0_2px_10px_rgba(255,210,97,0.35)] transition-transform group-hover:scale-105 duration-300">
+                        <div
+                          className={`text-3xl sm:text-4xl font-normal tracking-wide text-[#ffd261] transition-transform duration-300 ${
+                            isSelected
+                              ? 'scale-110 drop-shadow-[0_4px_16px_rgba(255,210,97,0.65)]'
+                              : 'drop-shadow-[0_2px_10px_rgba(255,210,97,0.35)] group-hover:scale-105'
+                          }`}
+                        >
                           {item.aksaraAsli}
                         </div>
                         <div
@@ -335,7 +365,9 @@ export default function MulaiPage() {
         <section
           aria-labelledby="section-jalur"
           className={`transition-all duration-500 ${
-            selectedAksara ? 'opacity-100 translate-y-0' : 'opacity-40 pointer-events-none'
+            selectedAksara
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-40 pointer-events-none'
           }`}
         >
           <div className="flex items-center justify-between mb-2">
@@ -344,7 +376,7 @@ export default function MulaiPage() {
                 2. Pilih Cara Belajar
               </span>
               {selectedAksara && (
-                <span className="text-[11px] text-white/50">
+                <span className="text-[11px] text-white/60 font-medium">
                   (untuk {AKSARA_LIST.find((a) => a.id === selectedAksara)?.nama})
                 </span>
               )}
@@ -357,7 +389,7 @@ export default function MulaiPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
-            {JALUR_LIST.map((jalur) => {
+            {JALUR_LIST.map((jalur, idx) => {
               const isSelected = selectedJalur === jalur.id;
               const Icon = jalur.icon;
               return (
@@ -366,16 +398,17 @@ export default function MulaiPage() {
                   type="button"
                   disabled={!selectedAksara}
                   onClick={() => setSelectedJalur(jalur.id)}
-                  className={`relative p-3 sm:p-3.5 rounded-xl text-left border transition-all duration-300 cursor-pointer flex flex-col justify-between ${
+                  style={{ '--stagger': idx } as React.CSSProperties}
+                  className={`stagger-item animate-emerge-scale sheen-sweep relative p-3 sm:p-3.5 rounded-xl text-left border transition-all duration-300 cursor-pointer flex flex-col justify-between ${
                     isSelected
-                      ? 'bg-[#ffd261]/15 border-[#ffd261] shadow-[0_0_20px_rgba(255,210,97,0.2)] ring-1 ring-[#ffd261]'
-                      : 'bg-white/[0.03] border-white/10 hover:border-white/25 hover:bg-white/[0.06]'
+                      ? 'bg-[#ffd261]/20 border-[#ffd261] shadow-[0_0_24px_rgba(255,210,97,0.25)] ring-1 ring-[#ffd261] scale-[1.01]'
+                      : 'bg-white/[0.03] border-white/10 hover:border-white/25 hover:bg-white/[0.06] hover:scale-[1.005]'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-1.5">
                     <div className="flex items-center gap-2">
                       <div
-                        className={`p-1.5 rounded-lg ${
+                        className={`p-1.5 rounded-lg transition-colors duration-300 ${
                           isSelected ? 'bg-[#ffd261]/25 text-[#ffd261]' : 'bg-white/5 text-white/80'
                         }`}
                       >
@@ -391,9 +424,9 @@ export default function MulaiPage() {
                       </div>
                     </div>
                     <div
-                      className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold transition-all ${
+                      className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold transition-all duration-300 ${
                         isSelected
-                          ? 'bg-[#ffd261] text-[#0c1a2c]'
+                          ? 'bg-[#ffd261] text-[#0c1a2c] scale-110 shadow-[0_0_8px_#ffd261]'
                           : 'border border-white/20 text-transparent'
                       }`}
                     >
@@ -410,18 +443,20 @@ export default function MulaiPage() {
         </section>
 
         {/* =========================================
-            BOTTOM ACTION: CTA BUTTON
+            BOTTOM ACTION: CTA BUTTON (Beacon Pulse)
             ========================================= */}
         <footer className="flex flex-col items-center justify-center gap-1.5 pt-1">
-          <ShinyButton
-            label={getCtaLabel()}
-            onClick={handleMulai}
-            className={`w-full max-w-md py-3 text-sm font-semibold transition-all duration-300 ${
-              canProceed
-                ? 'cursor-pointer shadow-[0_0_30px_rgba(255,210,97,0.35)] hover:scale-[1.01]'
-                : 'opacity-40 cursor-not-allowed pointer-events-none'
-            }`}
-          />
+          <div className={`w-full max-w-md ${canProceed ? 'animate-beacon-pulse rounded-full' : ''}`}>
+            <ShinyButton
+              label={getCtaLabel()}
+              onClick={handleMulai}
+              className={`w-full py-3 text-sm font-semibold transition-all duration-300 ${
+                canProceed
+                  ? 'cursor-pointer shadow-[0_0_30px_rgba(255,210,97,0.35)] hover:scale-[1.02] active:scale-[0.98]'
+                  : 'opacity-40 cursor-not-allowed pointer-events-none'
+              }`}
+            />
+          </div>
           <p className="text-[11px] text-white/45 text-center font-mono">
             {getRouteHint()}
           </p>

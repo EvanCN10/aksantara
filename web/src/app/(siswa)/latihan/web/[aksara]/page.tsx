@@ -1,6 +1,7 @@
 'use client';
 
 import { use, useState, useMemo } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
@@ -131,7 +132,22 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
   };
 
   return (
-    <main className="relative min-h-screen bg-[#0c1a2c] text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col">
+    <main className="relative min-h-screen text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col">
+      {/* Visual Thematic Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#060d16]" aria-hidden="true">
+        <Image
+          src="/images/ui/backgrounds/bg-studio-kanvas.webp"
+          alt="Studio Sanggar Aksara"
+          fill
+          priority={true}
+          quality={90}
+          sizes="100vw"
+          className="object-cover object-center filter brightness-[0.45] contrast-[1.05] saturate-[1.05]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060d16] via-[#060d16]/70 to-[#060d16]/40" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(6,13,22,0.75)_100%)]" />
+      </div>
+
       {/* Background Ambience & Radial Glows */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute top-[-10%] left-1/4 w-[650px] h-[350px] bg-[radial-gradient(ellipse_at_center,rgba(255,210,97,0.10),transparent_70%)] blur-3xl" />
@@ -186,7 +202,7 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                 title={`${dikuasaiCount} dari ${totalGlif} glif telah dikuasai`}
               >
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#cf5600] via-[#ffd261] to-[#ffd261] transition-all duration-500 shadow-[0_0_12px_rgba(255,210,97,0.5)]"
+                  className="h-full rounded-full bg-gradient-to-r from-[#cf5600] via-[#ffd261] to-[#ffd261] transition-all duration-700 shadow-[0_0_12px_rgba(255,210,97,0.5)] animate-progress-shimmer"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -266,7 +282,7 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
 
             {/* Glif Cards Grid (4 cols desktop, 3 tablet, 2 mobile) */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {filteredGlifList.map((glif) => {
+              {filteredGlifList.map((glif, idx) => {
                 const isSelected = selectedGlif?.slug === glif.slug;
                 const status = userProgress[glif.slug] || 'belum';
 
@@ -275,9 +291,10 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                     key={glif.slug}
                     type="button"
                     onClick={() => setSelectedSlug(glif.slug)}
-                    className={`group relative p-3 sm:p-3.5 rounded-2xl text-left border transition-all duration-200 cursor-pointer flex flex-col justify-between min-h-[125px] ${
+                    style={{ animationDelay: `${Math.min(idx * 28, 450)}ms` }}
+                    className={`group relative p-3 sm:p-3.5 rounded-2xl text-left border transition-all duration-200 cursor-pointer flex flex-col justify-between min-h-[125px] animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${
                       isSelected
-                        ? 'bg-gradient-to-b from-[#ffd261]/15 via-white/[0.04] to-transparent border-[#ffd261] shadow-[0_0_24px_rgba(255,210,97,0.22)] scale-[1.02] ring-1 ring-[#ffd261]'
+                        ? 'bg-gradient-to-b from-[#ffd261]/15 via-white/[0.04] to-transparent border-[#ffd261] shadow-[0_0_24px_rgba(255,210,97,0.28)] scale-[1.02] ring-1 ring-[#ffd261]'
                         : 'bg-white/[0.03] border-white/10 hover:border-[#ffd261]/40 hover:bg-white/[0.06] hover:scale-[1.01]'
                     }`}
                   >
@@ -293,7 +310,7 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                       {/* Status indicator badge */}
                       {status === 'dikuasai' ? (
                         <span
-                          className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 rounded-full"
+                          className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/15 border border-emerald-500/35 px-1.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(52,211,153,0.2)]"
                           title="Glif telah dikuasai"
                         >
                           <CheckCircleIcon className="w-2.5 h-2.5" />
@@ -301,7 +318,7 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                         </span>
                       ) : status === 'latihan' ? (
                         <span
-                          className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/15 border border-amber-500/30 px-1.5 py-0.5 rounded-full animate-pulse"
+                          className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/15 border border-amber-500/35 px-1.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.25)]"
                           title="Dalam proses latihan"
                         >
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />

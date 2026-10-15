@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { ShinyButton } from '@/components/ui/shiny-button';
@@ -153,12 +154,21 @@ const METRIK = [
 
 export default function TentangKamiPage() {
   return (
-    <main className="relative min-h-screen bg-[#0c1a2c] text-[#F6F2E9] overflow-x-hidden selection:bg-[#ffd261]/20 selection:text-[#ffd261]">
-      {/* Background Atmosphere & Ambient Lighting */}
-      <div
-        className="absolute inset-0 bg-gradient-to-b from-[#0c1a2c] via-[#0c1a2c] to-[#060b14]"
-        aria-hidden="true"
-      />
+    <main className="relative min-h-screen text-[#F6F2E9] overflow-x-hidden selection:bg-[#ffd261]/20 selection:text-[#ffd261]">
+      {/* Visual Thematic Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#060d16]" aria-hidden="true">
+        <Image
+          src="/images/ui/backgrounds/bg-katalog-cerita.webp"
+          alt="Latar Belakang Aksantara"
+          fill
+          priority={true}
+          quality={90}
+          sizes="100vw"
+          className="object-cover object-center filter brightness-[0.75] contrast-[1.05] saturate-[1.10] animate-bg-zoom-in"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a2c] via-[#0c1a2c]/35 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(12,26,44,0.65)_100%)]" />
+      </div>
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[640px]"
         style={{
@@ -170,25 +180,32 @@ export default function TentangKamiPage() {
 
       <div className="relative z-10">
         {/* =========================================
-            1. HERO SECTION
+            1. HERO SECTION (Choreographed Entrance)
             ========================================= */}
         <section className="mx-auto max-w-4xl px-6 pt-28 md:pt-36 pb-16 text-center">
-          <div className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border border-[#D4A373]/35 bg-[#0D0E12]/90 text-[#D4A373] shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
-            <SparklesIcon className="h-3.5 w-3.5 text-[#ffd261]" />
+          <div
+            className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.25em] uppercase px-4 py-1.5 rounded-full border border-[#D4A373]/35 bg-[#0D0E12]/90 text-[#D4A373] shadow-[0_4px_16px_rgba(0,0,0,0.4)] animate-emerge-up"
+            style={{ animationDelay: '80ms' }}
+          >
+            <SparklesIcon className="h-3.5 w-3.5 text-[#ffd261] animate-pulse" />
             Manifesto EdTech Nusantara
           </div>
 
           <h1
-            className="mt-6 text-4xl sm:text-5xl md:text-6xl font-bold leading-tight bg-gradient-to-t from-[#ffd261] via-[#FFF2D6] to-[#FFFFFF] bg-clip-text text-transparent"
+            className="mt-6 text-4xl sm:text-5xl md:text-6xl font-bold leading-tight bg-gradient-to-t from-[#ffd261] via-[#FFF2D6] to-[#FFFFFF] bg-clip-text text-transparent animate-emerge-up"
             style={{
               fontFamily: 'var(--font-philosopher), serif',
               filter: 'drop-shadow(0 4px 14px rgba(0, 0, 0, 0.85))',
+              animationDelay: '180ms',
             }}
           >
             Menghidupkan Aksara, Menyentuh Tradisi
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-sm md:text-base text-[#F6F2E9]/80 leading-relaxed font-light">
+          <p
+            className="mx-auto mt-6 max-w-2xl text-sm md:text-base text-[#F6F2E9]/80 leading-relaxed font-light animate-emerge-up"
+            style={{ animationDelay: '280ms' }}
+          >
             Aksantara melawan krisis literasi aksara daerah lewat perpaduan kecerdasan buatan
             presisi dan perangkat kinestetik fisik (Phygital), mengatasi kelelahan layar yang
             dialami anak sekolah saat belajar lewat aplikasi digital semata.
@@ -198,8 +215,11 @@ export default function TentangKamiPage() {
         {/* =========================================
             2. KONTEKS MASALAH & RISET UGM 2026
             ========================================= */}
-        <section className="mx-auto max-w-5xl px-6 pb-16">
-          <div className="rounded-2xl backdrop-blur-xl bg-[rgba(20,23,33,0.92)] border border-[#D4A373]/25 p-8 md:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+        <section
+          className="mx-auto max-w-5xl px-6 pb-16 animate-emerge-up"
+          style={{ animationDelay: '360ms' }}
+        >
+          <div className="rounded-2xl backdrop-blur-xl bg-[rgba(20,23,33,0.92)] border border-[#D4A373]/25 p-8 md:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] sheen-sweep">
             <div className="grid gap-8 md:grid-cols-2">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-[#D4A373] font-semibold mb-3">
@@ -231,7 +251,10 @@ export default function TentangKamiPage() {
             3. PENDEKATAN PHYGITAL: ANTI-GIMIK IOT
             ========================================= */}
         <section className="mx-auto max-w-5xl px-6 pb-16">
-          <div className="flex items-center justify-center gap-2 mb-3">
+          <div
+            className="flex items-center justify-center gap-2 mb-3 animate-emerge-up"
+            style={{ animationDelay: '420ms' }}
+          >
             <HandIcon className="h-5 w-5 text-[#ffd261]" />
             <h2
               className="text-2xl md:text-3xl font-bold text-center text-[#F6F2E9]"
@@ -240,13 +263,19 @@ export default function TentangKamiPage() {
               Pendekatan Phygital: Anti-Gimik IoT
             </h2>
           </div>
-          <p className="mx-auto max-w-2xl text-center text-sm text-[#F6F2E9]/65 mb-10 font-light">
+          <p
+            className="mx-auto max-w-2xl text-center text-sm text-[#F6F2E9]/65 mb-10 font-light animate-emerge-up"
+            style={{ animationDelay: '460ms' }}
+          >
             Dua mode penggunaan yang saling melengkapi, bukan saling menggantikan
           </p>
 
           <div className="grid gap-6 md:grid-cols-2">
             {/* Mode Digital: Web Canvas */}
-            <div className="rounded-2xl backdrop-blur-xl bg-[rgba(20,23,33,0.92)] border border-[#D4A373]/25 p-7 shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-transform duration-300 hover:border-[#D4A373]/45">
+            <div
+              className="animate-emerge-scale sheen-sweep rounded-2xl backdrop-blur-xl bg-[rgba(20,23,33,0.92)] border border-[#D4A373]/25 p-7 shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-300 hover:border-[#ffd261]/50 hover:scale-[1.015]"
+              style={{ animationDelay: '500ms' }}
+            >
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D4A373]/35 bg-black/40 text-[#ffd261]">
                   <LaptopIcon className="h-4 w-4" />
@@ -276,7 +305,10 @@ export default function TentangKamiPage() {
             </div>
 
             {/* Mode Fisik: Aksantara Tactile Pad */}
-            <div className="rounded-2xl backdrop-blur-xl bg-[rgba(20,23,33,0.92)] border border-[#D4A373]/25 p-7 shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-transform duration-300 hover:border-[#D4A373]/45">
+            <div
+              className="animate-emerge-scale sheen-sweep rounded-2xl backdrop-blur-xl bg-[rgba(20,23,33,0.92)] border border-[#D4A373]/25 p-7 shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-300 hover:border-[#ffd261]/50 hover:scale-[1.015]"
+              style={{ animationDelay: '560ms' }}
+            >
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D4A373]/35 bg-black/40 text-[#ffd261]">
                   <RadioIcon className="h-4 w-4" />
@@ -313,40 +345,48 @@ export default function TentangKamiPage() {
             ========================================= */}
         <section className="mx-auto max-w-5xl px-6 pb-16">
           <h2
-            className="text-2xl md:text-3xl font-bold text-center mb-10 text-[#F6F2E9]"
-            style={{ fontFamily: 'var(--font-philosopher), serif' }}
+            className="text-2xl md:text-3xl font-bold text-center mb-10 text-[#F6F2E9] animate-emerge-up"
+            style={{ fontFamily: 'var(--font-philosopher), serif', animationDelay: '600ms' }}
           >
             Arsitektur Empat Pilar Solusi
           </h2>
 
           <div className="grid gap-6 sm:grid-cols-2">
-            {PILAR.map(({ icon: Icon, nomor, kategori, judul, teks }) => (
-              <OrnateFrame key={judul} className="aspect-auto bg-[#0c1a2c]/60 backdrop-blur-xl">
-                <div className="p-6 sm:p-7">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D4A373]/35 bg-black/40 text-[#ffd261]">
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <span className="text-[11px] uppercase tracking-[0.2em] text-[#D4A373] font-semibold">
-                        {nomor}
-                      </span>
+            {PILAR.map(({ icon: Icon, nomor, kategori, judul, teks }, idx) => (
+              <div
+                key={judul}
+                style={{ '--stagger': idx } as React.CSSProperties}
+                className="stagger-item animate-emerge-scale sheen-sweep rounded-2xl group transition-transform duration-300 hover:scale-[1.02]"
+              >
+                <OrnateFrame className="aspect-auto bg-[#0c1a2c]/60 backdrop-blur-xl h-full">
+                  <div className="p-6 sm:p-7 flex flex-col justify-between h-full">
+                    <div>
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2.5">
+                          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D4A373]/35 bg-black/40 text-[#ffd261] group-hover:border-[#ffd261] transition-colors">
+                            <Icon className="h-4 w-4 group-hover:scale-110 transition-transform duration-300" />
+                          </span>
+                          <span className="text-[11px] uppercase tracking-[0.2em] text-[#D4A373] font-semibold">
+                            {nomor}
+                          </span>
+                        </div>
+                        <span className="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full border border-white/10 bg-white/[0.04] text-[#F6F2E9]/60">
+                          {kategori}
+                        </span>
+                      </div>
+                      <h3
+                        className="mt-4 text-lg sm:text-xl font-bold text-[#F6F2E9] group-hover:text-[#ffd261] transition-colors"
+                        style={{ fontFamily: 'var(--font-philosopher), serif' }}
+                      >
+                        {judul}
+                      </h3>
+                      <p className="mt-2 text-sm text-[#F6F2E9]/75 leading-relaxed font-light">
+                        {teks}
+                      </p>
                     </div>
-                    <span className="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full border border-white/10 bg-white/[0.04] text-[#F6F2E9]/60">
-                      {kategori}
-                    </span>
                   </div>
-                  <h3
-                    className="mt-4 text-lg sm:text-xl font-bold text-[#F6F2E9]"
-                    style={{ fontFamily: 'var(--font-philosopher), serif' }}
-                  >
-                    {judul}
-                  </h3>
-                  <p className="mt-2 text-sm text-[#F6F2E9]/75 leading-relaxed font-light">
-                    {teks}
-                  </p>
-                </div>
-              </OrnateFrame>
+                </OrnateFrame>
+              </div>
             ))}
           </div>
         </section>
@@ -354,8 +394,11 @@ export default function TentangKamiPage() {
         {/* =========================================
             5. SPESIFIKASI & STANDAR REKAYASA
             ========================================= */}
-        <section className="mx-auto max-w-5xl px-6 pb-16">
-          <div className="rounded-2xl backdrop-blur-xl bg-[rgba(20,23,33,0.92)] border border-[#D4A373]/25 p-8 md:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+        <section
+          className="mx-auto max-w-5xl px-6 pb-16 animate-emerge-up"
+          style={{ animationDelay: '700ms' }}
+        >
+          <div className="rounded-2xl backdrop-blur-xl bg-[rgba(20,23,33,0.92)] border border-[#D4A373]/25 p-8 md:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] sheen-sweep">
             <div className="flex items-center gap-3 mb-8">
               <ShieldCheckIcon className="h-5 w-5 text-[#ffd261]" />
               <h2
@@ -367,13 +410,14 @@ export default function TentangKamiPage() {
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-              {METRIK.map((m) => (
+              {METRIK.map((m, idx) => (
                 <div
                   key={m.label}
-                  className="rounded-xl border border-white/5 bg-black/30 p-5 text-center transition-colors hover:border-[#ffd261]/30"
+                  style={{ '--stagger': idx } as React.CSSProperties}
+                  className="stagger-item animate-emerge-scale rounded-xl border border-white/5 bg-black/30 p-5 text-center transition-all duration-300 hover:border-[#ffd261]/40 hover:bg-white/[0.03] hover:scale-105"
                 >
                   <p
-                    className="text-2xl md:text-3xl font-bold text-[#ffd261]"
+                    className="text-2xl md:text-3xl font-bold text-[#ffd261] drop-shadow-[0_2px_12px_rgba(255,210,97,0.3)]"
                     style={{ fontFamily: 'var(--font-philosopher), serif' }}
                   >
                     {m.nilai}
@@ -390,8 +434,11 @@ export default function TentangKamiPage() {
         {/* =========================================
             6. ROADMAP & PERNYATAAN TIM
             ========================================= */}
-        <section className="mx-auto max-w-4xl px-6 pb-16">
-          <div className="rounded-2xl backdrop-blur-xl bg-[rgba(20,23,33,0.92)] border border-[#D4A373]/25 p-8 text-center shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+        <section
+          className="mx-auto max-w-4xl px-6 pb-16 animate-emerge-up"
+          style={{ animationDelay: '780ms' }}
+        >
+          <div className="rounded-2xl backdrop-blur-xl bg-[rgba(20,23,33,0.92)] border border-[#D4A373]/25 p-8 text-center shadow-[0_8px_32px_rgba(0,0,0,0.3)] sheen-sweep">
             <div className="flex items-center justify-center gap-3 mb-4">
               <AwardIcon className="h-5 w-5 text-[#ffd261]" />
               <h2
@@ -413,7 +460,10 @@ export default function TentangKamiPage() {
         {/* =========================================
             7. CALL TO ACTION (CTA)
             ========================================= */}
-        <section className="mx-auto max-w-3xl px-6 pb-28 text-center">
+        <section
+          className="mx-auto max-w-3xl px-6 pb-28 text-center animate-emerge-up"
+          style={{ animationDelay: '840ms' }}
+        >
           <p className="text-sm text-[#F6F2E9]/70 mb-6 font-light">
             Eksplorasi ketiga aksara atau langsung uji coba model evaluasi kanvas kami.
           </p>

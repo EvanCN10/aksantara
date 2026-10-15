@@ -33,7 +33,7 @@ export function CharacterRoster({
 
       {/* Roster Character Avatars Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
-        {characters.map((char) => {
+        {characters.map((char, idx) => {
           const isSelected = char.id === selectedCharacterId;
 
           return (
@@ -41,10 +41,11 @@ export function CharacterRoster({
               key={char.id}
               type="button"
               onClick={() => onSelectCharacter(char.id)}
-              className={`relative p-3 rounded-2xl border text-left transition-all duration-300 cursor-pointer flex items-center gap-3 ${
+              style={{ '--stagger': idx } as React.CSSProperties}
+              className={`stagger-item animate-emerge-scale sheen-sweep relative p-3 rounded-2xl border text-left transition-all duration-300 cursor-pointer flex items-center gap-3 ${
                 isSelected
-                  ? 'bg-gradient-to-r from-white/[0.08] to-white/[0.02] border-[#ffd261] shadow-[0_0_20px_rgba(255,210,97,0.22)] ring-1 ring-[#ffd261]'
-                  : 'bg-white/[0.03] border-white/10 hover:border-white/25 hover:bg-white/[0.06] opacity-80 hover:opacity-100'
+                  ? 'bg-gradient-to-r from-white/[0.08] to-white/[0.02] border-[#ffd261] shadow-[0_0_20px_rgba(255,210,97,0.22)] ring-1 ring-[#ffd261] scale-[1.01]'
+                  : 'bg-white/[0.03] border-white/10 hover:border-white/25 hover:bg-white/[0.06] opacity-80 hover:opacity-100 hover:scale-[1.005]'
               }`}
             >
               {/* Avatar Holder (Emoji or Custom Image) */}
@@ -89,14 +90,14 @@ export function CharacterRoster({
       </div>
 
       {/* Speech Bubble Display (Duolingo / RPG Visual Novel Style) */}
-      <div className="relative rounded-2xl bg-gradient-to-r from-[#141d2d]/90 via-[#0d1624]/95 to-[#141d2d]/90 border border-white/15 p-4 sm:p-5 shadow-[0_8px_30px_rgba(0,0,0,0.4)] flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        {/* Animated Avatar Badge */}
+      <div className="relative rounded-2xl bg-gradient-to-r from-[#141d2d]/90 via-[#0d1624]/95 to-[#141d2d]/90 border border-white/15 p-4 sm:p-5 shadow-[0_8px_30px_rgba(0,0,0,0.4)] flex flex-col sm:flex-row items-start sm:items-center gap-4 sheen-sweep">
+        {/* Animated Avatar Badge with Living Companion Breath */}
         <div className="flex items-center gap-3 shrink-0">
           <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-lg border border-white/20 shrink-0 relative"
+            className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-lg border border-white/20 shrink-0 relative animate-companion-idle"
             style={{
               backgroundColor: `${activeChar.warnaAksen}25`,
-              boxShadow: `0 0 24px ${activeChar.warnaAksen}30`,
+              boxShadow: `0 0 24px ${activeChar.warnaAksen}35`,
             }}
           >
             {activeChar.avatarUrl ? (
@@ -107,7 +108,7 @@ export function CharacterRoster({
                 className="w-full h-full object-cover rounded-2xl"
               />
             ) : (
-              <span className="animate-bounce select-none">{activeChar.avatar}</span>
+              <span className="select-none">{activeChar.avatar}</span>
             )}
           </div>
 
@@ -124,8 +125,8 @@ export function CharacterRoster({
           </div>
         </div>
 
-        {/* Speech Bubble Text */}
-        <div className="flex-1 space-y-1">
+        {/* Speech Bubble Text with Smooth Keyed Emergence */}
+        <div key={activeChar.id} className="flex-1 space-y-1 animate-emerge-up" style={{ animationDuration: '0.35s' }}>
           <div className="hidden sm:flex items-center gap-2">
             <span
               className="text-sm font-bold text-white"

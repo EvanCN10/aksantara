@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { Landmark, User, Sparkles } from 'lucide-react';
 import {
   GURU_PROFILE,
   GLIF_KRITIS_DATA,
@@ -12,29 +14,15 @@ import { GuruHero } from '@/components/dashboard/guru-hero';
 import { TrinitasMasteryCard } from '@/components/dashboard/trinitas-mastery-card';
 import { RemedialAlertPanel } from '@/components/dashboard/remedial-alert-panel';
 import { StudentRosterTable } from '@/components/dashboard/student-roster-table';
+import { playSuccessGamelan } from '@/lib/audio/sound-effects';
 
 export default function GuruDashboardPage() {
   const [selectedPeriode, setSelectedPeriode] = useState('semester');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Audio chime feedback
+  // Acoustic chime feedback
   const playChime = () => {
-    try {
-      const audioCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-      osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
-      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.35);
-    } catch {
-      // Audio not supported or blocked
-    }
+    playSuccessGamelan();
   };
 
   const triggerToast = (msg: string) => {
@@ -47,22 +35,47 @@ export default function GuruDashboardPage() {
 
   // Action handlers
   const handleExportCsv = () => {
-    // TODO: BACKEND INTEGRATION - Connect to Supabase to export real gradebook CSV
-    const csvContent =
-      'data:text/csv;charset=utf-8,ID,NISN,Nama,Gelar,Akurasi_AI,Sesi_Hardware,Epos_Bintang,Preservasi,Status\n' +
-      DAFTAR_SISWA_ROSTER.map(
-        (s) =>
-          `${s.id},${s.nisn},"${s.nama}","${s.gelarBudaya}",${s.akurasiMenulis}%,${s.sesiHardware},${s.eposBintang}/9,${s.usulanPreservasi},"${s.statusAktivitas}"`
-      ).join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `Rekap_Nilai_Aksantara_${GURU_PROFILE.namaKelas.replace(/\s+/g, '_')}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      const headers = [
+        'ID',
+        'NISN',
+        'Nama Siswa',
+        'Gelar Budaya',
+        'Akurasi Menulis AI',
+        'Sesi Hardware',
+        'Epos Bintang',
+        'Preservasi Manuskrip',
+        'Status',
+      ];
+      const rows = DAFTAR_SISWA_ROSTER.map((s) => [
+        s.id,
+        s.nisn,
+        `"${s.nama.replace(/"/g, '""')}"`,
+        `"${s.gelarBudaya.replace(/"/g, '""')}"`,
+        `"${s.akurasiMenulis}%"`,
+        s.sesiHardware,
+        `"${s.eposBintang}/9"`,
+        s.usulanPreservasi,
+        `"${s.statusAktivitas}"`,
+      ]);
 
-    triggerToast('Rekap Nilai Siswa (.CSV) berhasil diunduh ke perangkat Anda!');
+      const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\r\n');
+      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const cleanClassName = GURU_PROFILE.namaKelas.replace(/[^a-zA-Z0-9_-]/g, '_');
+      link.setAttribute('download', `Rekap_Nilai_Aksantara_${cleanClassName}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+      triggerToast('Rekap Nilai Siswa (.CSV) berhasil diunduh ke perangkat Anda!');
+    } catch (err) {
+      console.error('Gagal mengekspor CSV:', err);
+      triggerToast('Gagal mengekspor rekap nilai. Silakan coba lagi.');
+    }
   };
 
   const handleTugaskanLatihan = () => {
@@ -78,7 +91,22 @@ export default function GuruDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060d16] text-white flex flex-col selection:bg-[#ffd261] selection:text-[#0c1a2c]">
+    <div className="min-h-screen text-white flex flex-col selection:bg-[#ffd261] selection:text-[#0c1a2c] relative">
+      {/* Visual Thematic Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#060d16]" aria-hidden="true">
+        <Image
+          src="/images/ui/backgrounds/bg-dashboard-guru.webp"
+          alt="Balairung Guru Pamomong"
+          fill
+          priority={true}
+          quality={90}
+          sizes="100vw"
+          className="object-cover object-center filter brightness-[0.45] contrast-[1.05] saturate-[1.05]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060d16] via-[#060d16]/75 to-[#060d16]/45" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(6,13,22,0.75)_100%)]" />
+      </div>
+
       {/* Top Navbar Header */}
       <header className="border-b border-white/10 bg-[#0c1a2c]/80 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -92,7 +120,7 @@ export default function GuruDashboardPage() {
             </Link>
             <span className="text-white/20">|</span>
             <div className="flex items-center gap-2">
-              <span className="text-lg">🏛️</span>
+              <Landmark className="w-5 h-5 text-[#ffd261]" />
               <span className="font-serif font-bold text-sm md:text-base text-white tracking-wide">
                 Pusat Kendali Pengampu & Analitik Budaya
               </span>
@@ -111,7 +139,7 @@ export default function GuruDashboardPage() {
               href="/profil"
               className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-[#ffd261] bg-[#ffd261]/10 hover:bg-[#ffd261]/20 border border-[#ffd261]/30 transition flex items-center gap-1.5"
             >
-              <span>👤</span>
+              <User className="w-4 h-4" />
               <span>Profil Pengampu</span>
             </Link>
           </div>
@@ -122,9 +150,9 @@ export default function GuruDashboardPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
         {/* Toast Floating Notification */}
         {toastMessage && (
-          <div className="fixed bottom-6 right-6 z-50 animate-bounce">
-            <div className="bg-[#0c1a2c] text-[#ffd261] border-2 border-[#ffd261]/80 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md">
-              <span className="text-xl">✨</span>
+          <div className="fixed bottom-6 right-6 z-50 animate-toast-slide-in">
+            <div className="bg-[#0c1a2c]/95 text-[#ffd261] border border-[#ffd261]/80 px-5 py-3.5 rounded-2xl shadow-[0_12px_36px_rgba(0,0,0,0.8),0_0_24px_rgba(255,210,97,0.25)] flex items-center gap-3 backdrop-blur-xl">
+              <Sparkles className="w-5 h-5 text-[#ffd261] shrink-0" />
               <span className="text-sm font-semibold text-white">{toastMessage}</span>
             </div>
           </div>
@@ -158,7 +186,7 @@ export default function GuruDashboardPage() {
 
       {/* Footer */}
       <footer className="border-t border-white/10 bg-[#060d16] py-6 text-center text-xs text-white/40">
-        <p>Aksantara Trinitas © 2026 — Sistem Evaluasi & Analitik Terpadu Guru Kebudayaan Nusantara</p>
+        <p>Aksantara Trinitas © 2026 - Sistem Evaluasi & Analitik Terpadu Guru Kebudayaan Nusantara</p>
       </footer>
     </div>
   );

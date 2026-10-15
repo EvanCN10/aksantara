@@ -121,7 +121,7 @@ function HasilLatihanContent() {
   }, [trainedGlifs]);
 
   const handleCopyCard = () => {
-    const text = `🏆 Aksantara - Sesi Belajar Paripurna!\nSaya telah menuntaskan latihan menulis ${dataAksara.nama} (${dataAksara.aksaraAsli}) dengan akurasi rata-rata ${avgAccuracy}% dan memperoleh +${totalXp} XP!\nMari lestarikan Trinitas Aksara Nusantara bersama Aksantara.`;
+    const text = `[Aksantara] Sesi Belajar Paripurna!\nSaya telah menuntaskan latihan menulis ${dataAksara.nama} (${dataAksara.aksaraAsli}) dengan akurasi rata-rata ${avgAccuracy}% dan memperoleh +${totalXp} XP!\nMari lestarikan Trinitas Aksara Nusantara bersama Aksantara.`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -179,6 +179,7 @@ function HasilLatihanContent() {
           </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <SessionMetricCard
+              index={0}
               label="Akurasi Rata-rata"
               value={`${avgAccuracy}%`}
               sublabel="Taraf Presisi Paleografi"
@@ -188,6 +189,7 @@ function HasilLatihanContent() {
             />
 
             <SessionMetricCard
+              index={1}
               label="XP Diperoleh"
               value={`+${totalXp}`}
               sublabel="Termasuk Bonus Sesi Selesai"
@@ -195,6 +197,7 @@ function HasilLatihanContent() {
             />
 
             <SessionMetricCard
+              index={2}
               label="Karakter Dituntaskan"
               value={`${trainedGlifs.length} Glif`}
               sublabel="Seluruh Target Terlatih"
@@ -202,6 +205,7 @@ function HasilLatihanContent() {
             />
 
             <SessionMetricCard
+              index={3}
               label="Durasi Latihan"
               value="3m 48s"
               sublabel="Irama Goresan Tenang"
@@ -233,9 +237,10 @@ function HasilLatihanContent() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            {trainedGlifs.map((item) => (
+            {trainedGlifs.map((item, idx) => (
               <GlyphScoreCard
                 key={item.slug}
+                index={idx}
                 aksaraId={aksaraKey}
                 slug={item.slug}
                 simbol={item.simbol}

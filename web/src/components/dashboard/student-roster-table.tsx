@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { Search, Sliders, Star, Scroll } from 'lucide-react';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { SiswaRosterItem } from '@/data/guru/guru-data';
 
@@ -49,8 +50,8 @@ export const StudentRosterTable: React.FC<StudentRosterTableProps> = ({
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           {/* Search Box */}
           <div className="relative">
-            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40 text-sm">
-              🔍
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40">
+              <Search className="w-4 h-4" />
             </span>
             <input
               type="text"
@@ -115,7 +116,7 @@ export const StudentRosterTable: React.FC<StudentRosterTableProps> = ({
             {filteredList.length === 0 ? (
               <tr>
                 <td colSpan={7} className="py-12 text-center text-white/50">
-                  <div className="text-3xl mb-2">🔍</div>
+                  <Search className="w-8 h-8 text-white/40 mx-auto mb-2" />
                   <p className="font-medium text-white/70">Tidak ada siswa yang sesuai kriteria pencarian</p>
                   <p className="text-xs text-white/40 mt-1">Coba gunakan kata kunci lain atau ubah filter tab.</p>
                 </td>
@@ -129,7 +130,7 @@ export const StudentRosterTable: React.FC<StudentRosterTableProps> = ({
                   {/* Siswa */}
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition">
+                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-bold text-xs text-[#ffd261] shrink-0 group-hover:scale-105 transition">
                         {siswa.avatar}
                       </div>
                       <div>
@@ -183,7 +184,7 @@ export const StudentRosterTable: React.FC<StudentRosterTableProps> = ({
                   {/* Hardware */}
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-1.5 font-medium text-white/90">
-                      <span className="text-purple-400">🎛️</span>
+                      <Sliders className="w-3.5 h-3.5 text-purple-400 shrink-0" />
                       <span className="font-mono">{siswa.sesiHardware}</span>
                       <span className="text-[10px] text-white/40">Sesi</span>
                     </div>
@@ -192,7 +193,7 @@ export const StudentRosterTable: React.FC<StudentRosterTableProps> = ({
                   {/* Epos Cerita */}
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-amber-400">★</span>
+                      <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400 shrink-0" />
                       <span className="font-mono text-white/90 font-medium">
                         {siswa.eposBintang}/9
                       </span>
@@ -203,7 +204,7 @@ export const StudentRosterTable: React.FC<StudentRosterTableProps> = ({
                   {/* Preservasi */}
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-emerald-400">📜</span>
+                      <Scroll className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       <span className="font-mono text-white/90 font-medium">
                         {siswa.usulanPreservasi}
                       </span>

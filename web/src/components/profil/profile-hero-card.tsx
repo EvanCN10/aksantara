@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { Edit3 } from 'lucide-react';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import type { SiswaProfile } from '@/data/profil/profil-data';
 
@@ -37,8 +39,18 @@ export function ProfileHeroCard({ profile, onUpdateName }: ProfileHeroCardProps)
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 text-center sm:text-left">
           {/* Avatar Container with Level Badge */}
           <div className="relative shrink-0">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-[#ffd261]/20 via-[#101826] to-black border-2 border-[#ffd261]/50 flex items-center justify-center text-4xl sm:text-5xl shadow-[0_0_30px_rgba(255,210,97,0.25)]">
-              {profile.avatar}
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-[#ffd261]/20 via-[#101826] to-black border-2 border-[#ffd261]/50 flex items-center justify-center text-4xl sm:text-5xl shadow-[0_0_30px_rgba(255,210,97,0.25)] overflow-hidden">
+              {profile.avatarUrl ? (
+                <Image
+                  src={profile.avatarUrl}
+                  alt={profile.nama}
+                  width={96}
+                  height={96}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                profile.avatar
+              )}
             </div>
             <span className="absolute -bottom-2 -right-1 px-2.5 py-0.5 rounded-full bg-[#ffd261] text-[#0c1a2c] text-[10px] font-mono font-bold shadow-md">
               LV {profile.level}
@@ -90,7 +102,7 @@ export function ProfileHeroCard({ profile, onUpdateName }: ProfileHeroCardProps)
                   className="text-xs text-white/40 hover:text-[#ffd261] transition-colors cursor-pointer"
                   title="Ubah Nama"
                 >
-                  ✎
+                  <Edit3 className="w-3.5 h-3.5" />
                 </button>
               </div>
             )}

@@ -1,7 +1,7 @@
-# AKSANTARA — Single Source of Truth (SSOT v3.1)
+﻿# AKSANTARA - Single Source of Truth (SSOT v3.1)
 ### Multi-Modal AI Classifier & Phygital Platform Pelestarian Aksara Nusantara
-> **Kompetisi:** Hackathon JOINTS UGM 2026 — **Tema: Education**  
-> **Status:** Versi 3.1 — penghapusan referensi fitur multiplayer yang tidak terdefinisi | Diperbarui: 10 Oktober 2026  
+> **Kompetisi:** Hackathon JOINTS UGM 2026 - **Tema: Education**  
+> **Status:** Versi 3.1 - penghapusan referensi fitur multiplayer yang tidak terdefinisi | Diperbarui: 10 Oktober 2026  
 > **Sifat Dokumen:** **Satu-satunya rujukan resmi tim.** Scope penuh: 4 Pilar × 2 Mode + Gamified Narrative & Tangible IoT Layer, dikonsolidasi penuh pada **Trinitas Aksara Nusantara (Lontara, Sunda, Bali)**. Prioritas utama: kesesuaian arsitektur-dataset-algoritma, validasi teknis/akademis, unifikasi dataset, dan konsistensi klaim vs kode (Bagian 12).
 
 ---
@@ -11,7 +11,7 @@
 | Parameter | Spesifikasi |
 |---|---|
 | **Nama Proyek** | **Aksantara** *(Aksara Nusantara Berdaya di Era Digital & Fisik)* |
-| **Deskripsi Formal** | Platform edukasi multi-modal berbasis AI klasifikasi dan perangkat kinestetik (Phygital) untuk melatih, mengevaluasi, dan merevitalisasi aksara daerah Nusantara — mendukung latihan digital (Web Mode via AI Canvas) maupun media sensorik fisik (Hardware Mode via Aksantara Tactile Pad), terintegrasi dengan Narrative Story Mode berbasis cerita rakyat dan jembatan pelestarian manuskrip kuno. |
+| **Deskripsi Formal** | Platform edukasi multi-modal berbasis AI klasifikasi dan perangkat kinestetik (Phygital) untuk melatih, mengevaluasi, dan merevitalisasi aksara daerah Nusantara - mendukung latihan digital (Web Mode via AI Canvas) maupun media sensorik fisik (Hardware Mode via Aksantara Tactile Pad), terintegrasi dengan Narrative Story Mode berbasis cerita rakyat dan jembatan pelestarian manuskrip kuno. |
 | **Tema Lomba** | **Education** (revitalisasi literasi aksara daerah melalui pendekatan digital AI dan perangkat fisik kinestetik) |
 | **Masalah Inti** | Indonesia memiliki >700 bahasa dan puluhan aksara daerah, namun generasi muda mengalami krisis literasi aksara non-Latin. Riset UGM (2026) mencatat aksara Nusantara berisiko punah karena metode ajar yang membosankan, minimnya alat peraga interaktif di sekolah, dan pendekatan digital yang kaku. Aksantara mengunci fokus implementasi pada **Trinitas Aksara Nusantara (Lontara, Sunda, Bali)** sebagai representasi paleografi Indonesia. |
 | **Solusi Inti** | Platform berbasis **4 Pilar AI** lewat **2 Mode Penggunaan**: **Web Mode** (latihan digital responsif via Universal Web Canvas & AI Shape/Topology Classifier fine-tuned dari benchmark NusaAksara) dan **Hardware Mode / Aksantara Tactile Pad** (perangkat IoT kinestetik multi-slot NFC/RFID untuk mini game susun aksara fisik), diperkaya **Narrative Story Mode (Pilar 3)** berbasis cerita rakyat dengan branching roleplay lokal, serta **Human-in-the-Loop Digitalisasi Manuskrip (Pilar 4)**. |
@@ -36,26 +36,26 @@
 
 ### 2.1 Deliverables yang Wajib Diserahkan
 
-1. **Proposal (PDF, maks. 10 halaman)** — *Opsional*
-2. **Video Demo** — *Wajib.* Maksimal 2 menit, diunggah ke YouTube, status **Public**
-3. **Source Code (GitHub Repository)** — *Wajib*
-4. **Pitch Deck (PDF)** — *Wajib*
-5. **Prototype/Mockup** (mockup UI/UX, prototype interaktif web & hardware) — *Wajib*
+1. **Proposal (PDF, maks. 10 halaman)** - *Opsional*
+2. **Video Demo** - *Wajib.* Maksimal 2 menit, diunggah ke YouTube, status **Public**
+3. **Source Code (GitHub Repository)** - *Wajib*
+4. **Pitch Deck (PDF)** - *Wajib*
+5. **Prototype/Mockup** (mockup UI/UX, prototype interaktif web & hardware) - *Wajib*
 
 ### 2.2 Tahapan Mekanisme Lomba
 
-- **Tahap 1 — Registrasi:** kelengkapan dokumen administrasi
-- **Tahap 2 — Pengumpulan:** 5 deliverable di atas (Deadline 16 Okt 2026)
-- **Tahap 3 — Penyisihan:** kurasi & seleksi finalis oleh juri
-- **Tahap 4 — Grand Final:** Pitching (~10–12 menit) → Q&A (~5–8 menit) → Transisi (~3 menit) → Scoring (~2 menit)
+- **Tahap 1 - Registrasi:** kelengkapan dokumen administrasi
+- **Tahap 2 - Pengumpulan:** 5 deliverable di atas (Deadline 16 Okt 2026)
+- **Tahap 3 - Penyisihan:** kurasi & seleksi finalis oleh juri
+- **Tahap 4 - Grand Final:** Pitching (~10–12 menit) → Q&A (~5–8 menit) → Transisi (~3 menit) → Scoring (~2 menit)
 
 ### 2.3 Bobot Penilaian Juri (100% Total)
 
-- **Implementasi Teknis — 30%** *(bobot tertinggi)*: akurasi dan latensi model klasifikasi AI pada citra canvas, komunikasi hardware via Web Serial API, arsitektur hybrid state machine, dan kebersihan source code.
-- **Inovasi Solusi — 25%**: diferensiasi defensible melalui Phygital Tangible Learning, unifikasi model multimodal, dan eksplorasi Trinitas Aksara Nusantara.
-- **Fungsionalitas & Desain — 20%**: UX intuitif, latensi rendah (<50ms feedback), universalitas input canvas (stylus/touch/mouse), zero-friction access.
-- **Dampak & Kelayakan — 15%**: relevansi kurikulum muatan lokal, efektivitas pedagogi kinestetik anak SD, kelayakan model pengadaan BOS/SIPLah dan HaaS B2G.
-- **Presentasi & Demonstrasi — 10%**: video demo ringkas ≤120 detik, demo live tahan banting tanpa ketergantungan koneksi internet rapuh.
+- **Implementasi Teknis - 30%** *(bobot tertinggi)*: akurasi dan latensi model klasifikasi AI pada citra canvas, komunikasi hardware via Web Serial API, arsitektur hybrid state machine, dan kebersihan source code.
+- **Inovasi Solusi - 25%**: diferensiasi defensible melalui Phygital Tangible Learning, unifikasi model multimodal, dan eksplorasi Trinitas Aksara Nusantara.
+- **Fungsionalitas & Desain - 20%**: UX intuitif, latensi rendah (<50ms feedback), universalitas input canvas (stylus/touch/mouse), zero-friction access.
+- **Dampak & Kelayakan - 15%**: relevansi kurikulum muatan lokal, efektivitas pedagogi kinestetik anak SD, kelayakan model pengadaan BOS/SIPLah dan HaaS B2G.
+- **Presentasi & Demonstrasi - 10%**: video demo ringkas ≤120 detik, demo live tahan banting tanpa ketergantungan koneksi internet rapuh.
 
 ### 2.4 Narasi Inovasi yang Defensible (vs Kompetitor Nyata)
 
@@ -74,10 +74,10 @@ Dengan mengeliminasi kebutuhan DTW urutan temporal, Aksantara mencapai **unifika
 
 | Komponen | Jenis Data yang Dibutuhkan | Dataset yang Dipakai |
 |---|---|---|
-| **Pilar 1 — Web Canvas AI Classifier** | Citra statis binarized/grayscale per karakter aksara | **NusaAksara** (fine-tuned classifier untuk Lontara, Sunda, dan Bali) + Data augmentasi canvas sintetis. |
-| **Pilar 2 — Katalog & Font Referensi** | Citra statis karakter aksara & Unicode glyph | **NusaAksara** + Google Noto Sans (Buginese, Sundanese, Balinese). |
-| **Hardware Mode — Tactile Pad Cards** | Pemetaan UID NFC tag ke fonetik & karakter Unicode | Matriks Pemetaan Konfigurasi Lokal (JSON mapping kartu fisik ke aksara). |
-| **Pilar 4 — OCR/Transliterasi Manuskrip** | Citra naskah kuno beranotasi | **NusaAksara** + **dataset manuskrip Mendeley/BINUS** (British Library EAP). |
+| **Pilar 1 - Web Canvas AI Classifier** | Citra statis binarized/grayscale per karakter aksara | **NusaAksara** (fine-tuned classifier untuk Lontara, Sunda, dan Bali) + Data augmentasi canvas sintetis. |
+| **Pilar 2 - Katalog & Font Referensi** | Citra statis karakter aksara & Unicode glyph | **NusaAksara** + Google Noto Sans (Buginese, Sundanese, Balinese). |
+| **Hardware Mode - Tactile Pad Cards** | Pemetaan UID NFC tag ke fonetik & karakter Unicode | Matriks Pemetaan Konfigurasi Lokal (JSON mapping kartu fisik ke aksara). |
+| **Pilar 4 - OCR/Transliterasi Manuskrip** | Citra naskah kuno beranotasi | **NusaAksara** + **dataset manuskrip Mendeley/BINUS** (British Library EAP). |
 
 **Jawaban defensif untuk juri:**
 > *"Kami mengadopsi prinsip efisiensi rekayasa model AI. Karena aksara daerah dinilai berdasarkan keutuhan bentuk fonetis dan bukan urutan goresan, kami menstandarisasi seluruh pipeline AI menggunakan benchmark akademis NusaAksara (ACL 2025). Baik core canvas evaluator di Web Mode maupun model transliterasi naskah kuno di Pilar 4 memanfaatkan fondasi model visi komputer yang sama, sehingga hemat komputasi dan konsisten."*
@@ -108,7 +108,7 @@ Dengan mengeliminasi kebutuhan DTW urutan temporal, Aksantara mencapai **unifika
 
 ## 4. Arsitektur Teknis & Alur Data
 
-### 4.1 Web Mode: Universal Web Canvas & AI Classifier — Diagram Alur (Mermaid)
+### 4.1 Web Mode: Universal Web Canvas & AI Classifier - Diagram Alur (Mermaid)
 
 ```mermaid
 flowchart TD
@@ -125,7 +125,7 @@ flowchart TD
     J --> K["Mini Game / Story Branching Reaction"]
 ```
 
-### 4.2 Hardware Mode: Aksantara Tactile Pad (IoT Kinestetik) — Diagram Alur (Mermaid)
+### 4.2 Hardware Mode: Aksantara Tactile Pad (IoT Kinestetik) - Diagram Alur (Mermaid)
 
 ```mermaid
 flowchart TD
@@ -157,7 +157,7 @@ flowchart TD
     J --> K
 ```
 
-### 4.4 Pilar 4 — Digitalisasi Naskah Kuno (Mermaid)
+### 4.4 Pilar 4 - Digitalisasi Naskah Kuno (Mermaid)
 
 ```mermaid
 flowchart TD
@@ -208,7 +208,7 @@ flowchart TD
 | **Skenario Pemakaian** | Latihan harian mandiri di rumah atau gawai siswa | Pembelajaran aktif di kelas, sanggar seni, atau meja belajar anak |
 | **Nilai Pedagogis** | Kemandirian belajar, umpan balik visual instan | Mencegah kecanduan layar (*screen fatigue*), tactile sensory Montessori |
 
-### 5.3 Pilar 3 — Gamified Engagement Layer Detail
+### 5.3 Pilar 3 - Gamified Engagement Layer Detail
 
 #### 5.3.1 Narrative Story Mode (Hybrid Folklore Adventure)
 - **Kisah Nusantara yang Diadaptasi:**
@@ -293,28 +293,28 @@ flowchart LR
     F3 --> F4["FASE 4 (16 Okt)\nFinalisasi & Submission\n• Rekam & edit Video Demo YouTube ≤120s\n• Finalisasi Pitch Deck PDF\n• Dokumentasi README repositori publik\n• Submit seluruh berkas sebelum 23.59 WIB"]
 ```
 
-### 9.1 Checklist Fase 1 — Fondasi & Model AI (10–11 Oktober)
+### 9.1 Checklist Fase 1 - Fondasi & Model AI (10–11 Oktober)
 - [ ] Inisialisasi repositori Next.js 16 + Tailwind CSS v4
 - [ ] Unduh dan siapkan subset data Lontara, Sunda, dan Bali dari benchmark NusaAksara (ACL 2025)
 - [ ] Setup pipeline inferensi model klasifikasi citra aksara (ONNX Web / FastAPI endpoint)
 - [ ] Uji coba komunikasi ESP32 RC522 ke browser via Web Serial API (baca UID tag NFC langsung di console web)
 - [ ] Verifikasi keterbacaan font web Google Noto Sans (Buginese, Sundanese, Balinese)
 
-### 9.2 Checklist Fase 2 — Core Web Canvas & Phygital Minigame (12–13 Oktober)
+### 9.2 Checklist Fase 2 - Core Web Canvas & Phygital Minigame (12–13 Oktober)
 - [ ] Implementasi komponen Universal Web Canvas dengan listener `PointerEvent` yang responsif
 - [ ] Implementasi fungsi normalisasi canvas: crop bounding box, resize, dan konversi ke tensor model
 - [ ] Integrasi scoring: pencocokan Top-1 class vs target aksara + confidence score
 - [ ] Implementasi listener Web Serial API pada game component untuk menerima event kartu fisik
 - [ ] Pembuatan mini game "Ramu Mantra / Susun Kata" yang merespon input kartu fisik dan canvas
 
-### 9.3 Checklist Fase 3 — Narrative Mode & Modul Pendukung (14–15 Oktober)
+### 9.3 Checklist Fase 3 - Narrative Mode & Modul Pendukung (14–15 Oktober)
 - [ ] Implementasi 3 alur cerita interaktif lokal (Sawerigading, Lutung Kasarung, Calon Arang) dalam format JSON state graph
 - [ ] Integrasi event trigger tantangan di sela cerita (menulis aksara atau menempelkan kartu aksara)
 - [ ] Antarmuka modul koreksi naskah kuno manuskrip Pilar 4
 - [ ] Dashboard Guru sederhana untuk melihat riwayat latihan siswa
 - [ ] Deployment aplikasi web ke Vercel (HTTPS aktif untuk Web Serial API)
 
-### 9.4 Checklist Fase 4 — Submission & Finalisasi (16 Oktober)
+### 9.4 Checklist Fase 4 - Submission & Finalisasi (16 Oktober)
 - [ ] Pengujian menyeluruh sistem (Web Canvas + Tactile Pad IoT)
 - [ ] Perekaman dan produksi Video Demo 120 detik (unggah ke YouTube dengan status Public)
 - [ ] Penyusunan Pitch Deck PDF (fokus pada arsitektur teknis, pedagogi phygital, dan model bisnis realistis)
