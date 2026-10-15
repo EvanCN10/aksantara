@@ -2,7 +2,7 @@
 ### Handover Guide untuk AI Engineer & Embedded Hardware Engineer
 > **Kompetisi:** Hackathon JOINTS UGM 2026 - Tema: Education  
 > **Target:** Grand Final FMIPA UGM (1 November 2026)  
-> **Status Frontend & Web Engine:** 100% Siap Terintegrasi (*Production Ready*)
+> **Status AI Canvas:** Eksperimen privat dengan specialist FP32 ONNX lokal; perlu review manusia, bukan penilaian kualitas tulisan atau kesiapan produksi.
 
 ---
 
@@ -45,7 +45,7 @@ Seluruh kontrak interface dan endpoint AI telah disiapkan di lapisan Next.js. An
 
 ### A. Pilar 1: Model Klasifikasi Goresan Kanvas (ONNX Web / API)
 
-#### Opsi 1: On-Device ONNX Web (Rekomendasi Utama - Zero Latency <50ms & Bebas Kuota API)
+#### Opsi 1: On-Device ONNX Web (Rekomendasi Utama — Zero Latency <50ms & Bebas Kuota API)
 1. Export model CNN / MobileNet / ResNet fine-tuned NusaAksara Anda ke format ONNX:
    - Format file: `nusaaksara_trinitas.onnx`
    - Letakkan di: `web/public/models/nusaaksara_trinitas.onnx`
@@ -60,37 +60,62 @@ Seluruh kontrak interface dan endpoint AI telah disiapkan di lapisan Next.js. An
 Jika model dijalankan pada server microservice Python:
 1. Tambahkan URL server Anda di `web/.env.local`:
    ```env
-   NEXT_PUBLIC_AI_CLASSIFIER_URL=http://localhost:8000
+   AI_CLASSIFIER_URL=http://127.0.0.1:8000
    ```
-2. Frontend secara otomatis meneruskan snapshot citra canvas dan data koordinat tarikan kuas ke API Route Next.js di `/api/ai/classify`.
-3. **Format Request Payload POST `/api/ai/classify`:**
-   ```json
-   {
-     "aksaraId": "sunda",
-     "karakterSlug": "ka",
-     "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
-     "strokes": [
-       [{"x": 120, "y": 80}, {"x": 125, "y": 95}, {"x": 130, "y": 120}],
-       [{"x": 90, "y": 100}, {"x": 140, "y": 100}]
-     ]
-   }
+   Jangan memakai `NEXT_PUBLIC_AI_CLASSIFIER_URL`; browser tidak berkomunikasi langsung dengan Python.
+3. `evaluateGlyph` memanggil POST `/api/ai/classify`. Next.js memvalidasi JSON dan PNG lalu meneruskan POST `/predict`. Batas waktu layanan 30 detik memungkinkan pemuatan model dingin; bukan klaim latensi tercapai.
+4. Model tetap di server lokal, bukan `web/public/models`. Tanpa internet, layanan lokal dan aset yang tersedia dapat digunakan. Jika layanan/aset tidak tersedia, UI menampilkan error; tidak ada skor acak, heuristic, atau keberhasilan palsu.
+
+   Jalankan dari root repositori (bukan folder `web/`):
+   ```bash
+   python -m pip install -r ai/deployment/requirements.txt
+   python -m uvicorn ai.deployment.server:app --host 127.0.0.1 --port 8000
    ```
-4. **Format Response JSON yang Diharapkan:**
-   ```json
-   {
-     "score": 94,
-     "status": "sempurna",
-     "predictedSymbol": "KA",
-     "confidence": 0.94,
-     "latencyMs": 35,
-     "ringkasan": "Bentuk konsonan Ka proporsional.",
-     "kriteria": [
-       { "label": "Akurasi Geometri Bentuk", "lulus": true, "catatan": "Sudut presisi" },
-       { "label": "Keseimbangan & Kontinuitas Tarikan", "lulus": true, "catatan": "2 tarikan stabil" },
-       { "label": "Verifikasi Vokalisasi / Diakritik", "lulus": true, "catatan": "Konsonan dasar murni" }
-     ]
-   }
-   ```
+   GET `http://127.0.0.1:8000/health` mengembalikan 200 hanya setelah aset ketiga specialist tervalidasi dan graph CPU siap; jika tidak, readiness 503. Jalankan Next.js di terminal terpisah.
+
+#### Citra & Tensor
+
+- Snapshot hanya memuat tinta kanvas, tanpa overlay referensi/grid dari DOM. Ekspor menghasilkan tinta hitam di atas putih, mempertahankan siluet alpha dan rasio aspek; sisi maksimum 1024 piksel untuk membatasi snapshot HiDPI.
+- Python memakai **`ai/preprocess.py` → `preprocess_image(image, 128)`**: crop seluruh komponen foreground (bukan komponen terbesar saja), grayscale 128 dan tensor float32 CHW; hasil kosong ditolak. Tidak ada preprocessing tensor alternatif di browser.
+- Tensor ONNX **NCHW `[1, 3, 128, 128]`**, input `input`, output `logits`. Normalisasi ImageNet per kanal: mean `[0.485, 0.456, 0.406]`, std `[0.229, 0.224, 0.225]`, setelah pembagian intensitas dengan 255.
+- Urutan goresan diabaikan. Ini classifier karakter; benchmark baris NusaAksara bukan mapping karakter otomatis, dan classifier ini bukan validator topologi.
+
+#### Request POST `/api/ai/classify` → Python `/predict`
+
+```typescript
+{
+  aksaraId: 'sunda' | 'lontara' | 'bali';
+  karakterSlug: string; // 1–128 karakter; pencocokan label persis, case-insensitive
+  image: string; // PNG data URL, maks. 4 MiB decoded
+  strokes?: unknown; // Diabaikan; tidak memengaruhi prediksi
+  canvasWidth?: number; // Jika ada: finite, positif, <=2048
+  canvasHeight?: number;
+}
+```
+
+Batas PNG: data URL maksimal 5.592.430 karakter, setiap sisi maksimal 2048, maksimal 1.048.576 piksel. Proxy membatasi request JSON 6 MiB dan response JSON layanan 64 KiB. PNG rusak atau kanvas kosong menghasilkan HTTP 400; request tidak valid 422; aset/layanan tidak tersedia atau response backend tidak sesuai kontrak 503. Semua error memakai `{ error: string }` dan terlihat di UI.
+
+#### Response Klasifikasi (Bukan Nilai Tulisan)
+
+```typescript
+{
+  score: number;
+  status: 'perlu_review';
+  predictedSymbol: string; // source_label mentah, bukan Unicode terverifikasi
+  confidence: number; // probabilitas softmax top-1, 0..1
+  latencyMs: number; // latensi aktual layanan Python, bukan end-to-end browser
+  ringkasan: string; // penjelasan klasifikasi dalam bahasa Indonesia
+  kriteria: []; // Tidak ada klaim geometri atau diakritik
+  modelSource: 'onnx_backend';
+  targetSupported: boolean;
+  probabilitiesCalibrated: false;
+  mappingVerified: false;
+  modelId: string; // SHA256 model
+  top3: Array<{ labelId: string; sourceLabel: string; probability: number }>;
+}
+```
+
+`score` adalah persentase probabilitas label target **hanya jika ada satu label sumber yang sama persis secara case-insensitive** dengan slug. Jika target tidak didukung/ambigu, `score` adalah persentase probabilitas top-1 dan `targetSupported: false`; klasifikasi tetap nyata, tanpa mapping rekaan. Label seperti `Ke` dan `Ke_` tidak disamakan. UI memperlihatkan top-3 label sumber mentah, probabilitas, status perlu review, dan peringatan target tidak didukung. Hasil ini **tidak disimpan sebagai mastery, XP, atau keberhasilan progres latihan**. Probabilitas belum terkalibrasi, mapping Unicode belum terverifikasi, izin rilis publik belum diselesaikan; tidak mengklaim kualitas tulisan, validasi diakritik, kesiapan produksi, atau target latensi tercapai.
 
 ### B. Pilar 3: Variasi Dialog Cerita Berbasis Persona LLM (Gemini API)
 1. Endpoint: `web/src/app/api/ai/story-enrich/route.ts`
@@ -222,5 +247,5 @@ void loop() {
 - [x] Rute 16 halaman web lulus kompilasi 100% tanpa error TypeScript (`next build` sukses).
 - [x] Seluruh alur 3 Epos Cerita Rakyat (*Sawerigading*, *Lutung Kasarung*, *Calon Arang*) dapat dimainkan hingga selesai.
 - [x] Web Serial reader aktif membaca port USB pada 115200 baud.
-- [x] Kontrak API AI `/api/ai/classify`, `/api/ai/story-enrich`, dan `/api/ai/transcribe-manuscript` aktif.
-- [x] Zero-failure presentation resilient: jika hardware belum dicolok atau offline, mode simulasi dan fallback lokal langsung aktif.
+- [ ] Verifikasi classifier privat `/api/ai/classify` dengan ketiga specialist, kasus target tidak didukung, PNG kosong/rusak, dan layanan dimatikan; UI harus menampilkan perlu review atau error, tanpa keberhasilan palsu.
+- [x] Mode simulasi hardware dan alur cerita lokal tetap terpisah dari classifier. AI canvas memerlukan layanan lokal aktif dan tidak mempunyai fallback penilaian.

@@ -1,8 +1,3 @@
-# ==========================================
-# Aksantara Monorepo .gitignore
-# Hackathon JOINTS UGM 2026
-# ==========================================
-
 # --- Node.js & Next.js ---
 node_modules/
 .next/
@@ -42,6 +37,8 @@ build/
 develop-eggs/
 dist/
 downloads/
+docs/USAGE.*
+extracted/*
 eggs/
 .eggs/
 /ai/lib/
@@ -64,10 +61,14 @@ htmlcov/
 *.pt
 *.bin
 *.onnx
+# Selected FP32 deployment candidates; each file is below 50 MiB.
+!/ai/deployment/models/sunda/model.onnx
+!/ai/deployment/models/lontara/model.onnx
+!/ai/deployment/models/bali/model.onnx
 *.h5
 *.tflite
 *.safetensors
-datasets/cache/
+datasets/
 
 # --- Hardware & IoT (ESP32 / PlatformIO / Arduino) ---
 .pio/
@@ -91,6 +92,25 @@ Thumbs.db
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
+
+# --- Local Assistant Configuration ---
+/.agents/
+/.omp/
+
+# Generated classifier experiments and local runtime
+/ai/runs/
+/ai/artifacts/
+/ai/notebooks/*
+!/ai/notebooks/0*.ipynb
+
+# Colab MCP session tokens and transient command mailbox
+/ai/harness/colab_bridge_state.json
+/ai/harness/colab_command.json
+/ai/harness/colab_command_result.json
+
+# Local development documentation and AI usage records
+/docs/usage.md
+/docs/USAGE.md
 
 # --- Figma Local Tooling & Automation Bridge ---
 figma-bridge/

@@ -5,16 +5,21 @@ import Link from 'next/link';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { ShinyButton } from '@/components/ui/shiny-button';
 import type { GlifData, AksaraDetail } from '@/data/aksara/trinitas';
+import type { GlyphInferenceOutput } from '@/lib/onnx/onnx-classifier';
 
 export interface EvaluationResult {
   score: number;
-  status: 'sempurna' | 'bagus' | 'kurang';
+  status: 'sempurna' | 'bagus' | 'kurang' | 'perlu_review';
   ringkasan: string;
-  kriteria: {
+  kriteria?: {
     label: string;
     lulus: boolean;
     catatan: string;
   }[];
+  predictedSymbol?: string;
+  confidence?: number;
+  latencyMs?: number;
+  modelSource?: string;
 }
 
 interface AiEvaluationPanelProps {
@@ -23,7 +28,8 @@ interface AiEvaluationPanelProps {
   nextGlif?: GlifData;
   strokeCount: number;
   isEvaluating: boolean;
-  evaluationResult: EvaluationResult | null;
+  evaluationResult: EvaluationResult | GlyphInferenceOutput | null;
+  evaluationError?: string | null;
   onEvaluate: () => void;
   onResetEvaluation: () => void;
   onPlayPronunciation?: () => void;
@@ -78,6 +84,7 @@ export function AiEvaluationPanel({
   strokeCount,
   isEvaluating,
   evaluationResult,
+  evaluationError,
   onEvaluate,
   onResetEvaluation,
   onPlayPronunciation,
@@ -190,6 +197,12 @@ export function AiEvaluationPanel({
             )}
           </div>
 
+          {evaluationError && (
+            <div className="p-3 rounded-xl bg-red-500/15 border border-red-500/30 text-xs text-red-200">
+              {evaluationError}
+            </div>
+          )}
+
           {/* STATE A: EVALUATION RESULT VIEW */}
           {evaluationResult ? (
             <div className="space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-400">
@@ -206,7 +219,9 @@ export function AiEvaluationPanel({
                       ? 'Goresan Sangat Akurat!'
                       : evaluationResult.status === 'bagus'
                       ? 'Bentuk Cukup Presisi'
-                      : 'Perlu Sedikit Perbaikan'}
+                      : evaluationResult.status === 'kurang'
+                      ? 'Perlu Sedikit Perbaikan'
+                      : 'Perlu Ditinjau'}
                   </span>
                 </div>
 
@@ -217,27 +232,48 @@ export function AiEvaluationPanel({
                 </div>
               </div>
 
-              {/* Criteria Breakdown */}
-              <div className="space-y-1.5">
-                {evaluationResult.kriteria.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="p-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-xs flex items-start gap-2"
-                  >
-                    <span
-                      className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-[10px] ${
-                        item.lulus ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'
-                      }`}
-                    >
-                      {item.lulus ? '✓' : '•'}
-                    </span>
-                    <div className="flex-1">
-                      <div className="font-semibold text-white/90">{item.label}</div>
-                      <p className="text-[11px] text-white/60 mt-0.5">{item.catatan}</p>
-                    </div>
+              {/* Top-3 predictions if available */}
+              {'top3' in evaluationResult && Array.isArray(evaluationResult.top3) && evaluationResult.top3.length > 0 && (
+                <div className="p-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-xs space-y-1.5">
+                  <div className="text-[10px] text-white/50 font-semibold uppercase tracking-wider">
+                    Prediksi Model Specialist:
                   </div>
-                ))}
-              </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {evaluationResult.top3.map((item, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/80 font-mono text-[11px]"
+                      >
+                        {item.sourceLabel}: {(item.probability * 100).toFixed(1)}%
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Criteria Breakdown */}
+              {evaluationResult.kriteria && evaluationResult.kriteria.length > 0 && (
+                <div className="space-y-1.5">
+                  {evaluationResult.kriteria.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="p-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-xs flex items-start gap-2"
+                    >
+                      <span
+                        className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-[10px] ${
+                          item.lulus ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'
+                        }`}
+                      >
+                        {item.lulus ? '✓' : '•'}
+                      </span>
+                      <div className="flex-1">
+                        <div className="font-semibold text-white/90">{item.label}</div>
+                        <p className="text-[11px] text-white/60 mt-0.5">{item.catatan}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Action Buttons: Next Character or Retry */}
               <div className="flex flex-col gap-2 pt-2">

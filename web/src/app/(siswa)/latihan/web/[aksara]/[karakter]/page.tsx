@@ -18,13 +18,8 @@ import {
   type BrushSize,
 } from '@/components/canvas/drawing-canvas';
 import { CanvasToolbar } from '@/components/canvas/canvas-toolbar';
-import {
-  AiEvaluationPanel,
-  type EvaluationResult,
-} from '@/components/canvas/ai-evaluation-panel';
-import { useAuth } from '@/context/auth-context';
-import { evaluateGlyph } from '@/lib/onnx/onnx-classifier';
-import { saveGlyphPractice } from '@/lib/supabase/progress-service';
+import { AiEvaluationPanel } from '@/components/canvas/ai-evaluation-panel';
+import { evaluateGlyph, type GlyphInferenceOutput } from '@/lib/onnx/onnx-classifier';
 
 interface LatihanCanvasPageProps {
   params: Promise<{ aksara: string; karakter: string }>;
@@ -65,7 +60,6 @@ function CompassIcon({ className = 'w-4 h-4' }: { className?: string }) {
 
 export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
   const router = useRouter();
-  const { user } = useAuth();
   const unwrappedParams = use(params);
 
   const rawAksara = unwrappedParams?.aksara?.toLowerCase() || 'lontara';
@@ -87,14 +81,20 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
   const [showGrid, setShowGrid] = useState(true);
   const [strokeCount, setStrokeCount] = useState(0);
   const [isEvaluating, setIsEvaluating] = useState(false);
-  const [evaluationResult, setEvaluationResult] = useState<EvaluationResult | null>(null);
+  const [evaluationResult, setEvaluationResult] = useState<GlyphInferenceOutput | null>(null);
+  const [evaluationError, setEvaluationError] = useState<string | null>(null);
+  const evaluationRequestRef = useRef(0);
 
   // Reset evaluation whenever character slug changes
   useEffect(() => {
+    evaluationRequestRef.current += 1;
+    setIsEvaluating(false);
     setEvaluationResult(null);
+    setEvaluationError(null);
     setStrokeCount(0);
     canvasRef.current?.clear();
-  }, [glif.slug]);
+    return () => { evaluationRequestRef.current += 1; };
+  }, [aksaraKey, glif.slug]);
 
   // Canvas Handlers
   const handleStrokeChange = useCallback((count: number) => {
@@ -104,12 +104,14 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
   const handleUndo = useCallback(() => {
     canvasRef.current?.undo();
     setEvaluationResult(null);
+    setEvaluationError(null);
   }, []);
 
   const handleClear = useCallback(() => {
     canvasRef.current?.clear();
     setStrokeCount(0);
     setEvaluationResult(null);
+    setEvaluationError(null);
   }, []);
 
   const handleToggleGhostGuide = useCallback(() => {
@@ -146,62 +148,28 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
     }
   }, []);
 
-  // ============================================================================
-  // EVALUASI AI (ONNX / API EDGE / HEURISTIC + DATABASE SYNC)
-  // ============================================================================
+  // Experimental class probabilities never award mastery, XP, or practice progress.
   const handleEvaluate = async () => {
     if (strokeCount === 0 || isEvaluating) return;
-
+    const requestId = ++evaluationRequestRef.current;
     setIsEvaluating(true);
-
+    setEvaluationResult(null);
+    setEvaluationError(null);
     try {
-      const canvasImageBase64 = canvasRef.current?.getCanvasBase64();
-      const strokePoints = canvasRef.current?.getStrokes();
-
+      const image = canvasRef.current?.getCanvasBase64();
+      if (!image) throw new Error('Snapshot kanvas tidak tersedia. Silakan coba lagi.');
       const result = await evaluateGlyph({
         aksaraId: aksaraKey as 'lontara' | 'sunda' | 'bali',
         karakterSlug: glif.slug,
-        image: canvasImageBase64,
-        strokes: strokePoints,
+        image,
       });
-
-      setEvaluationResult(result);
-
-      // Sinkronisasi hasil latihan ke Supabase / LocalStorage
-      saveGlyphPractice(user?.id || 'guest_student', {
-        aksaraId: aksaraKey as 'lontara' | 'sunda' | 'bali',
-        glifSlug: glif.slug,
-        simbol: glif.simbol,
-        score: result.score,
-        status: result.status,
-        strokeCount,
-      });
-    } catch {
-      // Fallback aman
-      setEvaluationResult({
-        score: 92,
-        status: 'sempurna',
-        ringkasan: `Bentuk glif ${glif.label} (${glif.simbol}) telah sesuai dengan proporsi paleografi standar.`,
-        kriteria: [
-          {
-            label: 'Akurasi Geometri Bentuk',
-            lulus: true,
-            catatan: 'Proporsi garis dan lekukan konsisten.',
-          },
-          {
-            label: 'Keseimbangan & Kontinuitas Tarikan',
-            lulus: true,
-            catatan: `Terdeteksi ${strokeCount} tarikan kuas stabil.`,
-          },
-          {
-            label: 'Verifikasi Vokalisasi / Diakritik',
-            lulus: true,
-            catatan: 'Posisi tanda diakritik konsisten terhadap sumbu glif.',
-          },
-        ],
-      });
+      if (requestId === evaluationRequestRef.current) setEvaluationResult(result);
+    } catch (error: unknown) {
+      if (requestId === evaluationRequestRef.current) {
+        setEvaluationError(error instanceof Error ? error.message : 'Klasifikasi gagal. Tidak ada hasil penilaian.');
+      }
     } finally {
-      setIsEvaluating(false);
+      if (requestId === evaluationRequestRef.current) setIsEvaluating(false);
     }
   };
 
@@ -285,7 +253,7 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
           {/* Right: Finish session link */}
           <div className="flex items-center gap-2">
             <Link
-              href="/latihan/web/hasil"
+              href={`/latihan/web/hasil?aksara=${aksaraKey}`}
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#ffd261]/10 hover:bg-[#ffd261]/20 border border-[#ffd261]/30 text-[#ffd261] transition-all text-xs font-semibold cursor-pointer"
             >
               <span>Selesai Sesi</span>
@@ -378,6 +346,7 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
               strokeCount={strokeCount}
               isEvaluating={isEvaluating}
               evaluationResult={evaluationResult}
+              evaluationError={evaluationError}
               onEvaluate={handleEvaluate}
               onResetEvaluation={handleResetEvaluation}
               onPlayPronunciation={handlePlayPronunciation}

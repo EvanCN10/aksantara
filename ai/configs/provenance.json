@@ -1,0 +1,30 @@
+{
+  "lontara": {
+    "source_url":"https://www.kaggle.com/datasets/arsan5623/aksara-lontara",
+    "dataset_ref":"arsan5623/aksara-lontara","version":2,
+    "license":"Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)",
+    "training":"allowed","release":"unresolved",
+    "scope":"Private noncommercial research only; no public weights or adapted dataset sharing. Competition publication/deployment requires a documented rights decision.",
+    "attribution":"Arsan5623, Aksara Lontara Makassar-Handwritten Character, Kaggle version 2",
+    "evidence":[{"url":"https://www.kaggle.com/datasets/arsan5623/aksara-lontara","observed":"2026-10-12","text":"Data Source: Dataset collected independently; Supporting machine learning and deep learning research in handwritten character"},{"url":"https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.en","section":"2(a)(1)(B)","text":"produce and reproduce, but not Share, Adapted Material for NonCommercial purposes only"}],
+    "mixed_sources":[],"writer_metadata":"not provided"
+  },
+  "sunda": {
+    "source_url":"https://www.kaggle.com/datasets/abdidwiramdani/aksara-sunda",
+    "dataset_ref":"abdidwiramdani/aksara-sunda","version":1,
+    "license":"Other (specified in description)","training":"allowed","release":"unresolved",
+    "attribution":"Abdi Dwi Ramdani & Alifia CRM",
+    "evidence":[{"url":"https://www.kaggle.com/datasets/abdidwiramdani/aksara-sunda","observed":"2026-10-12","text":"description empty; subtitle Dataset primer dan sekunder (https://github.com/alifiacrm/aksarasunda-dataset)"},{"url":"https://api.github.com/repos/alifiacrm/aksarasunda-dataset/contents","observed":"2026-10-12","text":"Root contains README.md, data-set, img-set; no LICENSE in root listing"}],
+    "mixed_sources":["https://github.com/alifiacrm/aksarasunda-dataset"],
+    "training_decision":{"date":"2026-10-13","basis":"User explicitly directed continuation of training without a dataset-license permission gate. This is an operational decision, not evidence of a license grant.","scope":"Private dataset-only experiments; source license remains unresolved."}
+  },
+  "bali": {
+    "source_url":"https://www.kaggle.com/datasets/wildanfatahh22/aksara-bali",
+    "dataset_ref":"wildanfatahh22/aksara-bali","version":3,
+    "license":"Unknown","training":"allowed","release":"unresolved",
+    "attribution":"Wildan Fatahillah Akbar",
+    "evidence":[{"url":"https://www.kaggle.com/datasets/wildanfatahh22/aksara-bali","observed":"2026-10-12","text":"license_name Unknown; description empty"}],
+    "mixed_sources":[],
+    "training_decision":{"date":"2026-10-13","basis":"User explicitly directed continuation of training without a dataset-license permission gate. This is an operational decision, not evidence of a license grant.","scope":"Private dataset-only experiments; source license remains unresolved."}
+  }
+}

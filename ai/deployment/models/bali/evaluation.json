@@ -1,0 +1,134 @@
+{
+  "script": "bali",
+  "title": "Aksantara | Modul 03: Turnamen Multi-Arsitektur & Pengklasifikasi Aksara Bali",
+  "num_classes": 30,
+  "timestamp": 1791979680.9029553,
+  "training": {
+    "run_id": "seed42-1791978654289139796",
+    "max_epochs": 50,
+    "patience": 7,
+    "selection_metric": "macro_f1",
+    "historical_checkpoints_included": false
+  },
+  "champion": {
+    "model": "EfficientNet-B0",
+    "raw_name": "efficient",
+    "macro_f1": 0.9937321937321938,
+    "top1_acc": 0.9940119760479041,
+    "top3_acc": 0.9940119760479041,
+    "min_recall": 0.8,
+    "conf_gap": 0.003877699375152588,
+    "mean_conf_correct": 0.9961888194084167,
+    "mean_conf_wrong": 0.9923111200332642,
+    "accuracy": 0.9940119760479041,
+    "latency_p95_ms": 28.565355199975773,
+    "fp32_latency_p95_ms": 7.456716099841287,
+    "size_mb": 4.606522560119629,
+    "fp32_size_mb": 15.424650192260742,
+    "int8_size_mb": 4.606522560119629
+  },
+  "leaderboard": [
+    {
+      "model": "EfficientNet-B0",
+      "raw_name": "efficient",
+      "pretrained": true,
+      "macro_f1": 0.9937321937321938,
+      "top1_acc": 0.9940119760479041,
+      "top3_acc": 0.9940119760479041,
+      "min_recall": 0.8,
+      "conf_gap": 0.003877699375152588,
+      "accuracy": 0.9940119760479041,
+      "params_m": 4.045978,
+      "size_mb": 15.434181213378906,
+      "latency_ms": 24.14026449988569,
+      "best_epoch": 14,
+      "epochs_run": 21,
+      "checkpoint_path": "/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/aksantara-runs/tournaments/bali/seed42-1791978654289139796/efficient/best.pt"
+    },
+    {
+      "model": "ResNet-18",
+      "raw_name": "resnet18",
+      "pretrained": true,
+      "macro_f1": 0.9819088319088319,
+      "top1_acc": 0.9820359281437125,
+      "top3_acc": 0.9880239520958084,
+      "min_recall": 0.8,
+      "conf_gap": 0.3145121932029724,
+      "accuracy": 0.9820359281437125,
+      "params_m": 11.191902,
+      "size_mb": 42.69371795654297,
+      "latency_ms": 26.178956849980747,
+      "best_epoch": 8,
+      "epochs_run": 15,
+      "checkpoint_path": "/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/aksantara-runs/tournaments/bali/seed42-1791978654289139796/resnet18/best.pt"
+    },
+    {
+      "model": "MobileNetV3-Small",
+      "raw_name": "mobile",
+      "pretrained": true,
+      "macro_f1": 0.9404362304362304,
+      "top1_acc": 0.9401197604790419,
+      "top3_acc": 0.9940119760479041,
+      "min_recall": 0.6666666666666666,
+      "conf_gap": 0.24731743335723877,
+      "accuracy": 0.9401197604790419,
+      "params_m": 1.548606,
+      "size_mb": 5.907463073730469,
+      "latency_ms": 9.617274599929713,
+      "best_epoch": 11,
+      "epochs_run": 18,
+      "checkpoint_path": "/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/aksantara-runs/tournaments/bali/seed42-1791978654289139796/mobile/best.pt"
+    },
+    {
+      "model": "Custom CNN-4Layer",
+      "raw_name": "cnn",
+      "pretrained": false,
+      "macro_f1": 0.29144838105364423,
+      "top1_acc": 0.3652694610778443,
+      "top3_acc": 0.6467065868263473,
+      "min_recall": 0.0,
+      "conf_gap": 0.03741494566202164,
+      "accuracy": 0.3652694610778443,
+      "params_m": 0.097566,
+      "size_mb": 0.37218475341796875,
+      "latency_ms": 11.887484000021686,
+      "best_epoch": 12,
+      "epochs_run": 19,
+      "checkpoint_path": "/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/aksantara-runs/tournaments/bali/seed42-1791978654289139796/cnn/best.pt"
+    }
+  ],
+  "critical_classes": [
+    {
+      "class_id": 5,
+      "label": "aksara swalalita khakantia",
+      "recall": 0.8,
+      "support": 5
+    },
+    {
+      "class_id": 0,
+      "label": "aksara swalalita ba kembang",
+      "recall": 1.0,
+      "support": 5
+    },
+    {
+      "class_id": 1,
+      "label": "aksara swalalita calaca",
+      "recall": 1.0,
+      "support": 5
+    },
+    {
+      "class_id": 2,
+      "label": "aksara swalalita damadu",
+      "recall": 1.0,
+      "support": 5
+    },
+    {
+      "class_id": 3,
+      "label": "aksara swalalita gagora",
+      "recall": 1.0,
+      "support": 5
+    }
+  ],
+  "onnx_path": "/content/aksantara-runtime/ai/runs/onnx_exports/bali/bali-champion.onnx",
+  "onnx_int8_path": "/content/aksantara-runtime/ai/runs/onnx_exports/bali/bali-champion-int8.onnx"
+}
