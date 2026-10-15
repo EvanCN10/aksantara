@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 nama: meta.nama || meta.name || session.user.email?.split('@')[0] || 'Penoreh Aksara',
                 email: session.user.email,
                 role: userRole,
-                avatar: userRole === 'guru' ? '🏛️' : '👑',
+                avatar: userRole === 'guru' ? 'Guru' : 'Siswa',
                 gelarBudaya: userRole === 'guru' ? 'Pamong Budaya Utama' : 'Cantrik Pemula',
                 isGuest: false,
               });
@@ -123,7 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         (isGuru ? 'Ki Ageng Dananjaya (Tamu)' : 'Raden Arya Nusantara (Tamu)'),
       email: isGuru ? 'guru.demo@aksantara.id' : 'siswa.demo@aksantara.id',
       role: selectedRole,
-      avatar: isGuru ? '🏛️' : '👑',
+      avatar: isGuru ? 'Guru' : 'Siswa',
       gelarBudaya: isGuru
         ? 'Pamong Budaya Utama'
         : 'Juru Tulis Madya Parahyangan',

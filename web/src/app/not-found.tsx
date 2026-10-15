@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Scroll, PenTool } from 'lucide-react';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 
 export default function NotFound() {
@@ -17,8 +18,8 @@ export default function NotFound() {
       <div className="relative z-10 w-full max-w-lg mx-auto">
         <OrnateFrame className="bg-[#0c1a2c]/90 backdrop-blur-md p-8 md:p-10 rounded-3xl border border-[#ffd261]/30 shadow-2xl text-center space-y-6">
           {/* Cultural Icon */}
-          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-[#ffd261]/20 to-[#D4A373]/10 border-2 border-[#ffd261]/60 flex items-center justify-center text-4xl shadow-inner">
-            📜
+          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-[#ffd261]/20 to-[#D4A373]/10 border-2 border-[#ffd261]/60 flex items-center justify-center shadow-inner">
+            <Scroll className="w-10 h-10 text-[#ffd261]" />
           </div>
 
           <div className="space-y-2">
@@ -47,7 +48,7 @@ export default function NotFound() {
               href="/mulai"
               className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-[#0c1a2c] bg-gradient-to-r from-[#ffd261] to-[#D4A373] hover:brightness-110 shadow-lg shadow-[#ffd261]/20 transition flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
             >
-              <span>✍️</span>
+              <PenTool className="w-4 h-4 text-[#0c1a2c]" />
               <span>Mulai Belajar Aksara</span>
             </Link>
           </div>

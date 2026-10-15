@@ -55,11 +55,11 @@ export function ChapterCompleteModal({
 }: ChapterCompleteModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="w-full max-w-lg">
-        <OrnateFrame className="w-full bg-[#0c1a2c]/95 border border-[#ffd261]/40 shadow-[0_0_50px_rgba(255,210,97,0.25)]">
+      <div className="w-full max-w-lg animate-emerge-scale" style={{ animationDuration: '0.4s' }}>
+        <OrnateFrame className="w-full bg-[#0c1a2c]/95 border border-[#ffd261]/40 shadow-[0_0_50px_rgba(255,210,97,0.25)] sheen-sweep">
           <div className="p-6 sm:p-8 text-center flex flex-col items-center gap-5">
             {/* Trophy Icon */}
-            <div className="w-16 h-16 rounded-2xl bg-[#ffd261]/15 border border-[#ffd261]/40 flex items-center justify-center text-[#ffd261] shadow-[0_0_24px_rgba(255,210,97,0.3)]">
+            <div className="w-16 h-16 rounded-2xl bg-[#ffd261]/15 border border-[#ffd261]/40 flex items-center justify-center text-[#ffd261] shadow-[0_0_24px_rgba(255,210,97,0.3)] animate-companion-idle">
               <TrophyIcon className="w-8 h-8" />
             </div>
 
@@ -77,40 +77,53 @@ export function ChapterCompleteModal({
               <p className="text-xs text-white/60 mt-1 font-medium">{eposJudul}</p>
             </div>
 
-            {/* Stars Achievement */}
+            {/* Stars Achievement with Staggered Slam Down */}
             <div className="flex items-center justify-center gap-2 text-2xl text-[#ffd261]">
-              <StarIcon filled className="w-7 h-7 drop-shadow-[0_0_8px_rgba(255,210,97,0.6)]" />
-              <StarIcon filled className="w-7 h-7 drop-shadow-[0_0_8px_rgba(255,210,97,0.6)]" />
-              <StarIcon filled className="w-7 h-7 drop-shadow-[0_0_8px_rgba(255,210,97,0.6)]" />
+              <span className="animate-star-slam inline-block" style={{ animationDelay: '120ms' }}>
+                <StarIcon filled className="w-8 h-8 drop-shadow-[0_0_12px_rgba(255,210,97,0.8)]" />
+              </span>
+              <span className="animate-star-slam inline-block" style={{ animationDelay: '240ms' }}>
+                <StarIcon filled className="w-9 h-9 drop-shadow-[0_0_16px_rgba(255,210,97,0.9)]" />
+              </span>
+              <span className="animate-star-slam inline-block" style={{ animationDelay: '360ms' }}>
+                <StarIcon filled className="w-8 h-8 drop-shadow-[0_0_12px_rgba(255,210,97,0.8)]" />
+              </span>
             </div>
 
             {/* XP Gained Card */}
-            <div className="w-full p-4 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-between">
+            <div
+              className="w-full p-4 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-between animate-emerge-up"
+              style={{ animationDelay: '460ms' }}
+            >
               <span className="text-xs text-white/70 font-medium">Imbalan Penjelajah:</span>
               <span className="text-lg font-bold font-mono text-[#ffd261] bg-[#ffd261]/10 px-3 py-1 rounded-full border border-[#ffd261]/30">
                 +{xpReward} XP
               </span>
             </div>
 
-            {/* Action Buttons */}
-            <div className="w-full space-y-2.5 pt-2">
+            {/* Action Buttons with Beacon Pulse */}
+            <div className="w-full space-y-2.5 pt-2 animate-emerge-up" style={{ animationDelay: '520ms' }}>
               {hasNextChapter ? (
-                <Link
-                  href={`/cerita/${eposSlug}/bab/${babNomor + 1}`}
-                  className="w-full block"
-                >
-                  <ShinyButton
-                    label={`Lanjut ke Bab ${babNomor + 1} →`}
-                    className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)]"
-                  />
-                </Link>
+                <div className="w-full animate-beacon-pulse rounded-full">
+                  <Link
+                    href={`/cerita/${eposSlug}/bab/${babNomor + 1}`}
+                    className="w-full block"
+                  >
+                    <ShinyButton
+                      label={`Lanjut ke Bab ${babNomor + 1} →`}
+                      className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01]"
+                    />
+                  </Link>
+                </div>
               ) : (
-                <Link href="/cerita" className="w-full block">
-                  <ShinyButton
-                    label="Kembali ke Pilihan Cerita →"
-                    className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)]"
-                  />
-                </Link>
+                <div className="w-full animate-beacon-pulse rounded-full">
+                  <Link href="/cerita" className="w-full block">
+                    <ShinyButton
+                      label="Kembali ke Pilihan Cerita →"
+                      className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01]"
+                    />
+                  </Link>
+                </div>
               )}
 
               <div className="flex items-center gap-2">

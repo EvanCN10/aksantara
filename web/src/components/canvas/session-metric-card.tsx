@@ -9,6 +9,7 @@ interface SessionMetricCardProps {
   badge?: string;
   icon: React.ComponentType<{ className?: string }>;
   highlight?: boolean;
+  index?: number;
 }
 
 export function SessionMetricCard({
@@ -18,10 +19,12 @@ export function SessionMetricCard({
   badge,
   icon: Icon,
   highlight = false,
+  index = 0,
 }: SessionMetricCardProps) {
   return (
     <div
-      className={`relative p-4 sm:p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${
+      style={{ animationDelay: `${index * 65}ms` }}
+      className={`relative p-4 sm:p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${
         highlight
           ? 'bg-gradient-to-b from-[#ffd261]/15 via-white/[0.04] to-black/30 border-[#ffd261]/40 shadow-[0_4px_24px_rgba(255,210,97,0.18)]'
           : 'bg-[#0c1a2c]/80 border-white/10 hover:border-white/20 shadow-[0_4px_20px_rgba(0,0,0,0.3)]'

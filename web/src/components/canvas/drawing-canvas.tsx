@@ -81,6 +81,9 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
 
     // Stroke history
     const [strokes, setStrokes] = useState<Point[][]>([]);
+    const strokesRef = useRef<Point[][]>([]);
+    strokesRef.current = strokes;
+
     const currentStrokeRef = useRef<Point[]>([]);
     const isDrawingRef = useRef(false);
 
@@ -140,25 +143,27 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
     );
 
     // Resize canvas according to container dimensions (with devicePixelRatio)
+    // Isolated from strokes to prevent GPU texture reallocations during drawing
     const resizeCanvas = useCallback(() => {
       const canvas = canvasRef.current;
       const container = containerRef.current;
       if (!canvas || !container) return;
 
       const rect = container.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
       const dpr = window.devicePixelRatio || 1;
 
       // Set actual buffer size
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
 
-      // Scale context for sharp HiDPI rendering
+      // Scale context with setTransform for clean HiDPI rendering
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        ctx.scale(dpr, dpr);
-        redrawStrokes(ctx, strokes);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        redrawStrokes(ctx, strokesRef.current);
       }
-    }, [redrawStrokes, strokes]);
+    }, [redrawStrokes]);
 
     useEffect(() => {
       resizeCanvas();
@@ -194,7 +199,11 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      canvas.setPointerCapture(e.pointerId);
+      try {
+        canvas.setPointerCapture(e.pointerId);
+      } catch {
+        // safe fallback
+      }
       isDrawingRef.current = true;
 
       const pt = getCanvasCoordinates(e);
@@ -246,25 +255,45 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
       if (!isDrawingRef.current) return;
       isDrawingRef.current = false;
 
-      try {
-        e.currentTarget.releasePointerCapture(e.pointerId);
-      } catch {
-        // ignore if pointer capture was already released
+      const canvas = canvasRef.current;
+      if (canvas) {
+        try {
+          if (canvas.hasPointerCapture(e.pointerId)) {
+            canvas.releasePointerCapture(e.pointerId);
+          }
+        } catch {
+          // ignore if pointer capture was already released
+        }
       }
 
       if (currentStrokeRef.current.length > 0) {
-        // React may execute the updater after the mutable pointer buffer is reset.
         const completedStroke = [...currentStrokeRef.current];
         currentStrokeRef.current = [];
         setStrokes((prev) => [...prev, completedStroke]);
       }
     };
 
+    const handlePointerCancel = (e: React.PointerEvent<HTMLCanvasElement>) => {
+      isDrawingRef.current = false;
+      currentStrokeRef.current = [];
+      const canvas = canvasRef.current;
+      if (canvas) {
+        try {
+          if (canvas.hasPointerCapture(e.pointerId)) {
+            canvas.releasePointerCapture(e.pointerId);
+          }
+        } catch {
+          // safe fallback
+        }
+      }
+    };
+
     // Public API exposed via Ref
     useImperativeHandle(ref, () => ({
       clear: () => {
-        setStrokes([]);
+        isDrawingRef.current = false;
         currentStrokeRef.current = [];
+        setStrokes([]);
         const canvas = canvasRef.current;
         if (canvas) {
           const ctx = canvas.getContext('2d');
@@ -275,6 +304,8 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
         }
       },
       undo: () => {
+        isDrawingRef.current = false;
+        currentStrokeRef.current = [];
         setStrokes((prev) => (prev.length > 0 ? prev.slice(0, prev.length - 1) : []));
       },
       getCanvasBase64: () => {
@@ -328,7 +359,7 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
             aria-hidden="true"
           >
             <span
-              className="text-8xl sm:text-9xl md:text-[11rem] font-normal leading-none select-none text-[#ffd261]/[0.13] drop-shadow-[0_0_24px_rgba(255,210,97,0.1)] transition-transform"
+              className="text-8xl sm:text-9xl md:text-[11rem] font-normal leading-none select-none text-[#ffd261]/[0.14] drop-shadow-[0_0_24px_rgba(255,210,97,0.1)] animate-ghost-breathe transition-transform"
               style={{ fontFamily: 'var(--font-philosopher)' }}
             >
               {targetSymbol}
@@ -342,7 +373,7 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
         {/* AI Scanner Laser Line Animation (when evaluating) */}
         {isEvaluating && (
           <div className="pointer-events-none absolute inset-0 overflow-hidden z-20" aria-hidden="true">
-            <div className="w-full h-1.5 bg-gradient-to-r from-transparent via-[#ffd261] to-transparent shadow-[0_0_16px_#ffd261] animate-[scan_1.6s_ease-in-out_infinite]" />
+            <div className="w-full h-1.5 bg-gradient-to-r from-transparent via-[#ffd261] to-transparent shadow-[0_0_16px_#ffd261] animate-scan-laser" />
             <div className="absolute inset-0 bg-[#ffd261]/[0.04] backdrop-blur-[1px] animate-pulse" />
           </div>
         )}
@@ -353,6 +384,7 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerCancel}
           onPointerLeave={handlePointerUp}
           className="relative z-10 w-full h-full cursor-crosshair touch-none"
           style={{ touchAction: 'none' }}

@@ -111,3 +111,15 @@ Thumbs.db
 # Local development documentation and AI usage records
 /docs/usage.md
 /docs/USAGE.md
+
+# --- Figma Local Tooling & Automation Bridge ---
+figma-bridge/
+figma-export/
+*.figma.js
+
+# --- Temporary, Scratch & Local Logs ---
+scratch/
+temp/
+tmp/
+*.log
+

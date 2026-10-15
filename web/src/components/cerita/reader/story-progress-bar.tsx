@@ -62,7 +62,7 @@ export function StoryProgressBar({
                     isCompleted
                       ? 'w-full bg-[#ffd261] shadow-[0_0_8px_rgba(255,210,97,0.6)]'
                       : isCurrent
-                      ? 'w-full bg-[#ffd261] animate-pulse'
+                      ? 'w-full animate-progress-shimmer shadow-[0_0_12px_rgba(255,210,97,0.8)]'
                       : 'w-0'
                   }`}
                 />
@@ -71,9 +71,13 @@ export function StoryProgressBar({
           })}
         </div>
 
-        {/* XP Reward Badge */}
-        <div className="flex items-center gap-1 text-xs font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 rounded-full shrink-0">
-          <SparklesIcon className="text-[#ffd261]" />
+        {/* XP Reward Badge with Reactive Beat Feedback */}
+        <div
+          key={currentBeatIndex}
+          className="flex items-center gap-1 text-xs font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 rounded-full shrink-0 animate-emerge-scale"
+          style={{ animationDuration: '0.3s' }}
+        >
+          <SparklesIcon className="text-[#ffd261] animate-pulse" />
           <span>+{xpReward} XP</span>
         </div>
       </div>

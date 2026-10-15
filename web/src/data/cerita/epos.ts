@@ -24,6 +24,7 @@ export interface CeritaEpos {
   judul: string;
   subjudul: string;
   eposAsli: string;
+  bannerUrl?: string;
   aksaraId: 'lontara' | 'sunda' | 'bali';
   aksaraNama: string;
   aksaraAsli: string;
@@ -44,6 +45,7 @@ export const DAFTAR_EPOS: CeritaEpos[] = [
     judul: 'Kisah Sawerigading & I La Galigo',
     subjudul: 'Mengarungi Samudra Luwu Menyingkap Sulapa Eppa',
     eposAsli: 'Sureq Galigo (Karya Sastra Terpanjang di Dunia)',
+    bannerUrl: '/images/stories/banners/banner-sawerigading.webp',
     aksaraId: 'lontara',
     aksaraNama: 'Aksara Lontara',
     aksaraAsli: 'ᨒᨚᨈᨑ',
@@ -93,7 +95,7 @@ export const DAFTAR_EPOS: CeritaEpos[] = [
           'Mendarat di tanah harapan dan menguraikan naskah kuno Lontara terakhir yang menjaga persatuan suku bangsa maritim.',
         xp: 300,
         bintang: 0,
-        status: 'terkunci',
+        status: 'terbuka',
         fokusGlif: [
           { simbol: 'ᨔ', label: 'Sa' },
           { simbol: 'ᨕ', label: 'A' },
@@ -109,6 +111,7 @@ export const DAFTAR_EPOS: CeritaEpos[] = [
     judul: 'Legenda Lutung Kasarung',
     subjudul: 'Keadilan Hutan Sunyi & Aksara Ngalagena Purba',
     eposAsli: 'Carita Lutung Kasarung (Naskah Sunda Kuna Pantun Bogor)',
+    bannerUrl: '/images/stories/banners/banner-lutung-kasarung.webp',
     aksaraId: 'sunda',
     aksaraNama: 'Aksara Sunda',
     aksaraAsli: 'ᮃᮊ᮪ᮞᮛ',
@@ -174,6 +177,7 @@ export const DAFTAR_EPOS: CeritaEpos[] = [
     judul: 'Misteri Mantra Calon Arang',
     subjudul: 'Menundukkan Wabah Girah Melalui Rontal Suci',
     eposAsli: 'Lontar Calon Arang (Kakawin Kawi Naskah Bali-Jawa Timur)',
+    bannerUrl: '/images/stories/banners/banner-calon-arang.webp',
     aksaraId: 'bali',
     aksaraNama: 'Aksara Bali',
     aksaraAsli: 'ᬅᬓ᭄ᬱᬭ',

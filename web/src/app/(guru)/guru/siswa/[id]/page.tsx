@@ -2,11 +2,13 @@
 
 import React, { use, useState } from 'react';
 import Link from 'next/link';
+import { Scroll, User, Sparkles } from 'lucide-react';
 import { getSiswaDetailById, getAdjacentSiswaIds } from '@/data/guru/guru-data';
 import { SiswaDetailHero } from '@/components/dashboard/siswa-detail/siswa-detail-hero';
 import { SiswaPillarTabs } from '@/components/dashboard/siswa-detail/siswa-pillar-tabs';
 import { SiswaTeacherNotes } from '@/components/dashboard/siswa-detail/siswa-teacher-notes';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
+import { playSuccessGamelan } from '@/lib/audio/sound-effects';
 
 interface DetailSiswaPageProps {
   params: Promise<{ id: string }>;
@@ -21,24 +23,9 @@ export default function DetailSiswaPage({ params }: DetailSiswaPageProps) {
   const siswa = getSiswaDetailById(id);
   const { prevId, nextId } = getAdjacentSiswaIds(id);
 
-  // Audio chime feedback
+  // Acoustic chime feedback
   const playChime = () => {
-    try {
-      const audioCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-      osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
-      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.35);
-    } catch {
-      // Audio not supported or blocked
-    }
+    playSuccessGamelan();
   };
 
   const triggerToast = (msg: string) => {
@@ -66,7 +53,7 @@ export default function DetailSiswaPage({ params }: DetailSiswaPageProps) {
     return (
       <div className="min-h-screen bg-[#060d16] text-white flex flex-col items-center justify-center p-4">
         <OrnateFrame className="bg-[#0c1a2c]/90 p-8 rounded-2xl border border-white/20 text-center max-w-md space-y-4">
-          <div className="text-4xl">📜</div>
+          <Scroll className="w-10 h-10 text-[#ffd261] mx-auto" />
           <h1 className="text-xl font-serif font-bold text-white">Siswa Tidak Ditemukan</h1>
           <p className="text-xs text-white/60">
             Data siswa dengan pengenal ID &quot;{id}&quot; tidak terdaftar dalam kohor kelas pengampu saat ini.
@@ -100,7 +87,7 @@ export default function DetailSiswaPage({ params }: DetailSiswaPageProps) {
             </Link>
             <span className="text-white/20">|</span>
             <div className="flex items-center gap-2">
-              <span className="text-lg">📜</span>
+              <Scroll className="w-5 h-5 text-[#ffd261]" />
               <span className="font-serif font-bold text-sm md:text-base text-white tracking-wide">
                 Rapor Literasi & Diagnostik Individual
               </span>
@@ -119,7 +106,7 @@ export default function DetailSiswaPage({ params }: DetailSiswaPageProps) {
               href="/profil"
               className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-[#ffd261] bg-[#ffd261]/10 hover:bg-[#ffd261]/20 border border-[#ffd261]/30 transition flex items-center gap-1.5"
             >
-              <span>👤</span>
+              <User className="w-4 h-4" />
               <span>Profil Pengampu</span>
             </Link>
           </div>
@@ -132,7 +119,7 @@ export default function DetailSiswaPage({ params }: DetailSiswaPageProps) {
         {toastMessage && (
           <div className="fixed bottom-6 right-6 z-50 animate-bounce print:hidden">
             <div className="bg-[#0c1a2c] text-[#ffd261] border-2 border-[#ffd261]/80 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 backdrop-blur-md">
-              <span className="text-xl">✨</span>
+              <Sparkles className="w-5 h-5 text-[#ffd261]" />
               <span className="text-sm font-semibold text-white">{toastMessage}</span>
             </div>
           </div>
@@ -159,7 +146,7 @@ export default function DetailSiswaPage({ params }: DetailSiswaPageProps) {
 
       {/* Footer (Hidden in Print) */}
       <footer className="border-t border-white/10 bg-[#060d16] py-6 text-center text-xs text-white/40 print:hidden">
-        <p>Aksantara Trinitas © 2026 — Dokumen Resmi Evaluasi Literasi Siswa & Kepamongbudayaan</p>
+        <p>Aksantara Trinitas © 2026 - Dokumen Resmi Evaluasi Literasi Siswa & Kepamongbudayaan</p>
       </footer>
     </div>
   );

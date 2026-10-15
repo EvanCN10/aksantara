@@ -1,6 +1,6 @@
-# AKSANTARA — Panduan Integrasi Teknis AI, IoT & Database
+# AKSANTARA - Panduan Integrasi Teknis AI, IoT & Database
 ### Handover Guide untuk AI Engineer & Embedded Hardware Engineer
-> **Kompetisi:** Hackathon JOINTS UGM 2026 — Tema: Education  
+> **Kompetisi:** Hackathon JOINTS UGM 2026 - Tema: Education  
 > **Target:** Grand Final FMIPA UGM (1 November 2026)  
 > **Status AI Canvas:** Eksperimen privat dengan specialist FP32 ONNX lokal; perlu review manusia, bukan penilaian kualitas tulisan atau kesiapan produksi.
 
@@ -10,12 +10,12 @@
 
 Aksantara dibangun di atas arsitektur **4 Pilar AI** dan **2 Mode Penggunaan (Web & Hardware)** yang berfokus pada **Trinitas Aksara Nusantara (Lontara, Sunda, Bali)**:
 
-1. **Pilar 1 — Precision AI Writing Coach (Web Mode):** Klasifikasi citra akhir *Universal Web Canvas* tanpa penalti urutan goresan. Probabilitas kelas tidak memvalidasi geometri atau posisi diakritik.
-2. **Pilar 2 — Trinitas Aksara Nusantara (Katalog & Standar):** Kurikulum terstruktur paleografi aksara Lontara (sudut geometris), Sunda (modular ngalagena), dan Bali (kurvalinier).
-3. **Pilar 3 — Gamified Phygital & Narrative Layer:**
+1. **Pilar 1 - Precision AI Writing Coach (Web Mode):** Evaluasi goresan tulisan tangan siswa pada *Universal Web Canvas* berbasis model klasifikasi bentuk (*Shape & Diacritic Topology Classifier*).
+2. **Pilar 2 - Trinitas Aksara Nusantara (Katalog & Standar):** Kurikulum terstruktur paleografi aksara Lontara (sudut geometris), Sunda (modular ngalagena), dan Bali (kurvalinier).
+3. **Pilar 3 - Gamified Phygital & Narrative Layer:**
    - **Hardware Mode:** Mini-game kinestetik (*Ramu Mantra* & *Speed Match*) menggunakan konsol fisik *Aksantara Tactile Pad* (ESP32 + RFID Reader via Web Serial API).
    - **Narrative Story Mode:** Petualangan cerita rakyat lokal (*Sawerigading*, *Lutung Kasarung*, *Calon Arang*) dengan dialog diperkaya LLM (*Gemini AI*).
-4. **Pilar 4 — Preservasi Manuskrip Kuno:** Human-in-the-loop OCR transliterasi naskah lontar bersejarah.
+4. **Pilar 4 - Preservasi Manuskrip Kuno:** Human-in-the-loop OCR transliterasi naskah lontar bersejarah.
 
 ---
 
@@ -41,14 +41,24 @@ http://localhost:3000
 
 ## 3. PANDUAN UNTUK AI ENGINEER
 
-Kontrak klasifikasi canvas memakai layanan Python lokal melalui proxy same-origin Next.js. Model, label, kalibrasi, hak rilis, dan domain tulisan manusia masih memerlukan audit; tidak ada deployment publik pada integrasi ini.
+Seluruh kontrak interface dan endpoint AI telah disiapkan di lapisan Next.js. Anda tidak perlu mengubah komponen UI halaman.
 
-### A. Pilar 1: Specialist FP32 ONNX Privat via Python Lokal
+### A. Pilar 1: Model Klasifikasi Goresan Kanvas (ONNX Web / API)
 
-#### Alur & Konfigurasi
+#### Opsi 1: On-Device ONNX Web (Rekomendasi Utama — Zero Latency <50ms & Bebas Kuota API)
+1. Export model CNN / MobileNet / ResNet fine-tuned NusaAksara Anda ke format ONNX:
+   - Format file: `nusaaksara_trinitas.onnx`
+   - Letakkan di: `web/public/models/nusaaksara_trinitas.onnx`
+   - Letakkan file mapping kelas di: `web/public/models/labels.json`
+2. **Spesifikasi Input Model:**
+   - Dimensi: `[1, 1, 64, 64]` (Grayscale) atau `[1, 3, 224, 224]` (RGB).
+   - Normalisasi: `0.0` (background) hingga `1.0` (tinta goresan).
+   - Helper preprocessing dari canvas HTML ke Float32Array tensor sudah tersedia di:
+     `web/src/lib/onnx/onnx-classifier.ts` → fungsi `preprocessCanvasForOnnx(canvas, 64, true)`.
 
-1. Jalankan layanan Python di `127.0.0.1:8000` bersama server web. Aset specialist sudah berada di `ai/deployment/models/{sunda,lontara,bali}/`: `model.onnx`, `labels.json`, `manifest.json`, `evaluation.json`. Jumlah kelas: Sunda 30, Lontara 114, Bali 30.
-2. Tambahkan base URL **server-only** pada `web/.env.local` (nilai default sama):
+#### Opsi 2: Backend API Eksternal (FastAPI / PyTorch Server)
+Jika model dijalankan pada server microservice Python:
+1. Tambahkan URL server Anda di `web/.env.local`:
    ```env
    AI_CLASSIFIER_URL=http://127.0.0.1:8000
    ```

@@ -41,12 +41,13 @@ export interface SkenarioBab {
   judulBab: string;
   eposJudul: string;
   aksaraId: 'lontara' | 'sunda' | 'bali';
+  sceneBg?: string;
   xpReward: number;
   beats: StoryBeat[];
 }
 
 // ============================================================================
-// SKENARIO PILOT 1: SAWERIGADING (LONTARA) — BAB 1: PANGGILAN SAMUDRA LUWU
+// SKENARIO PILOT 1: SAWERIGADING (LONTARA) - BAB 1: PANGGILAN SAMUDRA LUWU
 // ============================================================================
 
 export const SKENARIO_SAWERIGADING_BAB_1: SkenarioBab = {
@@ -143,8 +144,200 @@ export const SKENARIO_SAWERIGADING_BAB_1: SkenarioBab = {
   ],
 };
 
+export const SKENARIO_SAWERIGADING_BAB_2: SkenarioBab = {
+  eposSlug: 'sawerigading',
+  babNomor: 2,
+  judulBab: 'Kemudi Beraksara Emas',
+  eposJudul: 'Kisah Sawerigading & I La Galigo',
+  aksaraId: 'lontara',
+  xpReward: 200,
+  beats: [
+    {
+      id: 'sg-2-beat-1',
+      tipe: 'narasi',
+      teks:
+        'Malam pekat menyelimuti Selat Makassar. Petir menyambar menggelegar dan ombak setinggi pohon kelapa menghantam lambung perahu pinisi tanpa henti. Di tengah amukan badai, pasak kemudi guling mulai berderit retak.',
+    },
+    {
+      id: 'sg-2-beat-2',
+      tipe: 'dialog',
+      karakterId: 'sawerigading',
+      pembicaraNama: 'Sawerigading',
+      teks:
+        'Pegang erat tali temali layar tanja! Ombak ganas ini digerakkan oleh amukan sang naga samudra I Tanra Balang! Kemudi guling kita bergetar hebat, kapal bisa terbalik jika kemudi lepas!',
+    },
+    {
+      id: 'sg-2-beat-3',
+      tipe: 'dialog',
+      karakterId: 'guru-pamomong',
+      pembicaraNama: 'Guru Pamomong',
+      teks:
+        'Tenangkan batinmu, wahai Sawerigading! Lihatlah pada lempeng kuningan di pasak kemudi buritan. Nenek moyang pelaut Luwu telah menorehkan rajah aksara pelindung bahari. Bangkitkan kekuatan glif ᨑ (Ra) penunduk gelombang!',
+      aksaraHighlight: {
+        simbol: 'ᨑ',
+        label: 'Ra',
+        makna:
+          'Konsonan belah ketupat Lontara bersayap ganda, melambangkan sirip lumba-lumba pemandu haluan dan keteguhan pelaut Bugis-Makassar menembus badai samudra.',
+      },
+    },
+    {
+      id: 'sg-2-beat-4',
+      tipe: 'pilihan',
+      karakterId: 'guru-pamomong',
+      pembicaraNama: 'Guru Pamomong',
+      teks:
+        'Uji pemahaman aksara pelaut: Dalam sistem aksara Lontara Bugis-Makassar, apakah sebutan untuk tanda vokalisasi (diakritik pengubah bunyi) yang ditempatkan di atas, bawah, atau samping huruf induk?',
+      pertanyaan: 'Apakah nama tanda vokalisasi (diakritik pengubah bunyi) dalam aksara Lontara?',
+      opsiJawaban: [
+        {
+          id: 'opt-1',
+          teks: "Ana' Sureq (seperti Tetti' Riase' untuk vokal [i] dan Tetti' Rawa untuk [u])",
+          benar: true,
+          penjelasan:
+            "Tepat sekali! Huruf konsonan dasar disebut Ina' Sureq (induk huruf), sedangkan tanda vokalisasi diakritik disebut Ana' Sureq (anak huruf).",
+        },
+        {
+          id: 'opt-2',
+          teks: 'Sandhangan Wulu dan Suku',
+          benar: false,
+          penjelasan: 'Sandhangan adalah istilah tanda diakritik dalam tradisi aksara Jawa (Hanacaraka).',
+        },
+        {
+          id: 'opt-3',
+          teks: 'Pangangge Suara',
+          benar: false,
+          penjelasan: 'Pangangge Suara adalah istilah tanda vokalisasi dalam aksara Bali.',
+        },
+      ],
+    },
+    {
+      id: 'sg-2-beat-5',
+      tipe: 'dialog',
+      karakterId: 'sawerigading',
+      pembicaraNama: 'Sawerigading',
+      teks:
+        'Pengetahuanmu sungguh laksana bintang Pari pemandu arah! Pusaka kuningan telah bersiap. Sekarang, bantu aku menggoreskan kembali aksara ᨑ (Ra) pada pasak kemudi pinisi ini sebelum ombak berikutnya menghantam!',
+    },
+    {
+      id: 'sg-2-beat-6',
+      tipe: 'kanvas',
+      teks:
+        'Tantangan Goresan In-Story: Pulihkan aksara ᨑ (Ra) penunduk badai pada lempengan pasak kemudi pinisi.',
+      targetGlif: {
+        simbol: 'ᨑ',
+        label: 'Ra',
+        petunjuk: 'Tarik garis sudut belah ketupat runcing yang meliuk tegas di bagian atas dan bawah.',
+      },
+    },
+    {
+      id: 'sg-2-beat-7',
+      tipe: 'dialog',
+      karakterId: 'sawerigading',
+      pembicaraNama: 'Sawerigading',
+      teks:
+        'Kurru\' Sumange\'! Lempeng pasak kemudi menyala keemasan dan terkunci kokoh! Haluan pinisi membelah gelombang badai dengan perkasa. Badai mereda dan angin buritan mulai mengantar kita mendekati daratan harapan!',
+    },
+  ],
+};
+
+export const SKENARIO_SAWERIGADING_BAB_3: SkenarioBab = {
+  eposSlug: 'sawerigading',
+  babNomor: 3,
+  judulBab: 'Pusaka Batara Guru',
+  eposJudul: 'Kisah Sawerigading & I La Galigo',
+  aksaraId: 'lontara',
+  xpReward: 300,
+  beats: [
+    {
+      id: 'sg-3-beat-1',
+      tipe: 'narasi',
+      teks:
+        'Sinar fajar keemasan menyapu pesisir pantai berpasir putih di Tanah Harapan. Perahu pinisi Sawerigading berlabuh damai di teluk yang tenang. Di puncak tebing karang menjulang, berdiri sebuah altar batu prasasti kuno peninggalan Batara Guru.',
+    },
+    {
+      id: 'sg-3-beat-2',
+      tipe: 'dialog',
+      karakterId: 'guru-pamomong',
+      pembicaraNama: 'Guru Pamomong',
+      teks:
+        'Segala puji bagi Yang Maha Kuasa, pelayaran akbar kita telah tiba di tujuan! Di altar batu karang itulah tersimpan naskah Sureq Galigo tertua yang mengikat tali persaudaraan antar-pulau maritim Nusantara.',
+    },
+    {
+      id: 'sg-3-beat-3',
+      tipe: 'dialog',
+      karakterId: 'sawerigading',
+      pembicaraNama: 'Sawerigading',
+      teks:
+        'Pintu altar batu ini terkunci oleh ukiran moralitas agung leluhur Luwu. Tanpa memahami glif suci ᨔ (Sa), peti perbendaharaan pusaka Batara Guru tidak akan pernah terbuka.',
+      aksaraHighlight: {
+        simbol: 'ᨔ',
+        label: 'Sa',
+        makna:
+          "Glif Lontara pelambang falsafah luhur 'Siri\' na Pacce' : mahkota kehormatan, keteguhan martabat diri, harga diri, dan welas asih mendalam bagi sesama anak bangsa.",
+      },
+    },
+    {
+      id: 'sg-3-beat-4',
+      tipe: 'pilihan',
+      karakterId: 'sawerigading',
+      pembicaraNama: 'Sawerigading',
+      teks:
+        'Uji kebijaksanaan maritim: Apakah semboyan keberanian legendaris para pelaut Bugis-Makassar saat mengarungi samudra raya pantang menyerah?',
+      pertanyaan: 'Apakah semboyan keberanian pantang menyerah para pelaut maritim Bugis-Makassar?',
+      opsiJawaban: [
+        {
+          id: 'opt-1',
+          teks: 'Kualleangi Tallanga na Toalia (Lebih baik tenggelam di lautan daripada surut langkah kembali)',
+          benar: true,
+          penjelasan:
+            "Tepat sekali! 'Kualleangi Tallanga na Toalia' adalah ikrar suci pelaut Bugis-Makassar yang mencerminkan tekad baja dan pantang mundur.",
+        },
+        {
+          id: 'opt-2',
+          teks: 'Bhinneka Tunggal Ika Tan Hana Dharma Mangrwa',
+          benar: false,
+          penjelasan: 'Semboyan ini berasal dari Kakawin Sutasoma karya Mpu Tantular pada era Majapahit Jawa Timur.',
+        },
+        {
+          id: 'opt-3',
+          teks: 'Tri Hita Karana',
+          benar: false,
+          penjelasan: 'Tri Hita Karana adalah falsafah keharmonisan hidup masyarakat Pulau Dewata Bali.',
+        },
+      ],
+    },
+    {
+      id: 'sg-3-beat-5',
+      tipe: 'dialog',
+      karakterId: 'guru-pamomong',
+      pembicaraNama: 'Guru Pamomong',
+      teks:
+        'Kebijaksanaan leluhur telah bersemayam seutuhnya dalam jiwamu! Sekarang, satukan ikrar suci persatuan ini dengan menorehkan glif pusaka ᨔ (Sa) pada altar batu naskah Batara Guru!',
+    },
+    {
+      id: 'sg-3-beat-6',
+      tipe: 'kanvas',
+      teks:
+        'Tantangan Goresan In-Story: Torehkan aksara pamungkas ᨔ (Sa) pada altar prasasti Batara Guru.',
+      targetGlif: {
+        simbol: 'ᨔ',
+        label: 'Sa',
+        petunjuk: 'Goreskan lengkung belah ketupat bersudut khas membentuk karakter Lontara Sa yang agung.',
+      },
+    },
+    {
+      id: 'sg-3-beat-7',
+      tipe: 'dialog',
+      karakterId: 'sawerigading',
+      pembicaraNama: 'Sawerigading',
+      teks:
+        'Kurru\' Sumange\'! Cahaya keemasan memancar dari altar karang! Naskah lontar Sureq Galigo terurai utuh mendendangkan kidung kedamaian dan persatuan Nusantara. Pengembaraan aksara Lontara kita telah tuntas dengan paripurna!',
+    },
+  ],
+};
+
 // ============================================================================
-// SKENARIO EPOS 2: LUTUNG KASARUNG (SUNDA) — TRILOGI PASUNDAN LENGKAP
+// SKENARIO EPOS 2: LUTUNG KASARUNG (SUNDA) - TRILOGI PASUNDAN LENGKAP
 // ============================================================================
 
 export const SKENARIO_LUTUNG_KASARUNG_BAB_1: SkenarioBab = {
@@ -410,7 +603,7 @@ export const SKENARIO_LUTUNG_KASARUNG_BAB_3: SkenarioBab = {
       karakterId: 'lutung-kasarung',
       pembicaraNama: 'Sang Guruminda',
       teks:
-        'Kilatan cahaya emas membubung ke angkasa—sosok kera lutung meluruh, menjelma menjadi Sang Hyang Guruminda, kesatria tampan dari kahyangan! Sekarang, Tuan Putri, materaikan piagam damai ini dengan glif ᮘ (Ba)!',
+        'Kilatan cahaya emas membubung ke angkasa, sosok kera lutung meluruh, menjelma menjadi Sang Hyang Guruminda, kesatria tampan dari kahyangan! Sekarang, Tuan Putri, materaikan piagam damai ini dengan glif ᮘ (Ba)!',
     },
     {
       id: 'lk-3-beat-6',
@@ -435,7 +628,7 @@ export const SKENARIO_LUTUNG_KASARUNG_BAB_3: SkenarioBab = {
 };
 
 // ============================================================================
-// SKENARIO EPOS 3: CALON ARANG (BALI) — TRILOGI RONTAL DEWATA LENGKAP
+// SKENARIO EPOS 3: CALON ARANG (BALI) - TRILOGI RONTAL DEWATA LENGKAP
 // ============================================================================
 
 export const SKENARIO_CALON_ARANG_BAB_1: SkenarioBab = {
@@ -728,29 +921,55 @@ export const SKENARIO_CALON_ARANG_BAB_3: SkenarioBab = {
 // HELPER LOADER SKENARIO
 // ============================================================================
 
+export function getSceneBgPath(eposSlug: string, babNomor: number): string {
+  const slug = eposSlug.toLowerCase();
+  const bab = Math.min(Math.max(babNomor, 1), 3);
+  if (slug === 'sawerigading') {
+    return `/images/stories/scenes/scene-sawerigading-bab${bab}.webp`;
+  }
+  if (slug === 'lutung-kasarung') {
+    return `/images/stories/scenes/scene-lutung-bab${bab}.webp`;
+  }
+  if (slug === 'calon-arang') {
+    return `/images/stories/scenes/scene-calonarang-bab${bab}.webp`;
+  }
+  return `/images/ui/backgrounds/bg-katalog-cerita.webp`;
+}
+
 export function getSkenarioBab(eposSlug: string, babNomor: number): SkenarioBab {
   const slug = eposSlug.toLowerCase();
+  let base: SkenarioBab;
 
   // 1. Epos Sawerigading (Lontara)
-  if (slug === 'sawerigading' && babNomor === 1) {
-    return SKENARIO_SAWERIGADING_BAB_1;
+  if (slug === 'sawerigading') {
+    if (babNomor === 1) base = SKENARIO_SAWERIGADING_BAB_1;
+    else if (babNomor === 2) base = SKENARIO_SAWERIGADING_BAB_2;
+    else if (babNomor === 3) base = SKENARIO_SAWERIGADING_BAB_3;
+    else base = getFallbackSkenario(eposSlug, babNomor);
+  } else if (slug === 'lutung-kasarung') {
+    // 2. Epos Lutung Kasarung (Sunda)
+    if (babNomor === 1) base = SKENARIO_LUTUNG_KASARUNG_BAB_1;
+    else if (babNomor === 2) base = SKENARIO_LUTUNG_KASARUNG_BAB_2;
+    else if (babNomor === 3) base = SKENARIO_LUTUNG_KASARUNG_BAB_3;
+    else base = getFallbackSkenario(eposSlug, babNomor);
+  } else if (slug === 'calon-arang') {
+    // 3. Epos Calon Arang (Bali)
+    if (babNomor === 1) base = SKENARIO_CALON_ARANG_BAB_1;
+    else if (babNomor === 2) base = SKENARIO_CALON_ARANG_BAB_2;
+    else if (babNomor === 3) base = SKENARIO_CALON_ARANG_BAB_3;
+    else base = getFallbackSkenario(eposSlug, babNomor);
+  } else {
+    base = getFallbackSkenario(eposSlug, babNomor);
   }
 
-  // 2. Epos Lutung Kasarung (Sunda)
-  if (slug === 'lutung-kasarung') {
-    if (babNomor === 1) return SKENARIO_LUTUNG_KASARUNG_BAB_1;
-    if (babNomor === 2) return SKENARIO_LUTUNG_KASARUNG_BAB_2;
-    if (babNomor === 3) return SKENARIO_LUTUNG_KASARUNG_BAB_3;
-  }
+  return {
+    ...base,
+    sceneBg: base.sceneBg || getSceneBgPath(eposSlug, babNomor),
+  };
+}
 
-  // 3. Epos Calon Arang (Bali)
-  if (slug === 'calon-arang') {
-    if (babNomor === 1) return SKENARIO_CALON_ARANG_BAB_1;
-    if (babNomor === 2) return SKENARIO_CALON_ARANG_BAB_2;
-    if (babNomor === 3) return SKENARIO_CALON_ARANG_BAB_3;
-  }
-
-  // Fallback scenario generator untuk bab-bab lainnya jika dibuka
+function getFallbackSkenario(eposSlug: string, babNomor: number): SkenarioBab {
+  const slug = eposSlug.toLowerCase();
   const isLontara = slug === 'sawerigading';
   const isSunda = slug === 'lutung-kasarung';
 
@@ -763,6 +982,7 @@ export function getSkenarioBab(eposSlug: string, babNomor: number): SkenarioBab 
     judulBab: `Petualangan Epos Bab ${babNomor}`,
     eposJudul: isLontara ? 'I La Galigo' : isSunda ? 'Lutung Kasarung' : 'Calon Arang',
     aksaraId: defaultAksara,
+    sceneBg: getSceneBgPath(eposSlug, babNomor),
     xpReward: 200,
     beats: [
       {

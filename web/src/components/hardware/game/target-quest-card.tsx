@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Sparkles, AlertTriangle } from 'lucide-react';
 import type { RamuMantraQuest, SpeedMatchQuest } from '@/data/hardware/game-quests';
 
 interface TargetQuestCardProps {
@@ -87,13 +88,15 @@ export function TargetQuestCard({
 
       {/* Match Status Banner Overlay */}
       {matchStatus === 'success' && (
-        <div className="mt-3 pt-3 border-t border-emerald-500/30 text-emerald-300 font-bold text-xs sm:text-sm animate-bounce">
-          ✨ Sempurna! Suku Kata Cocok (+{quest.xpReward} XP) ✨
+        <div className="mt-3 pt-3 border-t border-emerald-500/30 text-emerald-300 font-bold text-xs sm:text-sm animate-score-pop drop-shadow-[0_0_12px_rgba(52,211,153,0.5)] flex items-center justify-center gap-1.5">
+          <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>Sempurna! Suku Kata Cocok (+{quest.xpReward} XP)</span>
         </div>
       )}
       {matchStatus === 'failed' && (
-        <div className="mt-3 pt-3 border-t border-rose-500/30 text-rose-300 font-bold text-xs sm:text-sm">
-          ⚠️ Waktu Habis / Kartu Tidak Sesuai! Melanjutkan ke ronde berikutnya...
+        <div className="mt-3 pt-3 border-t border-rose-500/30 text-rose-300 font-bold text-xs sm:text-sm animate-shake-error flex items-center justify-center gap-1.5">
+          <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+          <span>Waktu Habis / Kartu Tidak Sesuai! Melanjutkan ke ronde berikutnya...</span>
         </div>
       )}
     </div>

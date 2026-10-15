@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { ShinyButton } from '@/components/ui/shiny-button';
@@ -55,9 +56,25 @@ function PlayIcon({ className = 'w-4 h-4' }: { className?: string }) {
 
 export function StoryCampaignCard({ epos, companion }: StoryCampaignCardProps) {
   return (
-    <OrnateFrame className="w-full bg-[#0c1a2c]/85 border border-[#D4A373]/30 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+    <OrnateFrame className="w-full bg-[#0c1a2c]/85 border border-[#D4A373]/30 shadow-[0_8px_32px_rgba(0,0,0,0.4)] sheen-sweep transition-transform duration-300 hover:scale-[1.005]">
       <div className="p-5 sm:p-6 lg:p-7 flex flex-col gap-6">
         
+        {/* Visual Epic Banner */}
+        {epos.bannerUrl && (
+          <div className="relative w-full h-36 sm:h-44 rounded-2xl overflow-hidden border border-white/10 shadow-lg group">
+            <Image
+              src={epos.bannerUrl}
+              alt={epos.judul}
+              fill
+              className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a2c] via-[#0c1a2c]/35 to-transparent" />
+            <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-mono text-[#ffd261]">
+              {epos.aksaraNama}
+            </div>
+          </div>
+        )}
+
         {/* ================================================================
             1. CAMPAIGN HEADER: TITLE, NATIVE SCRIPT & COMPANION
             ================================================================ */}
@@ -105,8 +122,20 @@ export function StoryCampaignCard({ epos, companion }: StoryCampaignCardProps) {
           {/* Companion Mini Badge & Star Rating */}
           <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-3 shrink-0">
             {companion && (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10">
-                <span className="text-xl select-none">{companion.avatar}</span>
+              <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10">
+                <div className="w-8 h-8 rounded-lg overflow-hidden border border-[#ffd261]/30 shrink-0 flex items-center justify-center bg-black/40">
+                  {companion.avatarUrl ? (
+                    <Image
+                      src={companion.avatarUrl}
+                      alt={companion.nama}
+                      width={32}
+                      height={32}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-base select-none">{companion.avatar}</span>
+                  )}
+                </div>
                 <div className="text-left">
                   <span className="text-[10px] text-white/50 block">Pemandu Kisah</span>
                   <span className="text-xs font-bold text-white" style={{ fontFamily: 'var(--font-philosopher)' }}>
@@ -133,7 +162,7 @@ export function StoryCampaignCard({ epos, companion }: StoryCampaignCardProps) {
           </span>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-            {epos.babList.map((bab: BabCerita) => {
+            {epos.babList.map((bab: BabCerita, bIdx) => {
               const isFinished = bab.status === 'selesai';
               const isOpen = bab.status === 'terbuka';
               const isLocked = bab.status === 'terkunci';
@@ -141,11 +170,12 @@ export function StoryCampaignCard({ epos, companion }: StoryCampaignCardProps) {
               return (
                 <div
                   key={bab.n}
-                  className={`relative rounded-2xl border p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 ${
+                  style={{ '--stagger': bIdx } as React.CSSProperties}
+                  className={`stagger-item animate-emerge-scale relative rounded-2xl border p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 ${
                     isFinished
-                      ? 'bg-gradient-to-b from-emerald-500/[0.08] to-black/30 border-emerald-500/30 shadow-sm'
+                      ? 'bg-gradient-to-b from-emerald-500/[0.08] to-black/30 border-emerald-500/30 shadow-sm hover:scale-[1.015]'
                       : isOpen
-                      ? 'bg-gradient-to-b from-white/[0.06] to-black/30 border-[#ffd261]/40 shadow-[0_4px_20px_rgba(255,210,97,0.12)]'
+                      ? 'bg-gradient-to-b from-white/[0.08] via-[#ffd261]/[0.04] to-black/35 border-[#ffd261] shadow-[0_4px_24px_rgba(255,210,97,0.18)] hover:scale-[1.015] animate-radar-ping'
                       : 'bg-white/[0.02] border-white/10 opacity-60'
                   }`}
                 >

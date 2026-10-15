@@ -1,6 +1,6 @@
 # 🇮🇩 Aksantara (Aksara Nusantara)
 ### Multi-Modal AI Classifier & Phygital Platform Pelestarian Aksara Nusantara
-> **Kompetisi:** Hackathon JOINTS UGM 2026 — **Tema:** Education  
+> **Kompetisi:** Hackathon JOINTS UGM 2026 - **Tema:** Education  
 > **Fokus Wilayah:** Trinitas Aksara Nusantara (Lontara, Sunda, Bali)  
 > **Status:** Active Development | Target Final: FMIPA Universitas Gadjah Mada (1 November 2026)
 

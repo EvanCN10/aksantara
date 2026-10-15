@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import type { OpsiJawaban } from '@/data/cerita/skenario';
+import { playSuccessGamelan, playSoftMuted } from '@/lib/audio/sound-effects';
 
 interface ChallengeQuizProps {
   pertanyaan: string;
@@ -35,34 +36,12 @@ export function ChallengeQuiz({
   const [hasAnswered, setHasAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
 
-  // Play soft synthesized Web Audio feedback
+  // Play acoustic gamelan or soft muted feedback
   const playSound = (correct: boolean) => {
-    try {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = 'sine';
-      if (correct) {
-        osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-        osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.2); // E5
-        gain.gain.setValueAtTime(0.15, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
-      } else {
-        osc.frequency.setValueAtTime(260, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.25);
-        gain.gain.setValueAtTime(0.12, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-      }
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.35);
-    } catch {
-      // AudioContext unavailable
+    if (correct) {
+      playSuccessGamelan();
+    } else {
+      playSoftMuted();
     }
   };
 
@@ -106,15 +85,15 @@ export function ChallengeQuiz({
         {opsiJawaban.map((opt) => {
           const isSelected = selectedId === opt.id;
           let btnStyle =
-            'bg-white/[0.04] border-white/15 hover:border-white/30 hover:bg-white/[0.08] text-white/85';
+            'bg-white/[0.04] border-white/15 hover:border-white/30 hover:bg-white/[0.08] text-white/85 hover:scale-[1.005]';
 
           if (isSelected) {
             if (opt.benar) {
               btnStyle =
-                'bg-emerald-500/20 border-emerald-400 text-emerald-200 shadow-[0_0_16px_rgba(52,211,153,0.3)] ring-1 ring-emerald-400';
+                'bg-emerald-500/20 border-emerald-400 text-emerald-200 shadow-[0_0_20px_rgba(52,211,153,0.35)] ring-1 ring-emerald-400 scale-[1.01]';
             } else {
               btnStyle =
-                'bg-rose-500/20 border-rose-400 text-rose-200 shadow-[0_0_16px_rgba(244,63,94,0.3)] ring-1 ring-rose-400';
+                'bg-rose-500/20 border-rose-400 text-rose-200 shadow-[0_0_16px_rgba(244,63,94,0.3)] ring-1 ring-rose-400 animate-shake-error';
             }
           }
 
@@ -124,13 +103,13 @@ export function ChallengeQuiz({
               type="button"
               onClick={() => handleSelectOption(opt)}
               disabled={isCorrect}
-              className={`w-full p-3.5 sm:p-4 rounded-xl border text-left text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 active:translate-y-0.5 ${btnStyle}`}
+              className={`w-full p-3.5 sm:p-4 rounded-xl border text-left text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 active:translate-y-0.5 sheen-sweep ${btnStyle}`}
             >
               <span>{opt.teks}</span>
               {isSelected && (
-                <span className="shrink-0">
+                <span className="shrink-0 animate-emerge-scale">
                   {opt.benar ? (
-                    <span className="w-5 h-5 rounded-full bg-emerald-500 text-[#0c1a2c] flex items-center justify-center font-bold">
+                    <span className="w-5 h-5 rounded-full bg-emerald-500 text-[#0c1a2c] flex items-center justify-center font-bold shadow-[0_0_10px_#10b981]">
                       <CheckIcon className="w-3.5 h-3.5" />
                     </span>
                   ) : (
@@ -148,19 +127,23 @@ export function ChallengeQuiz({
       {/* Answer Explanation & Feedback */}
       {hasAnswered && selectedOption && (
         <div
-          className={`p-3 rounded-xl border text-xs leading-relaxed transition-all animate-in fade-in duration-200 ${
+          key={`${selectedId}-${isCorrect}`}
+          className={`p-3.5 rounded-xl border text-xs leading-relaxed transition-all animate-emerge-up ${
             isCorrect
-              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-200'
-              : 'bg-rose-500/10 border-rose-500/30 text-rose-200'
+              ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-100 shadow-[0_0_20px_rgba(16,185,129,0.15)]'
+              : 'bg-rose-500/15 border-rose-500/40 text-rose-100 shadow-[0_0_20px_rgba(244,63,94,0.15)]'
           }`}
+          style={{ animationDuration: '0.3s' }}
         >
-          <strong className="block mb-0.5">
+          <strong className="block mb-0.5 text-sm">
             {isCorrect ? 'Jawaban Benar! ✦' : 'Kurang Tepat, Coba Lagi!'}
           </strong>
-          {selectedOption.penjelasan ||
-            (isCorrect
-              ? 'Pilihanmu tepat sesuai filosofi naskah kuno!'
-              : 'Pilih opsi yang lain untuk menemukan jawaban yang sesuai.')}
+          <p className="font-light">
+            {selectedOption.penjelasan ||
+              (isCorrect
+                ? 'Pilihanmu tepat sesuai filosofi naskah kuno!'
+                : 'Pilih opsi yang lain untuk menemukan jawaban yang sesuai.')}
+          </p>
         </div>
       )}
     </div>

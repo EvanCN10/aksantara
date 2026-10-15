@@ -8,6 +8,7 @@ import {
   type TipeSlot,
   KARTU_RFID_PRESET,
 } from './tactile-serial-types';
+import { playWoodTap } from '@/lib/audio/sound-effects';
 
 export function useTactileSerial() {
   const [status, setStatus] = useState<SerialConnectionStatus>('disconnected');
@@ -40,27 +41,9 @@ export function useTactileSerial() {
     ]);
   }, []);
 
-  // Web Audio chime feedback on card scan
-  const playChime = useCallback((frequency = 587.33) => {
-    try {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(frequency, ctx.currentTime);
-      gain.gain.setValueAtTime(0.08, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.25);
-    } catch {
-      // AudioContext unavailable
-    }
+  // Web Audio chime feedback on card scan - uses organic teak wood tap
+  const playChime = useCallback((_frequency?: number) => {
+    playWoodTap();
   }, []);
 
   // Combined syllable calculation

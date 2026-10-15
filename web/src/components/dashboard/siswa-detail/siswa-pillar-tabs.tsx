@@ -1,6 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
+import {
+  PenTool,
+  Sliders,
+  BookOpen,
+  Scroll,
+  Bot,
+  CreditCard,
+  Star,
+  CheckCircle2,
+  Clock,
+} from 'lucide-react';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { SiswaDetailData } from '@/data/guru/guru-data';
 
@@ -23,7 +34,7 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
               : 'text-white/70 hover:text-white bg-white/5 hover:bg-white/10'
           }`}
         >
-          <span>✍️</span>
+          <PenTool className="w-4 h-4" />
           <span>Pilar 1: AI Canvas ({siswa.riwayatCanvas.length})</span>
         </button>
 
@@ -35,7 +46,7 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
               : 'text-white/70 hover:text-white bg-white/5 hover:bg-white/10'
           }`}
         >
-          <span>🎛️</span>
+          <Sliders className="w-4 h-4" />
           <span>Pilar 3: Hardware Pad ({siswa.riwayatHardware.length})</span>
         </button>
 
@@ -47,7 +58,7 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
               : 'text-white/70 hover:text-white bg-white/5 hover:bg-white/10'
           }`}
         >
-          <span>📖</span>
+          <BookOpen className="w-4 h-4" />
           <span>Pilar 3: Epos Cerita ({siswa.riwayatEpos.length})</span>
         </button>
 
@@ -59,7 +70,7 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
               : 'text-white/70 hover:text-white bg-white/5 hover:bg-white/10'
           }`}
         >
-          <span>📜</span>
+          <Scroll className="w-4 h-4" />
           <span>Pilar 4: Preservasi ({siswa.riwayatPreservasi.length})</span>
         </button>
       </div>
@@ -136,7 +147,7 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
 
                 {/* AI Diagnostic Commentary */}
                 <div className="mt-3 pt-3 border-t border-white/5 text-xs text-white/70 flex items-start gap-2">
-                  <span className="text-[#ffd261] text-sm">🤖</span>
+                  <Bot className="w-4 h-4 text-[#ffd261] shrink-0 mt-0.5" />
                   <p><span className="font-semibold text-white">Diagnosis AI:</span> {item.catatanAi}</p>
                 </div>
               </div>
@@ -162,8 +173,8 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
                 className="bg-[#060d16]/70 border border-white/10 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-purple-500/40 transition"
               >
                 <div className="flex items-start gap-3">
-                  <span className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-xl text-purple-300 shrink-0">
-                    🎛️
+                  <span className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-300 shrink-0">
+                    <Sliders className="w-5 h-5" />
                   </span>
                   <div>
                     <h4 className="text-sm font-bold text-white">{item.gameNama}</h4>
@@ -174,9 +185,10 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
                       {item.kartuDigunakan.map((kartu, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-0.5 rounded text-[11px] bg-white/5 border border-white/10 text-white/80"
+                          className="px-2 py-0.5 rounded text-[11px] bg-white/5 border border-white/10 text-white/80 inline-flex items-center gap-1"
                         >
-                          💳 {kartu}
+                          <CreditCard className="w-3 h-3 text-white/60" />
+                          <span>{kartu}</span>
                         </span>
                       ))}
                     </div>
@@ -235,7 +247,10 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
                 <div>
                   <div className="flex items-center justify-between text-xs text-white/70 mb-1.5">
                     <span>Kemajuan Bab: {epos.babSelesai} / {epos.totalBab}</span>
-                    <span className="text-amber-400 font-bold">★ {epos.bintang}/3</span>
+                    <span className="text-amber-400 font-bold inline-flex items-center gap-1">
+                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      <span>{epos.bintang}/3</span>
+                    </span>
                   </div>
                   <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
                     <div
@@ -274,8 +289,18 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
                     <h4 className="font-serif font-bold text-white text-sm mt-1">{item.judulNaskah}</h4>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                      {item.status === 'terverifikasi' ? 'Terverifikasi Kurator ✓' : 'Menunggu Validasi ⏳'}
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1">
+                      {item.status === 'terverifikasi' ? (
+                        <>
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Terverifikasi Kurator</span>
+                        </>
+                      ) : (
+                        <>
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>Menunggu Validasi</span>
+                        </>
+                      )}
                     </span>
                     <span className="text-xs text-[#ffd261] font-mono font-bold">+{item.xpDidapat} XP</span>
                   </div>

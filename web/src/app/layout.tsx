@@ -27,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className={philosopher.variable}>
-      <body className="antialiased">
+      <body className="antialiased bg-[#070d17] text-[#F6F2E9]">
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

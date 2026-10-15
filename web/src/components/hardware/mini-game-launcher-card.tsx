@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { FlaskConical, Zap, CheckCircle2 } from 'lucide-react';
 
 interface MiniGameLauncherCardProps {
   isOnline: boolean;
@@ -14,7 +15,7 @@ export function MiniGameLauncherCard({ isOnline }: MiniGameLauncherCardProps) {
       judul: 'Ramu Mantra (Syllable Crafter)',
       deskripsi:
         'Susun kombinasi konsonan dan diakritik fisik pada slot pad untuk merapalkan suku kata sakral.',
-      icon: '🧪',
+      icon: FlaskConical,
       tag: 'Kombinasi Fonetik 2-Slot',
       waktu: '3-5 Menit',
       warna: '#4ade80',
@@ -25,7 +26,7 @@ export function MiniGameLauncherCard({ isOnline }: MiniGameLauncherCardProps) {
       judul: 'Aksara Cepat Tanggap (Speed Match)',
       deskripsi:
         'Tantangan refleks cepat: temukan dan tempelkan kartu RFID yang tepat sebelum waktu habis.',
-      icon: '⚡',
+      icon: Zap,
       tag: 'Ketangkasan & Refleks',
       waktu: '2-4 Menit',
       warna: '#38bdf8',
@@ -42,28 +43,37 @@ export function MiniGameLauncherCard({ isOnline }: MiniGameLauncherCardProps) {
         >
           Arena Mini-Game Kinestetik (Pilar 3)
         </h3>
-        <span className="text-[10px] font-mono text-[#ffd261] bg-[#ffd261]/10 px-2 py-0.5 rounded-full border border-[#ffd261]/25">
-          {isOnline ? 'Siap Dimainkan ✓' : 'Menunggu Koneksi'}
+        <span className="text-[10px] font-mono text-[#ffd261] bg-[#ffd261]/10 px-2 py-0.5 rounded-full border border-[#ffd261]/25 inline-flex items-center gap-1">
+          {isOnline ? (
+            <>
+              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+              <span>Siap Dimainkan</span>
+            </>
+          ) : (
+            <span>Menunggu Koneksi</span>
+          )}
         </span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        {games.map((g) => (
-          <div
-            key={g.id}
-            className="group relative rounded-2xl bg-[#141e2e]/90 border border-white/10 hover:border-white/25 p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-lg hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
-          >
-            <div>
-              <div className="flex items-start justify-between gap-3 mb-2.5">
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
-                  style={{
-                    backgroundColor: `${g.warna}20`,
-                    boxShadow: `0 0 16px ${g.warna}30`,
-                  }}
-                >
-                  {g.icon}
-                </div>
+        {games.map((g) => {
+          const GameIcon = g.icon;
+          return (
+            <div
+              key={g.id}
+              className="group relative rounded-2xl bg-[#141e2e]/90 border border-white/10 hover:border-white/25 p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-lg hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
+            >
+              <div>
+                <div className="flex items-start justify-between gap-3 mb-2.5">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                    style={{
+                      backgroundColor: `${g.warna}20`,
+                      boxShadow: `0 0 16px ${g.warna}30`,
+                    }}
+                  >
+                    <GameIcon className="w-5 h-5" style={{ color: g.warna }} />
+                  </div>
                 <div className="text-right">
                   <span className="text-[9px] font-mono text-white/40 block">{g.waktu}</span>
                   <span
@@ -94,7 +104,8 @@ export function MiniGameLauncherCard({ isOnline }: MiniGameLauncherCardProps) {
               Mulai Mini-Game →
             </Link>
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

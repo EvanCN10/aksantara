@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Save } from 'lucide-react';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 
 interface SiswaTeacherNotesProps {
@@ -87,7 +88,7 @@ export const SiswaTeacherNotes: React.FC<SiswaTeacherNotesProps> = ({
           onClick={handleSave}
           className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold text-[#0c1a2c] bg-gradient-to-r from-[#ffd261] to-[#D4A373] hover:brightness-110 shadow-lg shadow-[#ffd261]/20 transition flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
         >
-          <span>💾</span>
+          <Save className="w-4 h-4" />
           <span>Simpan Evaluasi Guru</span>
         </button>
       </div>

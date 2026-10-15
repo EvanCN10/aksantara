@@ -1,6 +1,7 @@
 'use client';
 
 import React, { use, useState, useMemo } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { getSkenarioBab, type StoryBeat } from '@/data/cerita/skenario';
 import { getKarakterById } from '@/data/cerita/karakter';
@@ -10,6 +11,7 @@ import { ChallengeQuiz } from '@/components/cerita/reader/challenge-quiz';
 import { ChallengeCanvasMini } from '@/components/cerita/reader/challenge-canvas-mini';
 import { ChapterCompleteModal } from '@/components/cerita/reader/chapter-complete-modal';
 import { ShinyButton } from '@/components/ui/shiny-button';
+import { playWoodTap } from '@/lib/audio/sound-effects';
 
 interface StoryPlayerPageProps {
   params: Promise<{ judul: string; n: string }>;
@@ -65,28 +67,9 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
     return true;
   }, [currentBeat, passedChallenges]);
 
-  // Audio Cue on Beat Step
+  // Audio Cue on Beat Step - subtle acoustic wood tap
   const playStepSound = () => {
-    try {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(440, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(520, ctx.currentTime + 0.15);
-      gain.gain.setValueAtTime(0.08, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.2);
-    } catch {
-      // AudioContext unavailable
-    }
+    playWoodTap();
   };
 
   const handleNextBeat = () => {
@@ -130,7 +113,25 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
   }, [skenario.aksaraId]);
 
   return (
-    <main className="relative min-h-screen bg-[#0c1a2c] text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col justify-between">
+    <main className="relative min-h-screen text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col justify-between">
+      {/* Dynamic Thematic Chapter Scene Background */}
+      {skenario.sceneBg && (
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#060d16]" aria-hidden="true">
+          <Image
+            src={skenario.sceneBg}
+            alt={skenario.judulBab}
+            fill
+            priority={true}
+            quality={90}
+            sizes="100vw"
+            className="object-cover object-center filter brightness-[0.75] contrast-[1.05] saturate-[1.10] transition-all duration-1000"
+          />
+          {/* Multi-layered cinematic vignette & contrast control */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a2c] via-[#0c1a2c]/35 to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(12,26,44,0.65)_100%)]" />
+        </div>
+      )}
+
       {/* Background Ambience */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute top-[-10%] left-1/3 w-[700px] h-[360px] bg-[radial-gradient(ellipse_at_center,rgba(255,210,97,0.12),transparent_70%)] blur-3xl" />
@@ -154,7 +155,7 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
       {/* 2. Main Stage Center */}
       <div className="relative z-10 max-w-3xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 flex-1 flex flex-col justify-center gap-6">
         {/* Chapter Title Badge */}
-        <div className="text-center">
+        <div className="text-center animate-emerge-up" style={{ animationDelay: '100ms' }}>
           <span className="text-[11px] font-mono tracking-widest uppercase text-[#ffd261]/70 block mb-0.5">
             {skenario.eposJudul}
           </span>
@@ -167,7 +168,7 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
         </div>
 
         {/* Stage Content Based on Beat Type */}
-        <div className="w-full">
+        <div className="w-full animate-emerge-up" style={{ animationDelay: '180ms' }}>
           {currentBeat.tipe === 'dialog' || currentBeat.tipe === 'narasi' ? (
             <DialogueStage beat={currentBeat} companion={companion} />
           ) : currentBeat.tipe === 'pilihan' ? (
@@ -204,34 +205,36 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
             Adegan {currentBeatIndex + 1} dari {totalBeats}
           </span>
 
-          {/* Primary Next Action Button */}
-          {isLastBeat ? (
-            <ShinyButton
-              label="Tuntaskan Bab (Selesai) ✓"
-              onClick={handleNextBeat}
-              className={`py-2.5 px-5 text-xs sm:text-sm font-bold ${
-                canProceed
-                  ? 'cursor-pointer shadow-[0_0_20px_rgba(255,210,97,0.35)]'
-                  : 'opacity-40 cursor-not-allowed pointer-events-none'
-              }`}
-            />
-          ) : (
-            <ShinyButton
-              label={
-                canProceed
-                  ? 'Lanjutkan Cerita →'
-                  : currentBeat.tipe === 'pilihan'
-                  ? 'Pilih Jawaban Dulu'
-                  : 'Selesaikan Goresan'
-              }
-              onClick={handleNextBeat}
-              className={`py-2.5 px-5 text-xs sm:text-sm font-bold ${
-                canProceed
-                  ? 'cursor-pointer shadow-[0_0_20px_rgba(255,210,97,0.35)]'
-                  : 'opacity-40 cursor-not-allowed pointer-events-none'
-              }`}
-            />
-          )}
+          {/* Primary Next Action Button with Beacon Pulse */}
+          <div className={canProceed ? 'animate-beacon-pulse rounded-full' : ''}>
+            {isLastBeat ? (
+              <ShinyButton
+                label="Tuntaskan Bab (Selesai) ✓"
+                onClick={handleNextBeat}
+                className={`py-2.5 px-5 text-xs sm:text-sm font-bold ${
+                  canProceed
+                    ? 'cursor-pointer shadow-[0_0_20px_rgba(255,210,97,0.35)] hover:scale-[1.01]'
+                    : 'opacity-40 cursor-not-allowed pointer-events-none'
+                }`}
+              />
+            ) : (
+              <ShinyButton
+                label={
+                  canProceed
+                    ? 'Lanjutkan Cerita →'
+                    : currentBeat.tipe === 'pilihan'
+                    ? 'Pilih Jawaban Dulu'
+                    : 'Selesaikan Goresan'
+                }
+                onClick={handleNextBeat}
+                className={`py-2.5 px-5 text-xs sm:text-sm font-bold ${
+                  canProceed
+                    ? 'cursor-pointer shadow-[0_0_20px_rgba(255,210,97,0.35)] hover:scale-[1.01]'
+                    : 'opacity-40 cursor-not-allowed pointer-events-none'
+                }`}
+              />
+            )}
+          </div>
         </div>
       </footer>
 

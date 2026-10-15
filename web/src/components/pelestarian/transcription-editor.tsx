@@ -2,7 +2,9 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { AlertTriangle, Sparkles, ClipboardList } from 'lucide-react';
 import type { ManuskripItem } from '@/data/pelestarian/manuskrip-data';
+import { playSuccessGamelan } from '@/lib/audio/sound-effects';
 
 interface TranscriptionEditorProps {
   manuskrip: ManuskripItem;
@@ -16,28 +18,9 @@ export function TranscriptionEditor({
   const [usulanTeks, setUsulanTeks] = useState(manuskrip.transliterasiBaku);
   const [submitted, setSubmitted] = useState(false);
 
-  // Play audio chime on submission
+  // Play acoustic gamelan chime on submission
   const playRewardSound = () => {
-    try {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(523.25, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.15);
-      gain.gain.setValueAtTime(0.08, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.3);
-    } catch {
-      // AudioContext unavailable
-    }
+    playSuccessGamelan();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -66,8 +49,9 @@ export function TranscriptionEditor({
           <p className="text-xs sm:text-sm text-white/80 font-mono leading-relaxed italic">
             &quot;{manuskrip.prediksiOcrAi}&quot;
           </p>
-          <span className="text-[10px] text-white/40 block mt-2">
-            ⚠️ Terdapat glif yang pudar atau terpotong noda usia naskah. Periksa dan sempurnakan pembacaannya di bawah.
+          <span className="text-[10px] text-white/40 flex items-center gap-1.5 mt-2">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span>Terdapat glif yang pudar atau terpotong noda usia naskah. Periksa dan sempurnakan pembacaannya di bawah.</span>
           </span>
         </div>
       </div>
@@ -98,7 +82,10 @@ export function TranscriptionEditor({
         {/* Success Confirmation Toast */}
         {submitted && (
           <div className="rounded-xl bg-emerald-500/15 border border-emerald-500/30 p-3 flex items-center justify-between text-xs text-emerald-300 animate-in fade-in duration-200">
-            <span>✨ Usulan berhasil dikirimkan ke antrean kurasi filolog! (+75 XP)</span>
+            <span className="flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <span>Usulan berhasil dikirimkan ke antrean kurasi filolog! (+75 XP)</span>
+            </span>
             <Link
               href="/pelestarian/status"
               className="text-[11px] font-bold underline hover:text-white ml-2 shrink-0"
@@ -119,9 +106,10 @@ export function TranscriptionEditor({
 
           <Link
             href="/pelestarian/status"
-            className="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10 text-xs font-medium transition-colors cursor-pointer shrink-0"
+            className="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10 text-xs font-medium transition-colors cursor-pointer shrink-0 inline-flex items-center gap-1.5"
           >
-            Papan Kurasi 📋
+            <ClipboardList className="w-3.5 h-3.5" />
+            <span>Papan Kurasi</span>
           </Link>
         </div>
       </form>

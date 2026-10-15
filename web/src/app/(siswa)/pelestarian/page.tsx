@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { ClipboardList, Scroll } from 'lucide-react';
 import { DAFTAR_MANUSKRIP, type ManuskripItem } from '@/data/pelestarian/manuskrip-data';
 import { ManuscriptViewer } from '@/components/pelestarian/manuscript-viewer';
 import { TranscriptionEditor } from '@/components/pelestarian/transcription-editor';
@@ -36,7 +38,22 @@ export default function PelestarianPage() {
   };
 
   return (
-    <main className="relative min-h-screen bg-[#0c1a2c] text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col justify-between">
+    <main className="relative min-h-screen text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col justify-between">
+      {/* Visual Thematic Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#060d16]" aria-hidden="true">
+        <Image
+          src="/images/ui/backgrounds/bg-studio-pelestarian.webp"
+          alt="Studio Pelestarian & Digitalisasi Manuskrip"
+          fill
+          priority={true}
+          quality={90}
+          sizes="100vw"
+          className="object-cover object-center filter brightness-[0.45] contrast-[1.05] saturate-[1.05]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060d16] via-[#060d16]/70 to-[#060d16]/40" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(6,13,22,0.75)_100%)]" />
+      </div>
+
       {/* Background Ambience */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute top-[-10%] left-1/3 w-[750px] h-[380px] bg-[radial-gradient(ellipse_at_center,rgba(255,210,97,0.1),transparent_70%)] blur-3xl" />
@@ -60,7 +77,7 @@ export default function PelestarianPage() {
               href="/pelestarian/status"
               className="text-xs font-semibold text-[#ffd261] bg-[#ffd261]/10 hover:bg-[#ffd261]/20 px-3.5 py-1.5 rounded-full border border-[#ffd261]/25 transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <span>📋</span>
+              <ClipboardList className="w-4 h-4" />
               <span>Papan Status Kurasi</span>
             </Link>
           </div>
@@ -92,13 +109,14 @@ export default function PelestarianPage() {
               key={ms.id}
               type="button"
               onClick={() => setSelectedManuscriptIndex(idx)}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer border ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer border inline-flex items-center gap-1.5 ${
                 selectedManuscriptIndex === idx
                   ? 'bg-gradient-to-r from-[#ffd261] to-[#D4A373] text-[#0c1a2c] border-[#ffd261] shadow-[0_0_16px_rgba(255,210,97,0.3)] font-bold'
                   : 'bg-[#141e2e]/90 text-white/70 hover:text-white border-white/10 hover:border-white/20'
               }`}
             >
-              📜 {ms.judul}
+              <Scroll className="w-3.5 h-3.5" />
+              <span>{ms.judul}</span>
             </button>
           ))}
         </div>

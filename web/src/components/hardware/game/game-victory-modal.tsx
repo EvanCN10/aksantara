@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Trophy, Star } from 'lucide-react';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { ShinyButton } from '@/components/ui/shiny-button';
 
@@ -34,8 +35,8 @@ export function GameVictoryModal({
         <OrnateFrame className="w-full bg-[#0c1a2c]/95 border border-[#ffd261]/40 shadow-[0_0_50px_rgba(255,210,97,0.25)]">
           <div className="p-6 sm:p-8 text-center flex flex-col items-center gap-5">
             {/* Crown / Trophy Icon */}
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#ffd261]/25 to-transparent border border-[#ffd261]/50 flex items-center justify-center text-3xl shadow-[0_0_24px_rgba(255,210,97,0.3)] animate-bounce">
-              🏆
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#ffd261]/25 to-transparent border border-[#ffd261]/50 flex items-center justify-center shadow-[0_0_30px_rgba(255,210,97,0.4)] animate-score-pop">
+              <Trophy className="w-8 h-8 text-[#ffd261]" />
             </div>
 
             <div>
@@ -54,10 +55,10 @@ export function GameVictoryModal({
             </div>
 
             {/* Stars Row */}
-            <div className="flex items-center justify-center gap-2 text-2xl sm:text-3xl text-[#ffd261]">
-              <span className="drop-shadow-[0_0_12px_rgba(255,210,97,0.6)] animate-in zoom-in-50 delay-100">⭐</span>
-              <span className="drop-shadow-[0_0_12px_rgba(255,210,97,0.6)] animate-in zoom-in-50 delay-200">⭐</span>
-              <span className="drop-shadow-[0_0_12px_rgba(255,210,97,0.6)] animate-in zoom-in-50 delay-300">⭐</span>
+            <div className="flex items-center justify-center gap-3">
+              <Star className="w-7 h-7 text-[#ffd261] fill-[#ffd261] drop-shadow-[0_0_12px_rgba(255,210,97,0.6)] animate-star-slam [animation-delay:150ms]" />
+              <Star className="w-7 h-7 text-[#ffd261] fill-[#ffd261] drop-shadow-[0_0_12px_rgba(255,210,97,0.6)] animate-star-slam [animation-delay:300ms]" />
+              <Star className="w-7 h-7 text-[#ffd261] fill-[#ffd261] drop-shadow-[0_0_12px_rgba(255,210,97,0.6)] animate-star-slam [animation-delay:450ms]" />
             </div>
 
             {/* Stats Metric Grid */}
