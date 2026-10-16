@@ -33,9 +33,7 @@ env/
 venv/
 .venv/
 ENV/
-build/
 develop-eggs/
-dist/
 downloads/
 extracted/*
 eggs/
