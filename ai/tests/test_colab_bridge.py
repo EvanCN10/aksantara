@@ -1,6 +1,7 @@
 import asyncio
 import importlib.util
 import json
+import socket
 import sys
 import tempfile
 import types
@@ -138,3 +139,23 @@ class BridgeTests(unittest.IsolatedAsyncioTestCase):
                 envelope = json.loads(output.read_text(encoding='utf-8'))
                 self.assertEqual((envelope['id'], envelope['status']), ('timeout-008', 'error'))
                 self.assertIn('remote execution state unknown', envelope['error'])
+
+    async def test_status_rejects_stale_handshake_and_redacts_credentials(self):
+        with tempfile.TemporaryDirectory() as directory, socket.socket() as listener:
+            state_file = Path(directory) / 'state.json'
+            listener.bind(('127.0.0.1', 0))
+            port = listener.getsockname()[1]
+            state_file.write_text(json.dumps({
+                'status': 'connected', 'port': port, 'token': 'private-token',
+                'url': 'https://colab.research.google.com/#private-token',
+            }), encoding='utf-8')
+            with patch.object(self.bridge, 'STATE_FILE', state_file):
+                stale = self.bridge.bridge_status()
+                self.assertEqual(stale['status'], 'not_running')
+                self.assertEqual(stale['recorded_status'], 'connected')
+                self.assertNotIn('private-token', json.dumps(stale))
+                listener.listen()
+                live = self.bridge.bridge_status()
+                self.assertEqual(live['status'], 'listener_running')
+                self.assertTrue(live['listener_reachable'])
+                self.assertNotIn('private-token', json.dumps(live))

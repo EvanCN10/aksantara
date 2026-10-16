@@ -10,8 +10,10 @@ import argparse
 import asyncio
 import json
 import os
+import socket
 import re
 import sys
+import time
 import webbrowser
 from pathlib import Path
 
@@ -147,6 +149,29 @@ def write_json(path: Path, payload: dict) -> None:
         except PermissionError:
             time.sleep(0.05)
     temporary.replace(path)
+
+
+def bridge_status() -> dict:
+    """A saved handshake is not evidence that its listener is still alive."""
+    try:
+        state = json.loads(STATE_FILE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"status": "not_running", "listener_reachable": False}
+    port = state.get("port") if isinstance(state, dict) else None
+    reachable = False
+    if type(port) is int and 0 < port < 65536:
+        try:
+            with socket.create_connection(("127.0.0.1", port), timeout=1):
+                reachable = True
+        except OSError:
+            pass
+    return {
+        "status": "listener_running" if reachable else "not_running",
+        "listener_reachable": reachable,
+        "recorded_status": state.get("status") if isinstance(state, dict) else None,
+        "notebook_id": state.get("notebook_id") if isinstance(state, dict) else None,
+        "port": port,
+    }
 
 
 def sanitize_structured(value):
@@ -438,6 +463,8 @@ async def run_bridge(
 
 def main():
     parser = argparse.ArgumentParser(description="Aksantara Google Colab MCP Bridge")
+    parser.add_argument("--status", action="store_true",
+                        help="Check the saved listener without trusting stale handshake state or printing its token")
     parser.add_argument(
         "--script",
         "-s",
@@ -466,6 +493,10 @@ def main():
     )
 
     args = parser.parse_args()
+    if args.status:
+        status = bridge_status()
+        print(json.dumps(status))
+        raise SystemExit(0 if status["listener_reachable"] else 1)
 
     target_nb = args.notebook or DEFAULT_NOTEBOOK_ID
     target_path = NOTEBOOK_PATH

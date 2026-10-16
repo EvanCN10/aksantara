@@ -3,6 +3,7 @@ param(
     [string]$Script = "",
     [string]$Notebook = "",
     [switch]$NoBrowser,
+    [switch]$Status,
     [double]$Timeout = 180.0,
     [Parameter(ValueFromRemainingArguments=$true)]
     [string[]]$ExtraArgs
@@ -31,6 +32,9 @@ if ($ExtraArgs) {
 }
 if ($NoBrowser) {
     $uvArgs += "--no-browser"
+}
+if ($Status) {
+    $uvArgs += "--status"
 }
 
 & uv @uvArgs
