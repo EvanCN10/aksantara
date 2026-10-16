@@ -1,13 +1,9 @@
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ClipboardList, Scroll } from 'lucide-react';
-import { DAFTAR_MANUSKRIP, type ManuskripItem } from '@/data/pelestarian/manuskrip-data';
-import { ManuscriptViewer } from '@/components/pelestarian/manuscript-viewer';
-import { TranscriptionEditor } from '@/components/pelestarian/transcription-editor';
-import { OrnateFrame } from '@/components/ui/ornate-frame';
+import { ClipboardList } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
+import { PreservationStudio } from '@/components/pelestarian/preservation-studio';
 
 function ArrowLeftIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
@@ -17,25 +13,9 @@ function ArrowLeftIcon({ className = 'w-4 h-4' }: { className?: string }) {
   );
 }
 
-export default function PelestarianPage() {
-  const [selectedManuscriptIndex, setSelectedManuscriptIndex] = useState(0);
-  const activeManuskrip: ManuskripItem = DAFTAR_MANUSKRIP[selectedManuscriptIndex];
-
-  const handleCorrectionSubmit = (koreksiTeks: string) => {
-    // ============================================================================
-    // TODO: BACKEND INTEGRATION
-    // Simpan usulan koreksi ke Active Learning Buffer di database Supabase:
-    // POST /api/pelestarian/submit-correction
-    // Body Payload:
-    // {
-    //   manuskripId: activeManuskrip.id,
-    //   kodeArsip: activeManuskrip.kodeArsip,
-    //   usulanTeks: koreksiTeks,
-    //   userId: "current-user-id"
-    // }
-    // ============================================================================
-    console.log('Koreksi terkirim untuk', activeManuskrip.id, ':', koreksiTeks);
-  };
+export default async function PelestarianPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
   return (
     <main className="relative min-h-screen text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col justify-between">
@@ -89,7 +69,7 @@ export default function PelestarianPage() {
         {/* Title Header */}
         <div className="text-center max-w-2xl mx-auto">
           <span className="text-[11px] font-mono tracking-widest uppercase text-[#ffd261] px-3 py-1 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/25 inline-block mb-2">
-            Pilar 4: Human-in-the-Loop Preservasi & Digitalisasi
+            Pilar 4: Transliterasi Manual &amp; Review Manusia
           </span>
           <h1
             className="text-2xl sm:text-4xl font-bold text-white tracking-wide mb-2.5"
@@ -98,51 +78,17 @@ export default function PelestarianPage() {
             Studio Transliterasi Manuskrip Kuno
           </h1>
           <p className="text-xs sm:text-sm text-white/70 leading-relaxed">
-            Bantu filolog menyempurnakan pembacaan naskah bersejarah Nusantara. Periksa prediksi awal AI dan sumbangkan usulan transliterasi Latin yang tepat.
+            Bantu filolog membaca naskah kuno Nusantara. Baca aksara pada foto manuskrip asli, lalu tuliskan transliterasi Latin untuk ditinjau oleh guru atau kurator ahli.
           </p>
         </div>
 
-        {/* 3. Manuscript Selector Tabs */}
-        <div className="flex items-center justify-center gap-2 flex-wrap">
-          {DAFTAR_MANUSKRIP.map((ms, idx) => (
-            <button
-              key={ms.id}
-              type="button"
-              onClick={() => setSelectedManuscriptIndex(idx)}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer border inline-flex items-center gap-1.5 ${
-                selectedManuscriptIndex === idx
-                  ? 'bg-gradient-to-r from-[#ffd261] to-[#D4A373] text-[#0c1a2c] border-[#ffd261] shadow-[0_0_16px_rgba(255,210,97,0.3)] font-bold'
-                  : 'bg-[#141e2e]/90 text-white/70 hover:text-white border-white/10 hover:border-white/20'
-              }`}
-            >
-              <Scroll className="w-3.5 h-3.5" />
-              <span>{ms.judul}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* 4. Split Studio Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-          {/* Left Column: Manuscript Viewer (7 cols) */}
-          <div className="lg:col-span-7">
-            <OrnateFrame className="w-full">
-              <ManuscriptViewer manuskrip={activeManuskrip} />
-            </OrnateFrame>
-          </div>
-
-          {/* Right Column: AI Pre-Prediction & Human-in-the-Loop Editor (5 cols) */}
-          <div className="lg:col-span-5">
-            <TranscriptionEditor
-              manuskrip={activeManuskrip}
-              onSubmitCorrection={handleCorrectionSubmit}
-            />
-          </div>
-        </div>
+        {/* 3. Interactive Preservation Studio */}
+        <PreservationStudio isAuthenticated={Boolean(user)} />
       </div>
 
-      {/* 5. Footer */}
+      {/* 4. Footer */}
       <footer className="w-full border-t border-white/10 py-4 px-6 text-center text-xs text-white/40">
-        Aksantara Manuskrip Digital • British Library EAP & PNRI Preservation • FMIPA UGM 2026
+        Aksantara Manuskrip Digital • British Library EAP &amp; PNRI • FMIPA UGM 2026
       </footer>
     </main>
   );

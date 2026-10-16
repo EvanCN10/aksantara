@@ -10,7 +10,6 @@ interface ManuscriptViewerProps {
 
 export function ManuscriptViewer({ manuskrip }: ManuscriptViewerProps) {
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [showBoundingBoxes, setShowBoundingBoxes] = useState(true);
 
   const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.25, 2.0));
   const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.25, 0.75));
@@ -63,18 +62,6 @@ export function ManuscriptViewer({ manuskrip }: ManuscriptViewerProps) {
           >
             ↺
           </button>
-          <button
-            type="button"
-            onClick={() => setShowBoundingBoxes((prev) => !prev)}
-            className={`px-3 h-8 rounded-lg text-[11px] font-mono border transition-all cursor-pointer ${
-              showBoundingBoxes
-                ? 'bg-[#ffd261]/20 border-[#ffd261] text-[#ffd261] font-bold'
-                : 'bg-white/5 border-white/10 text-white/50'
-            }`}
-            title="Toggle Bounding Box OCR"
-          >
-            OCR Box
-          </button>
         </div>
       </div>
 
@@ -94,7 +81,7 @@ export function ManuscriptViewer({ manuskrip }: ManuscriptViewerProps) {
                 src={manuskrip.imageUrl}
                 alt={manuskrip.judul}
                 fill
-                priority
+                sizes="(max-width: 640px) calc(100vw - 64px), 576px"
                 className="object-cover object-center filter contrast-110 brightness-95"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/30" />
@@ -129,43 +116,6 @@ export function ManuscriptViewer({ manuskrip }: ManuscriptViewerProps) {
             </div>
           )}
 
-          {/* AI Bounding Boxes Simulation & Optical Laser Scan */}
-          {showBoundingBoxes && (
-            <div className="pointer-events-none absolute inset-0 z-20">
-              {/* Dynamic Laser Optical Scan Line */}
-              <div className="absolute inset-x-0 h-10 -translate-y-1/2 animate-lontar-scan z-30">
-                {/* Core laser line */}
-                <div className="w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-300 to-transparent shadow-[0_0_14px_3px_rgba(34,211,238,0.75)]" />
-                {/* Soft phosphor trailing glow */}
-                <div className="w-full h-7 bg-gradient-to-b from-cyan-400/20 via-emerald-400/8 to-transparent" />
-                {/* Micro Sensor HUD Indicators */}
-                <span className="absolute -top-1.5 left-4 text-[7px] font-mono tracking-wider text-cyan-300/90 bg-black/75 px-1 rounded border border-cyan-400/30">
-                  SCAN SENSOR • 60 FPS
-                </span>
-                <span className="absolute -top-1.5 right-4 text-[7px] font-mono tracking-wider text-emerald-300/90 bg-black/75 px-1 rounded border border-emerald-400/30">
-                  PALEOGRAFI NUSA
-                </span>
-              </div>
-
-              {manuskrip.segmenDeteksi.map((seg, idx) => (
-                <div
-                  key={seg.id}
-                  className="absolute border border-emerald-400 bg-emerald-400/15 rounded shadow-[0_0_8px_rgba(52,211,153,0.3)] animate-cascade-fade-up"
-                  style={{
-                    left: `${seg.x}%`,
-                    top: `${seg.y}%`,
-                    width: `${seg.w}%`,
-                    height: `${seg.h}%`,
-                    animationDelay: `${idx * 80}ms`,
-                  }}
-                >
-                  <span className="absolute -top-3.5 left-0 text-[8px] font-mono text-emerald-300 bg-black/85 px-1 rounded border border-emerald-400/30">
-                    AI DETECT
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
