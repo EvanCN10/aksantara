@@ -10,7 +10,7 @@
 ## 1. Arsitektur Integrasi Sistem
 
 Platform Aksantara terdiri dari 4 pilar edukasi dan 2 mode penggunaan:
-1. **Pilar 1 — Latihan Kanvas Digital & AI Eksperimen:** Evaluasi visual karakter tulisan tangan siswa pada Web Canvas menggunakan adapter Next.js `/api/ai/classify` dan backend Python ONNX specialist. Rincian kontrak model dan preprocessing merujuk ke [AI_MODEL_HANDOFF.md](AI_MODEL_HANDOFF.md).
+1. **Pilar 1 — Latihan Kanvas Digital & AI Eksperimen:** Studio Web Canvas menjalankan specialist langsung di browser melalui ONNX Runtime Web 1.22.0, WASM satu thread. Cerita mini canvas tetap memakai `/api/ai/classify` dan backend Python. Kontrak model/preprocessing merujuk ke [AI_MODEL_HANDOFF.md](AI_MODEL_HANDOFF.md).
 2. **Pilar 2 — Trinitas Aksara Nusantara:** Kurikulum pembelajaran tiga aksara (Lontara, Sunda, Bali) dengan karakteristik paleografi sudut, modular, dan kurvalinier.
 3. **Pilar 3 — Gamifikasi Naratif & Hardware Phygital:**
    - **Mode Hardware:** Konsol fisik *Aksantara Tactile Pad* (ESP32 + RC522 RFID) terhubung via Web Serial API (USB Plug-and-Play).
@@ -29,13 +29,23 @@ cd web
 # Pasang dependensi
 npm install
 
+# Salin model/labels dan runtime lokal sebelum dev maupun build/deploy
+npm run provision:onnx
+
 # Jalankan server pengembangan
 npm run dev
 ```
 Akses di peramban: `http://localhost:3000`
 
-### B. Menjalankan Backend Classifier AI (Python FastAPI)
-Dari root repositori:
+Studio tidak membutuhkan Python atau `AI_CLASSIFIER_URL`. Sumber provisioning harus tersedia di `ai/deployment/models/{script}/` dan `ai/artifacts/runtime/`; biner model/WASM ignored, sehingga checkout Git saja belum cukup. Saat deploy, jalankan provisioning sebelum build. Petunjuk aset: [README model browser](../web/public/models/README.md).
+
+Katalog `/latihan/web/lontara`, `/latihan/web/sunda`, dan `/latihan/web/bali` mencakup seluruh 114/30/30 kelas model. Unicode/font tetap dipakai; gabungan seperti Mi berkategori **Suku Kata**, tanda diakritik mandiri yang bukan kelas model tidak ditawarkan. Grid/filter/progres/pilihan/navigasi studio memakai adaptor `getModelTrainingCatalog()` yang sama. URL target unsupported tidak membuka evaluasi.
+
+Evaluasi variasi vokal (suku kata seperti *Bi*, *Be*, *Bu*) menerapkan *Contextual Base-Consonant Prior Suppression*, di mana indeks konsonan dasar (*Ba*) disaring dari penyebut softmax saat variasi vokal dilatih agar probabilitas tidak terserap ke bentuk dasar induknya. Jika siswa menggambar konsonan dasar tanpa tanda diakritik vokal, sistem memberikan diagnostik cerdas: *"Bentuk konsonan dasar Ba sudah terbaca dengan baik, namun tanda diakritik vokal untuk Bi belum terdeteksi. Tambahkan tanda titik/imbuhan vokal yang sesuai!"*.
+
+Top-1 sesuai target dan probabilitas target ≥85% tampil benar. Prediksi berbeda menampilkan “Tulisan terbaca sebagai Ma, bukan Pa. Coba perbaiki bentuknya.”, dengan badge “Belum sesuai target”. Probabilitas kelas bukan skor kualitas paleografi dan tidak memberikan XP/penguasaan otomatis.
+### B. Backend Classifier AI — hanya untuk cerita mini canvas / jalur proxy
+Jalankan dari root repositori bila memakai pemanggil `evaluateGlyph(input)` tanpa ImageData. Studio selalu memakai ImageData/WASM dan tidak beralih otomatis ke backend saat ada error:
 ```bash
 python -m pip install -r ai/deployment/requirements.txt
 python -m uvicorn ai.deployment.server:app --host 127.0.0.1 --port 8000
@@ -132,3 +142,21 @@ GEMINI_MODEL=gemini-2.5-flash
 1. **Endpoint:** `web/src/app/api/ai/story-enrich/route.ts`
 2. **Model:** Google Gemini API melalui model yang ditentukan di `GEMINI_MODEL` (default: `gemini-2.5-flash`).
 3. **Mekanisme Fallback:** Jika `GEMINI_API_KEY` tidak tersedia, kuota habis, atau waktu tunggu melebihi 8 detik, sistem mengembalikan petunjuk materi lokal terkurasi (`deterministic_lore`) dengan label "Petunjuk dari materi" agar alur pembelajaran cerita tidak terputus.
+
+## 6. Membaca artefak Drive melalui Colab MCP
+
+Browser otomatis yang belum login tidak mempunyai akses ke Drive pribadi. Mengubah skill tidak memberikan autentikasi Google. Gunakan bridge proyek dengan browser pengguna yang sudah login:
+
+```powershell
+# Dari root repo; membutuhkan uv dan akses ke dependensi googlecolab/colab-mcp
+powershell -NoProfile -File ai/harness/connect_colab.ps1 -Status -NoBrowser
+powershell -NoProfile -File ai/harness/connect_colab.ps1 -Script lontara -Timeout 600
+```
+
+`-Status` hanya memeriksa apakah listener loopback pada state tersimpan masih hidup; ia tidak mencetak token dan tidak mengklaim Drive sudah ter-mount. `not_running` berarti state `connected` lama tidak boleh dipercaya. `listener_running` juga bukan bukti autentikasi Google, handshake notebook, atau izin membaca Drive.
+
+Launcher membuka notebook yang dikonfigurasi pada `ai/configs/colab_targets.json`, dengan URL handshake unik. Pada browser pengguna, izinkan koneksi lokal Colab bila diminta. Bridge yang benar-benar tersambung mencetak `GOOGLE COLAB CONNECTED` dan mendaftarkan tool notebook. Jangan memulai training atau menjalankan semua sel hanya untuk membaca file model.
+
+Jika runtime belum terhubung atau Drive belum di-mount, pengguna perlu menyetujui koneksi/runtime dan dialog otorisasi `drive.mount` Google. Jangan menyalin cookie login, password, atau OAuth token ke chat, kode, atau konfigurasi repositori. Token handshake lokal di state/URL bridge juga jangan dipublikasikan.
+
+Audit model bersifat baca-saja: cari ekspor per aksara pada folder proyek di `/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/`, catat path, ukuran, waktu modifikasi, metadata run dan SHA-256 `*-champion-int8.onnx`. Cocokkan hash dengan file lokal yang di-benchmark; bila berbeda, hasil benchmark lama tidak boleh diasumsikan berlaku untuk versi Drive. Jangan mengubah notebook training, menjalankan training ulang, atau menimpa deployment sebagai bagian pemeriksaan hash.
