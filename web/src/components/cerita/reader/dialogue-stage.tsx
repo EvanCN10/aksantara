@@ -7,9 +7,10 @@ import type { KarakterCompanion } from '@/data/cerita/karakter';
 interface DialogueStageProps {
   beat: StoryBeat;
   companion?: KarakterCompanion;
+  source?: 'gemini_ai' | 'deterministic_lore';
 }
 
-export function DialogueStage({ beat, companion }: DialogueStageProps) {
+export function DialogueStage({ beat, companion, source }: DialogueStageProps) {
   const isNarration = beat.tipe === 'narasi';
   const speakerName = beat.pembicaraNama || companion?.nama || 'Narator';
 
@@ -48,11 +49,15 @@ export function DialogueStage({ beat, companion }: DialogueStageProps) {
               >
                 {speakerName}
               </span>
+              {source && (
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-white/10 bg-white/5 text-[#ffd261]">
+                  {source === 'gemini_ai' ? 'Petunjuk AI' : 'Petunjuk dari materi'}
+                </span>
+              )}
               <span className="text-[10px] font-medium text-[#ffd261] px-2 py-0.5 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/25">
                 {companion.gelar}
               </span>
             </div>
-
             {/* Bubble Box */}
             <div className="relative rounded-2xl bg-[#141e2e]/90 border border-white/15 p-4 sm:p-5 shadow-[0_8px_32px_rgba(0,0,0,0.4)] sheen-sweep">
               {/* Speech bubble arrow pointer */}

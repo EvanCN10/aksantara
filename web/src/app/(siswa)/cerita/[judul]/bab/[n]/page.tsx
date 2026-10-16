@@ -1,6 +1,6 @@
 'use client';
 
-import React, { use, useState, useMemo } from 'react';
+import React, { use, useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { getSkenarioBab, type StoryBeat } from '@/data/cerita/skenario';
@@ -45,10 +45,34 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
     return getSkenarioBab(rawJudul, babNomor);
   }, [rawJudul, babNomor]);
 
-  // Player State Machine
+  // Player State Machine per beat
+  interface BeatChallengeState {
+    wrongAttempts: number;
+    assisted: boolean;
+    passed: boolean;
+  }
+
   const [currentBeatIndex, setCurrentBeatIndex] = useState(0);
-  const [passedChallenges, setPassedChallenges] = useState<Record<string, boolean>>({});
+  const [challengeStates, setChallengeStates] = useState<Record<string, BeatChallengeState>>({});
+  const [replayGen, setReplayGen] = useState(0);
   const [isChapterFinished, setIsChapterFinished] = useState(false);
+  const [recoveryMessage, setRecoveryMessage] = useState<string | null>(null);
+  const [assistanceDialog, setAssistanceDialog] = useState<{
+    beatId: string;
+    speakerName: string;
+    text: string;
+    source: 'gemini_ai' | 'deterministic_lore';
+  } | null>(null);
+
+  // Reset all state on route changes
+  useEffect(() => {
+    setCurrentBeatIndex(0);
+    setChallengeStates({});
+    setReplayGen((g) => g + 1);
+    setIsChapterFinished(false);
+    setRecoveryMessage(null);
+    setAssistanceDialog(null);
+  }, [rawJudul, babNomor]);
 
   const currentBeat: StoryBeat = skenario.beats[currentBeatIndex] || skenario.beats[0];
   const companion = currentBeat.karakterId ? getKarakterById(currentBeat.karakterId) : undefined;
@@ -56,16 +80,23 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
   const totalBeats = skenario.beats.length;
   const isLastBeat = currentBeatIndex === totalBeats - 1;
 
+  const currentBeatState: BeatChallengeState = challengeStates[currentBeat.id] ?? {
+    wrongAttempts: 0,
+    assisted: false,
+    passed: false,
+  };
+
   // Validation if user can proceed to next beat
   const canProceed = useMemo(() => {
-    if (currentBeat.tipe === 'pilihan') {
-      return Boolean(passedChallenges[currentBeat.id]);
-    }
-    if (currentBeat.tipe === 'kanvas') {
-      return Boolean(passedChallenges[currentBeat.id]);
+    if (currentBeat.tipe === 'pilihan' || currentBeat.tipe === 'kanvas') {
+      return currentBeatState.passed;
     }
     return true;
-  }, [currentBeat, passedChallenges]);
+  }, [currentBeat, currentBeatState.passed]);
+
+  const isChapterAssisted = useMemo(() => {
+    return Object.values(challengeStates).some((s) => s.assisted);
+  }, [challengeStates]);
 
   // Audio Cue on Beat Step - subtle acoustic wood tap
   const playStepSound = () => {
@@ -81,25 +112,160 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
     }
 
     playStepSound();
+    setRecoveryMessage(null);
     setCurrentBeatIndex((prev) => Math.min(prev + 1, totalBeats - 1));
   };
 
   const handlePrevBeat = () => {
     if (currentBeatIndex > 0) {
+      setRecoveryMessage(null);
       setCurrentBeatIndex((prev) => prev - 1);
     }
   };
 
-  const handleChallengePassed = (beatId: string) => {
-    setPassedChallenges((prev) => ({ ...prev, [beatId]: true }));
+  const requestAssistance = (beat: StoryBeat, wrongContext: string) => {
+    const fallbackText = beat.petunjukBantuan || beat.targetGlif?.petunjuk || beat.teks;
+    const speaker = companion?.nama || beat.pembicaraNama || 'Pendamping';
+
+    // Set local assistance immediately without locking navigation
+    setAssistanceDialog({
+      beatId: beat.id,
+      speakerName: speaker,
+      text: fallbackText,
+      source: 'deterministic_lore',
+    });
+
+    // Call background AI enrichment
+    fetch('/api/ai/story-enrich', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        karakterId: beat.karakterId || 'sawerigading',
+        pembicaraNama: speaker,
+        konteksCerita: `${beat.pertanyaan || beat.teks}. ${wrongContext}. Petunjuk: ${fallbackText}`,
+        aksaraId: skenario.aksaraId,
+        glifTarget: beat.targetGlif?.label || beat.aksaraHighlight?.label,
+      }),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: unknown) => {
+        if (
+          data &&
+          typeof data === 'object' &&
+          'success' in data &&
+          (data as { success: boolean }).success &&
+          'dialog' in data &&
+          typeof (data as { dialog: string }).dialog === 'string' &&
+          (data as { dialog: string }).dialog.trim().length > 0
+        ) {
+          const enrichedText = (data as { dialog: string }).dialog.trim();
+          const source = (data as { source?: string }).source === 'gemini_ai' ? 'gemini_ai' : 'deterministic_lore';
+          setAssistanceDialog((prev) =>
+            prev && prev.beatId === beat.id
+              ? {
+                  beatId: beat.id,
+                  speakerName: speaker,
+                  text: enrichedText,
+                  source,
+                }
+              : prev
+          );
+        }
+      })
+      .catch(() => {
+        // Fallback remains in place
+      });
+  };
+
+  const handleQuizAttempt = (optionId: string, correct: boolean) => {
+    if (currentBeatState.passed) return;
+
+    if (correct) {
+      const assisted = currentBeatState.assisted;
+      setChallengeStates((prev) => ({
+        ...prev,
+        [currentBeat.id]: {
+          wrongAttempts: currentBeatState.wrongAttempts,
+          assisted,
+          passed: true,
+        },
+      }));
+      if (assisted) {
+        setRecoveryMessage('Kamu menyelesaikan tantangan dengan bantuan.');
+      } else {
+        setRecoveryMessage(null);
+      }
+    } else {
+      const nextWrong = currentBeatState.wrongAttempts + 1;
+      const nextAssisted = nextWrong >= 2 || currentBeatState.assisted;
+      setChallengeStates((prev) => ({
+        ...prev,
+        [currentBeat.id]: {
+          wrongAttempts: nextWrong,
+          assisted: nextAssisted,
+          passed: false,
+        },
+      }));
+
+      if (nextWrong === 1) {
+        setRecoveryMessage('Belum tepat. Mari perhatikan petunjuknya.');
+      } else if (nextWrong === 2) {
+        const selectedOpt = currentBeat.opsiJawaban?.find((o) => o.id === optionId);
+        requestAssistance(currentBeat, `Jawaban salah yang dipilih: ${selectedOpt?.teks || optionId}`);
+      }
+    }
+  };
+
+  const handleCanvasEvaluation = (result: import('@/lib/onnx/onnx-classifier').GlyphInferenceOutput) => {
+    if (currentBeatState.passed) return;
+
+    if (result.status === 'benar') {
+      const assisted = currentBeatState.assisted;
+      setChallengeStates((prev) => ({
+        ...prev,
+        [currentBeat.id]: {
+          wrongAttempts: currentBeatState.wrongAttempts,
+          assisted,
+          passed: true,
+        },
+      }));
+      if (assisted) {
+        setRecoveryMessage('Kamu menyelesaikan tantangan dengan bantuan.');
+      } else {
+        setRecoveryMessage(null);
+      }
+    } else if (result.targetSupported && result.status === 'perlu_review') {
+      // Mismatch / low probability counts as attempt
+      const nextWrong = currentBeatState.wrongAttempts + 1;
+      const nextAssisted = nextWrong >= 2 || currentBeatState.assisted;
+      setChallengeStates((prev) => ({
+        ...prev,
+        [currentBeat.id]: {
+          wrongAttempts: nextWrong,
+          assisted: nextAssisted,
+          passed: false,
+        },
+      }));
+
+      if (nextWrong === 1) {
+        setRecoveryMessage('Belum tepat. Mari perhatikan petunjuknya.');
+      } else if (nextWrong === 2) {
+        requestAssistance(
+          currentBeat,
+          `Goresan kanvas diprediksi sebagai '${result.predictedSymbol}' (skor: ${result.score.toFixed(1)}%)`
+        );
+      }
+    }
   };
 
   const handleReplayChapter = () => {
     setCurrentBeatIndex(0);
-    setPassedChallenges({});
+    setChallengeStates({});
+    setReplayGen((g) => g + 1);
+    setRecoveryMessage(null);
+    setAssistanceDialog(null);
     setIsChapterFinished(false);
   };
-
   const ambientCultureColor = useMemo(() => {
     switch (skenario.aksaraId) {
       case 'sunda':
@@ -168,20 +334,69 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
         </div>
 
         {/* Stage Content Based on Beat Type */}
-        <div className="w-full animate-emerge-up" style={{ animationDelay: '180ms' }}>
+        <div className="w-full flex flex-col gap-4 animate-emerge-up" style={{ animationDelay: '180ms' }}>
           {currentBeat.tipe === 'dialog' || currentBeat.tipe === 'narasi' ? (
             <DialogueStage beat={currentBeat} companion={companion} />
           ) : currentBeat.tipe === 'pilihan' ? (
-            <ChallengeQuiz
-              pertanyaan={currentBeat.pertanyaan || currentBeat.teks}
-              opsiJawaban={currentBeat.opsiJawaban || []}
-              onCorrectAnswer={() => handleChallengePassed(currentBeat.id)}
-            />
+            <div className="space-y-4">
+              <ChallengeQuiz
+                key={`${currentBeat.id}-${replayGen}`}
+                pertanyaan={currentBeat.pertanyaan || currentBeat.teks}
+                opsiJawaban={currentBeat.opsiJawaban || []}
+                passed={currentBeatState.passed}
+                onAttempt={handleQuizAttempt}
+              />
+              {recoveryMessage && (
+                <div className="p-3.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-200 animate-emerge-up">
+                  <p className="font-medium">{recoveryMessage}</p>
+                </div>
+              )}
+              {assistanceDialog && assistanceDialog.beatId === currentBeat.id && (
+                <div className="pt-2 animate-emerge-up">
+                  <DialogueStage
+                    beat={{
+                      id: `assist-${currentBeat.id}`,
+                      tipe: 'dialog',
+                      karakterId: currentBeat.karakterId,
+                      pembicaraNama: assistanceDialog.speakerName,
+                      teks: assistanceDialog.text,
+                    }}
+                    companion={companion}
+                    source={assistanceDialog.source}
+                  />
+                </div>
+              )}
+            </div>
           ) : currentBeat.tipe === 'kanvas' && currentBeat.targetGlif ? (
-            <ChallengeCanvasMini
-              targetGlif={currentBeat.targetGlif}
-              onCanvasCompleted={() => handleChallengePassed(currentBeat.id)}
-            />
+            <div className="space-y-4">
+              <ChallengeCanvasMini
+                key={`${currentBeat.id}-${replayGen}`}
+                aksaraId={skenario.aksaraId}
+                targetGlif={currentBeat.targetGlif}
+                passed={currentBeatState.passed}
+                onEvaluation={handleCanvasEvaluation}
+              />
+              {recoveryMessage && (
+                <div className="p-3.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-200 animate-emerge-up">
+                  <p className="font-medium">{recoveryMessage}</p>
+                </div>
+              )}
+              {assistanceDialog && assistanceDialog.beatId === currentBeat.id && (
+                <div className="pt-2 animate-emerge-up">
+                  <DialogueStage
+                    beat={{
+                      id: `assist-${currentBeat.id}`,
+                      tipe: 'dialog',
+                      karakterId: currentBeat.karakterId,
+                      pembicaraNama: assistanceDialog.speakerName,
+                      teks: assistanceDialog.text,
+                    }}
+                    companion={companion}
+                    source={assistanceDialog.source}
+                  />
+                </div>
+              )}
+            </div>
           ) : null}
         </div>
       </div>
@@ -247,6 +462,7 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
           xpReward={skenario.xpReward}
           eposSlug={skenario.eposSlug}
           hasNextChapter={skenario.babNomor < 3}
+          assisted={isChapterAssisted}
           onReplayChapter={handleReplayChapter}
         />
       )}

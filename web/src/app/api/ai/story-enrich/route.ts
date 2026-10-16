@@ -8,78 +8,102 @@ interface StoryEnrichRequest {
   glifTarget?: string;
 }
 
+function isNonEmptyString(val: unknown, maxLen: number): val is string {
+  return typeof val === 'string' && val.trim().length > 0 && val.length <= maxLen;
+}
+
+function isStoryEnrichRequest(val: unknown): val is StoryEnrichRequest {
+  if (typeof val !== 'object' || val === null || Array.isArray(val)) return false;
+  const obj = val as Record<string, unknown>;
+  const aksaraValid = obj.aksaraId === 'lontara' || obj.aksaraId === 'sunda' || obj.aksaraId === 'bali';
+  if (!aksaraValid) return false;
+  if (!isNonEmptyString(obj.karakterId, 128)) return false;
+  if (!isNonEmptyString(obj.pembicaraNama, 128)) return false;
+  if (!isNonEmptyString(obj.konteksCerita, 4000)) return false;
+  if (obj.glifTarget !== undefined && !isNonEmptyString(obj.glifTarget, 128)) return false;
+  return true;
+}
+
 export async function POST(req: Request) {
+  let body: unknown;
   try {
-    const body: StoryEnrichRequest = await req.json();
-    const { karakterId, pembicaraNama, konteksCerita, aksaraId, glifTarget } = body;
-
-    const apiKey = process.env.GEMINI_API_KEY;
-
-    // Jika GEMINI_API_KEY tersedia, panggil Gemini API untuk respon dinamis
-    if (apiKey && apiKey !== 'your-google-gemini-api-key-here') {
-      try {
-        const systemPrompt = `Kamu adalah karakter cerita rakyat Nusantara bernama ${pembicaraNama} dari tradisi aksara ${aksaraId}.
-Bicaralah dengan nada agung, bijaksana, dan mendalam layaknya sastra luhur Nusantara.
-Berikan satu nasihat filosofis singkat (maksimal 2-3 kalimat) mengenai makna pelestarian aksara atau glif '${glifTarget || 'pusaka'}' terkait situasi: "${konteksCerita}".`;
-
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-        const geminiRes = await fetch(geminiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              {
-                role: 'user',
-                parts: [{ text: systemPrompt }],
-              },
-            ],
-            generationConfig: {
-              maxOutputTokens: 150,
-              temperature: 0.7,
-            },
-          }),
-        });
-
-        if (geminiRes.ok) {
-          const geminiData = await geminiRes.json();
-          const generatedText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (generatedText) {
-            return NextResponse.json({
-              success: true,
-              dialog: generatedText.trim(),
-              source: 'gemini_ai',
-            });
-          }
-        }
-      } catch {
-        // Fallback jika API request gagal
-      }
-    }
-
-    // Fallback Deterministik Cerdas (Bebas Crash Saat Panggung Offline Tanpa Internet)
-    const personaQuotes: Record<string, string> = {
-      sawerigading:
-        'Samudra boleh bergelora kencang, namun batin yang berpegang pada empat sudut Sulapa Eppa takkan pernah karam ditelan ombak Luwu.',
-      purbasari:
-        'Rimba Cupu ini mengajarkan bahwa kebenaran sejati seperti aksara Ngalagena; ia tetap kokoh berdiri meski diselimuti kabut fitnah kedengkian.',
-      'mpu-bharadah':
-        'Kidung aksara suci di atas daun lontar adalah penyeimbang Rwa Bhineda; memadamkan amarah duniawi dan menghadirkan kedamaian jagat Hyang Widhi.',
-    };
-
-    const dialog =
-      personaQuotes[karakterId] ||
-      `Pegang teguh pesan leluhur kita, wahai pelindung aksara ${aksaraId}. Tiap tarikan garis adalah doa yang mengalir ke masa depan.`;
-
-    return NextResponse.json({
-      success: true,
-      dialog,
-      source: 'deterministic_lore',
-    });
-  } catch (err: unknown) {
-    const errorMsg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json(
-      { error: `Gagal memperkaya dialog cerita: ${errorMsg}` },
-      { status: 500 }
-    );
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'Payload harus berupa JSON yang valid.' }, { status: 400 });
   }
+
+  if (!isStoryEnrichRequest(body)) {
+    return NextResponse.json({ error: 'Payload permintaan pengayaan cerita tidak valid.' }, { status: 400 });
+  }
+
+  const { karakterId, pembicaraNama, konteksCerita, aksaraId, glifTarget } = body;
+  const apiKey = process.env.GEMINI_API_KEY;
+  const modelName = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+
+  if (apiKey && apiKey !== 'your-google-gemini-api-key-here') {
+    try {
+      const systemPrompt = `Kamu adalah pendamping belajar bernama ${pembicaraNama} untuk aksara daerah ${aksaraId}.
+Berikan petunjuk belajar sederhana dan ramah sebanyak 2-3 kalimat untuk membantu siswa memahami karakter '${glifTarget || 'aksara'}' atau menjawab pertanyaan dalam situasi: "${konteksCerita}".
+Fokus pada ciri visual, bentuk garis, atau petunjuk praktis cara membedakannya. Jangan gunakan nasihat filosofis generik.`;
+
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+      const geminiRes = await fetch(geminiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(8000),
+        body: JSON.stringify({
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: systemPrompt }],
+            },
+          ],
+          generationConfig: {
+            maxOutputTokens: 150,
+            temperature: 0.7,
+          },
+        }),
+      });
+
+      if (geminiRes.ok) {
+        const geminiData = await geminiRes.json();
+        const candidate = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (typeof candidate === 'string' && candidate.trim().length > 0) {
+          return NextResponse.json({
+            success: true,
+            dialog: candidate.trim(),
+            source: 'gemini_ai',
+          });
+        }
+      }
+    } catch {
+      // Fallback deterministik jika Gemini API gagal, timeout, atau model tidak tersedia
+    }
+  }
+
+  // Fallback deterministik berbasis lore lokal terkurasi
+  const personaQuotes: Record<string, string> = {
+    sawerigading:
+      'Perhatikan bentuk sudut belah ketupat Sulapa Eppa Lontara. Garis-garisnya tegas dan mencerminkan unsur alam laut Luwu.',
+    purbasari:
+      'Aksara Sunda memiliki struktur ngalagena yang modular dan teratur. Amati lekukan cabang dan garis penopang di sekelilingnya.',
+    'lutung-kasarung':
+      'Perhatikan lekukan simetris pada aksara Sunda. Budi yang luhur tampak dari ketelitian setiap goresan.',
+    'mpu-bharadah':
+      'Aksara Bali dialirkan dengan kurvalinier yang luwes. Ikuti gelombang garis wianjana dengan tenang.',
+    'calon-arang-arya':
+      'Keseimbangan adalah kunci menulis aksara Bali. Cermati busur lengkung dan titik temu garisnya.',
+    'guru-pamomong':
+      "Dalam aksara Lontara, bedakan induk huruf Ina' Sureq dan tanda vokalisasi Ana' Sureq dengan teliti.",
+  };
+
+  const dialog =
+    personaQuotes[karakterId] ||
+    `Perhatikan bentuk dasar dan ciri khas aksara ${aksaraId}. Setiap tarikan garis memiliki ciri yang membedakannya.`;
+
+  return NextResponse.json({
+    success: true,
+    dialog,
+    source: 'deterministic_lore',
+  });
 }

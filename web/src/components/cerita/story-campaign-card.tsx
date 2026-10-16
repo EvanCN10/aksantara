@@ -11,6 +11,7 @@ import type { KarakterCompanion } from '@/data/cerita/karakter';
 interface StoryCampaignCardProps {
   epos: CeritaEpos;
   companion?: KarakterCompanion;
+  eagerBanner?: boolean;
 }
 
 function StarIcon({ className = 'w-3.5 h-3.5', filled = false }: { className?: string; filled?: boolean }) {
@@ -54,7 +55,7 @@ function PlayIcon({ className = 'w-4 h-4' }: { className?: string }) {
   );
 }
 
-export function StoryCampaignCard({ epos, companion }: StoryCampaignCardProps) {
+export function StoryCampaignCard({ epos, companion, eagerBanner = false }: StoryCampaignCardProps) {
   return (
     <OrnateFrame className="w-full bg-[#0c1a2c]/85 border border-[#D4A373]/30 shadow-[0_8px_32px_rgba(0,0,0,0.4)] sheen-sweep transition-transform duration-300 hover:scale-[1.005]">
       <div className="p-5 sm:p-6 lg:p-7 flex flex-col gap-6">
@@ -66,6 +67,9 @@ export function StoryCampaignCard({ epos, companion }: StoryCampaignCardProps) {
               src={epos.bannerUrl}
               alt={epos.judul}
               fill
+              sizes="(max-width: 1152px) calc(100vw - 96px), 1048px"
+              priority={eagerBanner}
+              loading={eagerBanner ? 'eager' : 'lazy'}
               className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a2c] via-[#0c1a2c]/35 to-transparent" />

@@ -12,6 +12,7 @@ interface ChapterCompleteModalProps {
   xpReward: number;
   eposSlug: string;
   hasNextChapter?: boolean;
+  assisted?: boolean;
   onReplayChapter: () => void;
 }
 
@@ -51,6 +52,7 @@ export function ChapterCompleteModal({
   xpReward,
   eposSlug,
   hasNextChapter = true,
+  assisted = false,
   onReplayChapter,
 }: ChapterCompleteModalProps) {
   return (
@@ -75,8 +77,18 @@ export function ChapterCompleteModal({
                 Bab {babNomor}: {judulBab}
               </h2>
               <p className="text-xs text-white/60 mt-1 font-medium">{eposJudul}</p>
+              <div className="mt-2.5 flex items-center justify-center">
+                <span
+                  className={`text-xs px-3 py-1 rounded-full border font-medium ${
+                    assisted
+                      ? 'bg-amber-500/15 border-amber-500/30 text-amber-200'
+                      : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-200'
+                  }`}
+                >
+                  {assisted ? 'Selesai dengan bantuan' : 'Selesai mandiri'}
+                </span>
+              </div>
             </div>
-
             {/* Stars Achievement with Staggered Slam Down */}
             <div className="flex items-center justify-center gap-2 text-2xl text-[#ffd261]">
               <span className="animate-star-slam inline-block" style={{ animationDelay: '120ms' }}>

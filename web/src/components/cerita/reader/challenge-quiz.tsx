@@ -7,7 +7,8 @@ import { playSuccessGamelan, playSoftMuted } from '@/lib/audio/sound-effects';
 interface ChallengeQuizProps {
   pertanyaan: string;
   opsiJawaban: OpsiJawaban[];
-  onCorrectAnswer: () => void;
+  passed?: boolean;
+  onAttempt: (optionId: string, correct: boolean) => void;
 }
 
 function CheckIcon({ className = 'w-4 h-4' }: { className?: string }) {
@@ -30,12 +31,13 @@ function XIcon({ className = 'w-4 h-4' }: { className?: string }) {
 export function ChallengeQuiz({
   pertanyaan,
   opsiJawaban,
-  onCorrectAnswer,
+  passed = false,
+  onAttempt,
 }: ChallengeQuizProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hasAnswered, setHasAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-
+  const isPassed = passed || isCorrect;
   // Play acoustic gamelan or soft muted feedback
   const playSound = (correct: boolean) => {
     if (correct) {
@@ -46,7 +48,7 @@ export function ChallengeQuiz({
   };
 
   const handleSelectOption = (opt: OpsiJawaban) => {
-    if (isCorrect) return; // Already passed
+    if (isPassed) return;
 
     setSelectedId(opt.id);
     setHasAnswered(true);
@@ -54,10 +56,11 @@ export function ChallengeQuiz({
     if (opt.benar) {
       setIsCorrect(true);
       playSound(true);
-      onCorrectAnswer();
+      onAttempt(opt.id, true);
     } else {
       setIsCorrect(false);
       playSound(false);
+      onAttempt(opt.id, false);
     }
   };
 
@@ -102,7 +105,7 @@ export function ChallengeQuiz({
               key={opt.id}
               type="button"
               onClick={() => handleSelectOption(opt)}
-              disabled={isCorrect}
+              disabled={isPassed}
               className={`w-full p-3.5 sm:p-4 rounded-xl border text-left text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 active:translate-y-0.5 sheen-sweep ${btnStyle}`}
             >
               <span>{opt.teks}</span>
@@ -136,7 +139,7 @@ export function ChallengeQuiz({
           style={{ animationDuration: '0.3s' }}
         >
           <strong className="block mb-0.5 text-sm">
-            {isCorrect ? 'Jawaban Benar! ✦' : 'Kurang Tepat, Coba Lagi!'}
+            {isPassed ? 'Jawaban benar!' : 'Kurang Tepat, Coba Lagi!'}
           </strong>
           <p className="font-light">
             {selectedOption.penjelasan ||

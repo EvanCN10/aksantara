@@ -27,8 +27,10 @@ export interface StoryBeat {
   // Khusus tipe 'pilihan'
   pertanyaan?: string;
   opsiJawaban?: OpsiJawaban[];
+  petunjukBantuan?: string;
   // Khusus tipe 'kanvas'
   targetGlif?: {
+    slug: string;
     simbol: string;
     label: string;
     petunjuk: string;
@@ -88,6 +90,7 @@ export const SKENARIO_SAWERIGADING_BAB_1: SkenarioBab = {
     {
       id: 'beat-4',
       tipe: 'pilihan',
+      petunjukBantuan: 'Perhatikan filosofi Sulapa Eppa Lontara yang melambangkan empat unsur alam: Air, Api, Angin, dan Tanah.',
       karakterId: 'sawerigading',
       pembicaraNama: 'Sawerigading',
       teks:
@@ -128,10 +131,12 @@ export const SKENARIO_SAWERIGADING_BAB_1: SkenarioBab = {
       teks:
         'Tantangan Goresan In-Story: Pulihkan aksara ᨀ (Ka) pada batu prasasti kemudi pinisi.',
       targetGlif: {
+        slug: 'ka',
         simbol: 'ᨀ',
         label: 'Ka',
         petunjuk: 'Tarik dua garis belah ketupat simetris yang bertaut tegas.',
       },
+      petunjukBantuan: 'Tarik dua garis belah ketupat simetris yang bertaut tegas membentuk sudut belah ketupat Ka.',
     },
     {
       id: 'beat-7',
@@ -183,6 +188,7 @@ export const SKENARIO_SAWERIGADING_BAB_2: SkenarioBab = {
     {
       id: 'sg-2-beat-4',
       tipe: 'pilihan',
+      petunjukBantuan: "Huruf konsonan dasar disebut Ina' Sureq, sedangkan tanda vokalisasi diakritik disebut Ana' Sureq.",
       karakterId: 'guru-pamomong',
       pembicaraNama: 'Guru Pamomong',
       teks:
@@ -224,10 +230,12 @@ export const SKENARIO_SAWERIGADING_BAB_2: SkenarioBab = {
       teks:
         'Tantangan Goresan In-Story: Pulihkan aksara ᨑ (Ra) penunduk badai pada lempengan pasak kemudi pinisi.',
       targetGlif: {
+        slug: 'ra',
         simbol: 'ᨑ',
         label: 'Ra',
         petunjuk: 'Tarik garis sudut belah ketupat runcing yang meliuk tegas di bagian atas dan bawah.',
       },
+      petunjukBantuan: 'Tarik garis sudut belah ketupat runcing yang meliuk tegas di bagian atas dan bawah membentuk karakter Ra.',
     },
     {
       id: 'sg-2-beat-7',
@@ -279,6 +287,7 @@ export const SKENARIO_SAWERIGADING_BAB_3: SkenarioBab = {
     {
       id: 'sg-3-beat-4',
       tipe: 'pilihan',
+      petunjukBantuan: 'Semboyan keberanian pelaut Bugis-Makassar adalah Kualleangi Tallanga na Toalia (lebih baik tenggelam daripada surut langkah).',
       karakterId: 'sawerigading',
       pembicaraNama: 'Sawerigading',
       teks:
@@ -320,10 +329,12 @@ export const SKENARIO_SAWERIGADING_BAB_3: SkenarioBab = {
       teks:
         'Tantangan Goresan In-Story: Torehkan aksara pamungkas ᨔ (Sa) pada altar prasasti Batara Guru.',
       targetGlif: {
+        slug: 'sa',
         simbol: 'ᨔ',
         label: 'Sa',
         petunjuk: 'Goreskan lengkung belah ketupat bersudut khas membentuk karakter Lontara Sa yang agung.',
       },
+      petunjukBantuan: 'Goreskan lengkung belah ketupat bersudut khas membentuk karakter Lontara Sa.',
     },
     {
       id: 'sg-3-beat-7',
@@ -387,6 +398,7 @@ export const SKENARIO_LUTUNG_KASARUNG_BAB_1: SkenarioBab = {
     {
       id: 'lk-1-beat-5',
       tipe: 'pilihan',
+      petunjukBantuan: 'Naskah tradisional Sunda kuna ditulis di atas media alami nabati: daun lontar kropak dan kertas kulit kayu dluwang pohon Saeh.',
       karakterId: 'purbasari',
       pembicaraNama: 'Putri Purbasari',
       teks:
@@ -420,10 +432,12 @@ export const SKENARIO_LUTUNG_KASARUNG_BAB_1: SkenarioBab = {
       teks:
         'Tantangan Goresan In-Story: Pulihkan aksara ᮊ (Ka) pada batu prasasti untuk membuka jalan air rahasia.',
       targetGlif: {
+        slug: 'ka',
         simbol: 'ᮊ',
         label: 'Ka',
         petunjuk: 'Tarik lengkung dasar dan dua cabang tanduk lancip di bagian atas.',
       },
+      petunjukBantuan: 'Tarik lengkung dasar dan dua cabang tanduk lancip di bagian atas membentuk karakter Ka Sunda.',
     },
     {
       id: 'lk-1-beat-7',
@@ -476,6 +490,7 @@ export const SKENARIO_LUTUNG_KASARUNG_BAB_2: SkenarioBab = {
     {
       id: 'lk-2-beat-4',
       tipe: 'pilihan',
+      petunjukBantuan: 'Tanda vokalisasi atau diakritik penanda bunyi vokal dalam aksara Sunda disebut Rarangken.',
       karakterId: 'purbasari',
       pembicaraNama: 'Putri Purbasari',
       teks:
@@ -516,10 +531,12 @@ export const SKENARIO_LUTUNG_KASARUNG_BAB_2: SkenarioBab = {
       tipe: 'kanvas',
       teks: 'Tantangan Goresan In-Story: Lukiskan glif ᮒ (Ta) pada permukaan telaga berkilau.',
       targetGlif: {
+        slug: 'ta',
         simbol: 'ᮒ',
         label: 'Ta',
         petunjuk: 'Goreskan garis tegak melengkung dengan lekukan anggun di bagian tengah.',
       },
+      petunjukBantuan: 'Goreskan garis tegak melengkung dengan lekukan anggun di bagian tengah membentuk karakter Ta Sunda.',
     },
     {
       id: 'lk-2-beat-7',
@@ -570,6 +587,7 @@ export const SKENARIO_LUTUNG_KASARUNG_BAB_3: SkenarioBab = {
     {
       id: 'lk-3-beat-4',
       tipe: 'pilihan',
+      petunjukBantuan: 'Epos Lutung Kasarung mengajarkan bahwa ketulusan hati dan kemurnian budi akan mengalahkan kedengkian fana.',
       karakterId: 'lutung-kasarung',
       pembicaraNama: 'Sang Guruminda',
       teks:
@@ -611,10 +629,12 @@ export const SKENARIO_LUTUNG_KASARUNG_BAB_3: SkenarioBab = {
       teks:
         'Tantangan Goresan In-Story: Tuliskan glif pamungkas ᮘ (Ba) pada naskah piagam perdamaian Pasundan.',
       targetGlif: {
+        slug: 'ba',
         simbol: 'ᮘ',
         label: 'Ba',
         petunjuk: 'Buat kotak terbuka melengkung dengan ciri khas lekukan simetris aksara Sunda.',
       },
+      petunjukBantuan: 'Buat kotak terbuka melengkung dengan ciri khas lekukan simetris aksara Ba Sunda.',
     },
     {
       id: 'lk-3-beat-7',
@@ -678,6 +698,7 @@ export const SKENARIO_CALON_ARANG_BAB_1: SkenarioBab = {
     {
       id: 'ca-1-beat-5',
       tipe: 'pilihan',
+      petunjukBantuan: 'Dalam tradisi nyurat lontar Bali, aksara digoreskan menggunakan pisau pengrupak lalu dihitamkan dengan minyak kemiri.',
       karakterId: 'mpu-bharadah',
       pembicaraNama: 'Mpu Bharadah',
       teks:
@@ -711,10 +732,12 @@ export const SKENARIO_CALON_ARANG_BAB_1: SkenarioBab = {
       teks:
         'Tantangan Goresan In-Story: Goreskan aksara ᬓ (Ka) dengan pisau pengrupak batinmu untuk membuka segel peti lontar.',
       targetGlif: {
+        slug: 'ka',
         simbol: 'ᬓ',
         label: 'Ka',
         petunjuk: 'Goreskan dua gelombang lengkung simetris khas aksara Bali Wianjana.',
       },
+      petunjukBantuan: 'Goreskan dua gelombang lengkung simetris khas aksara Bali Wianjana Ka.',
     },
     {
       id: 'ca-1-beat-7',
@@ -765,6 +788,7 @@ export const SKENARIO_CALON_ARANG_BAB_2: SkenarioBab = {
     {
       id: 'ca-2-beat-4',
       tipe: 'pilihan',
+      petunjukBantuan: 'Tanda vokalisasi pengubah bunyi vokal dalam sistem penulisan aksara Bali disebut Pangangge Suara.',
       karakterId: 'calon-arang-arya',
       pembicaraNama: 'Mpu Arya',
       teks:
@@ -805,10 +829,12 @@ export const SKENARIO_CALON_ARANG_BAB_2: SkenarioBab = {
       tipe: 'kanvas',
       teks: 'Tantangan Goresan In-Story: Goreskan glif ᬢ (Ta) penyeimbang jagat untuk menenangkan kobaran api.',
       targetGlif: {
+        slug: 'ta',
         simbol: 'ᬢ',
         label: 'Ta',
         petunjuk: 'Tarik garis meliuk tegas dengan puncak busur khas aksara Bali.',
       },
+      petunjukBantuan: 'Tarik garis meliuk tegas dengan puncak busur khas aksara Bali Ta.',
     },
     {
       id: 'ca-2-beat-7',
@@ -860,6 +886,7 @@ export const SKENARIO_CALON_ARANG_BAB_3: SkenarioBab = {
     {
       id: 'ca-3-beat-4',
       tipe: 'pilihan',
+      petunjukBantuan: 'Falsafah tiga keharmonisan hidup masyarakat Bali (Tuhan, manusia, dan alam) adalah Tri Hita Karana.',
       karakterId: 'mpu-bharadah',
       pembicaraNama: 'Mpu Bharadah',
       teks:
@@ -901,10 +928,12 @@ export const SKENARIO_CALON_ARANG_BAB_3: SkenarioBab = {
       teks:
         'Tantangan Goresan In-Story: Torehkan glif pamungkas ᬩ (Ba) pada prasasti tembaga perdamaian dewata.',
       targetGlif: {
+        slug: 'ba',
         simbol: 'ᬩ',
         label: 'Ba',
         petunjuk: 'Goreskan lengkung dasar ganda meliuk dengan keluwesan aksara Bali kuno.',
       },
+      petunjukBantuan: 'Goreskan lengkung dasar ganda meliuk dengan keluwesan aksara Bali Ba.',
     },
     {
       id: 'ca-3-beat-7',
@@ -974,7 +1003,11 @@ function getFallbackSkenario(eposSlug: string, babNomor: number): SkenarioBab {
   const isSunda = slug === 'lutung-kasarung';
 
   const defaultAksara = isLontara ? 'lontara' : isSunda ? 'sunda' : 'bali';
-  const defaultGlif = isLontara ? { simbol: 'ᨁ', label: 'Ga' } : isSunda ? { simbol: 'ᮊ', label: 'Ka' } : { simbol: 'ᬓ', label: 'Ka' };
+  const defaultGlif = isLontara
+    ? { slug: 'ga', simbol: 'ᨁ', label: 'Ga' }
+    : isSunda
+    ? { slug: 'ka', simbol: 'ᮊ', label: 'Ka' }
+    : { slug: 'ka', simbol: 'ᬓ', label: 'Ka' };
 
   return {
     eposSlug,
@@ -1007,10 +1040,12 @@ function getFallbackSkenario(eposSlug: string, babNomor: number): SkenarioBab {
         tipe: 'kanvas',
         teks: `Tantangan Goresan: Pulihkan aksara ${defaultGlif.label} (${defaultGlif.simbol}) untuk melanjutkan perjalanan.`,
         targetGlif: {
+          slug: defaultGlif.slug,
           simbol: defaultGlif.simbol,
           label: defaultGlif.label,
           petunjuk: 'Goreskan karakter dengan proporsi simetris.',
         },
+        petunjukBantuan: 'Goreskan karakter dengan proporsi simetris.',
       },
       {
         id: 'beat-finish',

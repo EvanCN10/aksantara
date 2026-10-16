@@ -253,6 +253,7 @@ export default function PilihCeritaPage() {
                 <StoryCampaignCard
                   epos={epos}
                   companion={companion}
+                  eagerBanner={idx === 0}
                 />
               </div>
             );

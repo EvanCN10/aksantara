@@ -1,21 +1,21 @@
 'use client';
 
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import { DrawingCanvas, type DrawingCanvasRef } from '@/components/canvas/drawing-canvas';
+import { evaluateGlyph, type GlyphInferenceOutput } from '@/lib/onnx/onnx-classifier';
 import { ShinyButton } from '@/components/ui/shiny-button';
 import { playSuccessGamelan } from '@/lib/audio/sound-effects';
 
 interface ChallengeCanvasMiniProps {
+  aksaraId: 'lontara' | 'sunda' | 'bali';
   targetGlif: {
+    slug: string;
     simbol: string;
     label: string;
     petunjuk: string;
   };
-  onCanvasCompleted: () => void;
-}
-
-interface Point {
-  x: number;
-  y: number;
+  passed?: boolean;
+  onEvaluation: (result: GlyphInferenceOutput) => void;
 }
 
 function UndoIcon({ className = 'w-4 h-4' }: { className?: string }) {
@@ -46,225 +46,93 @@ function CheckIcon({ className = 'w-4 h-4' }: { className?: string }) {
 }
 
 export function ChallengeCanvasMini({
+  aksaraId,
   targetGlif,
-  onCanvasCompleted,
+  passed = false,
+  onEvaluation,
 }: ChallengeCanvasMiniProps) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  const [strokes, setStrokes] = useState<Point[][]>([]);
-  const strokesRef = useRef<Point[][]>([]);
-  strokesRef.current = strokes;
-
-  const isDrawingRef = useRef(false);
-  const currentStrokeRef = useRef<Point[]>([]);
-
-  const [isVerified, setIsVerified] = useState(false);
+  const canvasRef = useRef<DrawingCanvasRef | null>(null);
+  const [strokeCount, setStrokeCount] = useState(0);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [evaluationError, setEvaluationError] = useState<string | null>(null);
+  const [evaluationResult, setEvaluationResult] = useState<GlyphInferenceOutput | null>(null);
+  const requestTokenRef = useRef(0);
 
-  // Redraw canvas with all completed strokes
-  const redraw = useCallback((ctx: CanvasRenderingContext2D, strokeList: Point[][]) => {
-    const dpr = window.devicePixelRatio || 1;
-    const width = ctx.canvas.width / dpr;
-    const height = ctx.canvas.height / dpr;
-
-    ctx.clearRect(0, 0, width, height);
-
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#ffd261';
-    ctx.lineWidth = 6;
-    ctx.shadowColor = 'rgba(255, 210, 97, 0.45)';
-    ctx.shadowBlur = 6;
-
-    strokeList.forEach((stroke) => {
-      if (stroke.length < 1) return;
-
-      if (stroke.length === 1) {
-        ctx.beginPath();
-        ctx.arc(stroke[0].x, stroke[0].y, 3, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffd261';
-        ctx.fill();
-        return;
-      }
-
-      ctx.beginPath();
-      ctx.moveTo(stroke[0].x, stroke[0].y);
-      for (let i = 1; i < stroke.length; i++) {
-        ctx.lineTo(stroke[i].x, stroke[i].y);
-      }
-      ctx.stroke();
-    });
+  // Invalidate in-flight evaluation requests on unmount
+  useEffect(() => {
+    return () => {
+      requestTokenRef.current += 1;
+    };
   }, []);
 
-  // Setup canvas size based on container dimensions only (NO dependency on strokes!)
-  const setupCanvasSize = useCallback(() => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container) return;
-
-    const rect = container.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
-
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      redraw(ctx, strokesRef.current);
-    }
-  }, [redraw]);
-
-  // Handle window/container resize
-  useEffect(() => {
-    setupCanvasSize();
-    window.addEventListener('resize', setupCanvasSize);
-    return () => window.removeEventListener('resize', setupCanvasSize);
-  }, [setupCanvasSize]);
-
-  // Redraw whenever strokes state changes (does NOT change canvas buffer dimensions)
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      redraw(ctx, strokes);
-    }
-  }, [strokes, redraw]);
-
-  const getCanvasCoords = (e: React.PointerEvent<HTMLCanvasElement>): Point => {
-    const canvas = canvasRef.current;
-    if (!canvas) return { x: 0, y: 0 };
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    };
-  };
-
-  const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (isVerified || isVerifying) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    try {
-      canvas.setPointerCapture(e.pointerId);
-    } catch {
-      // safe fallback if capture unsupported
-    }
-
-    isDrawingRef.current = true;
-    const pt = getCanvasCoords(e);
-    currentStrokeRef.current = [pt];
-
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.fillStyle = '#ffd261';
-      ctx.beginPath();
-      ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  };
-
-  const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (!isDrawingRef.current || isVerified || isVerifying) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const pt = getCanvasCoords(e);
-    const stroke = currentStrokeRef.current;
-    stroke.push(pt);
-
-    const ctx = canvas.getContext('2d');
-    if (ctx && stroke.length >= 2) {
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.strokeStyle = '#ffd261';
-      ctx.lineWidth = 6;
-      ctx.shadowColor = 'rgba(255, 210, 97, 0.45)';
-      ctx.shadowBlur = 6;
-
-      ctx.beginPath();
-      ctx.moveTo(stroke[stroke.length - 2].x, stroke[stroke.length - 2].y);
-      ctx.lineTo(pt.x, pt.y);
-      ctx.stroke();
-    }
-  };
-
-  const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (!isDrawingRef.current) return;
-    isDrawingRef.current = false;
-
-    const canvas = canvasRef.current;
-    if (canvas) {
-      try {
-        if (canvas.hasPointerCapture(e.pointerId)) {
-          canvas.releasePointerCapture(e.pointerId);
-        }
-      } catch {
-        // safe fallback
-      }
-    }
-
-    if (currentStrokeRef.current.length > 0) {
-      const completedStroke = [...currentStrokeRef.current];
-      currentStrokeRef.current = [];
-      setStrokes((prev) => [...prev, completedStroke]);
-    }
-  };
-
-  const handlePointerCancel = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    isDrawingRef.current = false;
-    currentStrokeRef.current = [];
-    const canvas = canvasRef.current;
-    if (canvas) {
-      try {
-        if (canvas.hasPointerCapture(e.pointerId)) {
-          canvas.releasePointerCapture(e.pointerId);
-        }
-      } catch {
-        // safe fallback
-      }
+  const handleStrokeChange = (count: number) => {
+    setStrokeCount(count);
+    if (!passed) {
+      setEvaluationError(null);
+      setEvaluationResult(null);
     }
   };
 
   const handleUndo = () => {
-    isDrawingRef.current = false;
-    currentStrokeRef.current = [];
-    setStrokes((prev) => (prev.length > 0 ? prev.slice(0, prev.length - 1) : []));
+    if (isVerifying || passed) return;
+    canvasRef.current?.undo();
+    setEvaluationError(null);
+    setEvaluationResult(null);
   };
 
   const handleClear = () => {
-    isDrawingRef.current = false;
-    currentStrokeRef.current = [];
-    setStrokes([]);
+    if (isVerifying || passed) return;
+    canvasRef.current?.clear();
+    setStrokeCount(0);
+    setEvaluationError(null);
+    setEvaluationResult(null);
   };
 
-  const handleVerify = () => {
-    if (strokes.length === 0 || isVerified) return;
+  const handleVerify = async () => {
+    if (strokeCount === 0 || isVerifying || passed) return;
 
+    const token = ++requestTokenRef.current;
     setIsVerifying(true);
+    setEvaluationError(null);
+    setEvaluationResult(null);
 
-    setTimeout(() => {
-      setIsVerifying(false);
-      setIsVerified(true);
-      onCanvasCompleted();
+    try {
+      const image = canvasRef.current?.getCanvasBase64();
+      if (!image || canvasRef.current?.isEmpty()) {
+        throw new Error('Goreskan karakter pada kanvas sebelum meminta verifikasi.');
+      }
 
-      // Professional acoustic feedback
-      playSuccessGamelan();
-    }, 800);
+      const result = await evaluateGlyph({
+        aksaraId,
+        karakterSlug: targetGlif.slug,
+        image,
+      });
+
+      if (token !== requestTokenRef.current) return;
+
+      setEvaluationResult(result);
+      if (result.status === 'benar') {
+        playSuccessGamelan();
+      }
+      onEvaluation(result);
+    } catch (err: unknown) {
+      if (token !== requestTokenRef.current) return;
+      setEvaluationError(err instanceof Error ? err.message : 'Verifikasi kanvas gagal.');
+    } finally {
+      if (token === requestTokenRef.current) {
+        setIsVerifying(false);
+      }
+    }
   };
+
+  const isPassed = passed || evaluationResult?.status === 'benar';
 
   return (
     <div className="w-full space-y-3 rounded-2xl bg-[#0c1a2c]/95 border border-[#ffd261]/30 p-4 sm:p-5 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#ffd261] px-2 py-0.5 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#ffd261] px-2.5 py-0.5 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30">
             Tantangan Goresan In-Story
           </span>
           <span className="text-xs text-white/60 font-medium">
@@ -272,95 +140,116 @@ export function ChallengeCanvasMini({
           </span>
         </div>
 
-        {isVerified && (
-          <span className="text-xs text-emerald-300 font-semibold flex items-center gap-1">
+        {isPassed && (
+          <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full animate-emerge-scale">
             <CheckIcon className="w-3.5 h-3.5" />
-            Terverifikasi!
+            <span>Tulisan benar menurut model</span>
           </span>
         )}
       </div>
 
-      <p className="text-xs text-white/70">{targetGlif.petunjuk}</p>
-
-      {/* Mini Canvas Area */}
-      <div
-        ref={containerRef}
-        className="relative w-full h-[220px] sm:h-[260px] rounded-xl overflow-hidden bg-[#070b12] border border-white/15 select-none touch-none flex items-center justify-center"
-      >
-        {/* Ghost Guide */}
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center" aria-hidden="true">
-          <span
-            className="text-8xl sm:text-9xl font-normal leading-none text-[#ffd261]/[0.15] select-none"
-            style={{ fontFamily: 'var(--font-philosopher)' }}
-          >
+      {/* Target Glyph Reference Banner */}
+      <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.04] border border-white/10 text-xs">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-lg bg-black/40 border border-[#ffd261]/30 flex items-center justify-center text-3xl text-[#ffd261] shrink-0 font-normal shadow-[0_0_12px_rgba(255,210,97,0.25)]">
             {targetGlif.simbol}
-          </span>
-          <span className="text-[10px] font-mono text-white/20 mt-1 uppercase tracking-widest">
-            Panduan Bentuk
-          </span>
-        </div>
-
-        {/* The Canvas */}
-        <canvas
-          ref={canvasRef}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerCancel}
-          onPointerLeave={handlePointerUp}
-          className="relative z-10 w-full h-full cursor-crosshair touch-none"
-          style={{ touchAction: 'none' }}
-        />
-
-        {/* Empty Canvas Hint */}
-        {strokes.length === 0 && !isVerified && (
-          <div className="pointer-events-none absolute bottom-3 left-3 text-[11px] text-white/40 font-mono">
-            Goreskan karakter pada layar...
           </div>
-        )}
+          <div>
+            <span className="font-bold text-sm text-white block">
+              Aksara {targetGlif.label}
+            </span>
+            <p className="text-[11px] text-white/65 leading-tight mt-0.5">
+              {targetGlif.petunjuk}
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Toolbar & Verify Trigger */}
-      <div className="flex items-center justify-between gap-2 pt-1">
-        <div className="flex items-center gap-1.5">
+      {/* Canvas Container */}
+      <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[300px] rounded-xl overflow-hidden border border-white/20 bg-[#060d16] shadow-inner">
+        <DrawingCanvas
+          ref={canvasRef}
+          aksaraId={aksaraId}
+          targetSymbol={targetGlif.simbol}
+          targetLabel={targetGlif.label}
+          showGhostGuide={true}
+          showGrid={false}
+          onStrokeChange={handleStrokeChange}
+          isEvaluating={isVerifying || isPassed}
+        />
+      </div>
+
+      {/* Toolbar & Action Controls */}
+      <div className="flex items-center justify-between gap-3 pt-1">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={handleUndo}
-            disabled={strokes.length === 0 || isVerified}
-            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10 transition-all text-xs disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-            title="Urungkan"
+            disabled={strokeCount === 0 || isVerifying || isPassed}
+            title="Urungkan goresan terakhir"
+            className="p-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 active:scale-95 text-white/70 hover:text-white transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
           >
-            <UndoIcon className="w-3.5 h-3.5" />
+            <UndoIcon className="w-4 h-4" />
           </button>
-
           <button
             type="button"
             onClick={handleClear}
-            disabled={strokes.length === 0 || isVerified}
-            className="p-2 rounded-xl bg-white/5 hover:bg-rose-500/20 text-white/70 hover:text-rose-200 border border-white/10 transition-all text-xs disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-            title="Bersihkan"
+            disabled={strokeCount === 0 || isVerifying || isPassed}
+            title="Bersihkan kanvas"
+            className="p-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-rose-500/20 active:scale-95 text-white/70 hover:text-rose-300 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
           >
-            <TrashIcon className="w-3.5 h-3.5" />
+            <TrashIcon className="w-4 h-4" />
           </button>
+          <span className="text-[11px] font-mono text-white/40 ml-1">
+            {strokeCount} goresan
+          </span>
         </div>
 
-        {isVerified ? (
-          <div className="px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center gap-1.5">
-            <CheckIcon className="w-4 h-4" />
-            <span>Goresan Sukses Diakui!</span>
-          </div>
-        ) : (
-          <ShinyButton
-            label={isVerifying ? 'Memeriksa Goresan...' : 'Verifikasi Goresan'}
-            onClick={handleVerify}
-            className={`py-2 px-4 text-xs font-bold ${
-              strokes.length > 0 && !isVerifying
-                ? 'cursor-pointer shadow-[0_0_16px_rgba(255,210,97,0.3)]'
-                : 'opacity-40 cursor-not-allowed pointer-events-none'
-            }`}
-          />
-        )}
+        <div>
+          {!isPassed ? (
+            <ShinyButton
+              label={
+                isVerifying
+                  ? 'Memeriksa AI...'
+                  : strokeCount === 0
+                  ? 'Goreskan Dulu'
+                  : 'Verifikasi Goresan AI'
+              }
+              onClick={handleVerify}
+              className={`py-2 px-4 text-xs font-semibold ${
+                strokeCount > 0 && !isVerifying
+                  ? 'cursor-pointer shadow-[0_0_20px_rgba(255,210,97,0.3)] hover:scale-[1.01]'
+                  : 'opacity-40 cursor-not-allowed pointer-events-none'
+              }`}
+            />
+          ) : (
+            <div className="text-right">
+              <span className="text-xs font-semibold text-emerald-400 block">
+                Tulisan benar menurut model
+              </span>
+              <span className="text-[10px] text-white/50 block">
+                Model eksperimen; probabilitas belum dikalibrasi
+              </span>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Error / Feedback Notice */}
+      {evaluationError && (
+        <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200 animate-emerge-up">
+          {evaluationError}
+        </div>
+      )}
+
+      {evaluationResult && !isPassed && (
+        <div className="p-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-200 animate-emerge-up">
+          <p className="font-semibold mb-0.5">Perlu ditinjau:</p>
+          <p className="text-white/80">{evaluationResult.ringkasan}</p>
+        </div>
+      )}
     </div>
   );
 }
+
+export default ChallengeCanvasMini;
