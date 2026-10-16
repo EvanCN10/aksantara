@@ -2,12 +2,13 @@
 // AKSANTARA TACTILE PAD - SERIAL & RFID CONTRACT TYPES
 // ============================================================================
 
-export type SerialConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'simulated';
+export type SerialConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'simulated' | 'error';
 
 export type TipeSlot = 'konsonan' | 'diakritik';
 
 export interface RfidCardData {
   uid: string;
+  rawUid?: string;
   aksaraId: 'lontara' | 'sunda' | 'bali';
   tipe: TipeSlot;
   simbol: string;
@@ -21,6 +22,15 @@ export interface SerialTelemetryLog {
   timestamp: string;
   arah: 'RX' | 'TX' | 'SYS';
   pesan: string;
+}
+
+export interface TactileDeviceInfo {
+  portName: string;
+  baudRate: number;
+  device?: string;
+  chip?: string;
+  version?: string;
+  scanning?: boolean;
 }
 
 export interface TactilePadState {
