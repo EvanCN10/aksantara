@@ -4,7 +4,7 @@
 // Layanan ini mencatat progres pembelajaran siswa ke database Supabase PostgreSQL:
 // 1. `user_glyph_progress` & `practice_sessions` (Latihan Kanvas Digital)
 // 2. `story_progress` (Penyelesaian Bab Cerita Rakyat)
-// 3. `manuscript_submissions` (Transkripsi Naskah Kuno Pilar 4)
+
 //
 // Karakteristik Zero-Failure:
 // Jika koneksi Supabase belum aktif atau sedang offline di panggung demo,
@@ -29,14 +29,6 @@ export interface StoryProgressPayload {
   xpEarned: number;
 }
 
-export interface ManuscriptSubmissionPayload {
-  manuscriptId: string;
-  aksaraType: string;
-  transkripsiAksara: string;
-  transliterasiLatin: string;
-  terjemahanIndonesia: string;
-  catatanKurator?: string;
-}
 
 /**
  * Mencatat hasil latihan goresan kanvas ke database Supabase & localStorage
@@ -133,48 +125,3 @@ export async function saveStoryCompletion(
   }
 }
 
-/**
- * Mengirim usulan kurasi transliterasi naskah kuno (Pilar 4)
- */
-export async function saveManuscriptSubmission(
-  userId: string,
-  payload: ManuscriptSubmissionPayload
-): Promise<{ success: boolean; error?: string }> {
-  try {
-    if (typeof window !== 'undefined') {
-      const submissions = JSON.parse(localStorage.getItem('aksantara_submissions') || '[]');
-      submissions.push({
-        id: `sub-${Date.now()}`,
-        userId,
-        ...payload,
-        submittedAt: new Date().toISOString(),
-        status: 'pending',
-      });
-      localStorage.setItem('aksantara_submissions', JSON.stringify(submissions));
-    }
-
-    const supabase = createClient();
-    if (supabase && userId && !userId.startsWith('guest_')) {
-      const { error } = await supabase.from('manuscript_submissions').insert({
-        user_id: userId,
-        manuscript_id: payload.manuscriptId,
-        aksara_type: payload.aksaraType,
-        original_text: payload.transkripsiAksara,
-        transliteration: payload.transliterasiLatin,
-        translation: payload.terjemahanIndonesia,
-        curator_notes: payload.catatanKurator,
-        status: 'pending',
-      });
-
-      if (error) {
-        console.warn('[ProgressService] Manuscript sync warning:', error.message);
-      }
-    }
-
-    return { success: true };
-  } catch (err: unknown) {
-    const errorMsg = err instanceof Error ? err.message : String(err);
-    console.warn('[ProgressService] saveManuscriptSubmission fallback:', errorMsg);
-    return { success: true };
-  }
-}

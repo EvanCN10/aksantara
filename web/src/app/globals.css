@@ -256,32 +256,6 @@
   }
 }
 
-@keyframes enterPillarCard {
-  0% {
-    opacity: 0;
-    transform: translateY(32px) scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.pillar-header,
-.pillar-card {
-  opacity: 0;
-  pointer-events: none;
-}
-
-[data-in-view="true"] .pillar-header {
-  pointer-events: auto;
-  animation: enterHeroSubtext 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-[data-in-view="true"] .pillar-card {
-  pointer-events: auto;
-  animation: enterPillarCard 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
 
 /* =========================================
    CINEMATIC BATCH 1 MOTION SUITE (Anti-AI Slop)

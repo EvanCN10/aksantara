@@ -114,42 +114,42 @@ const PILAR = [
   {
     icon: CpuIcon,
     nomor: 'Pilar 1',
-    kategori: 'AI Computer Vision',
-    judul: 'Precision AI Writing Coach',
+    kategori: 'Latihan Kanvas',
+    judul: 'Latihan Menulis Aksara',
     teks:
-      'Evaluasi bentuk tulisan tangan dan verifikasi posisi diakritik secara on-device, menilai keutuhan fonetik tanpa bergantung pada koneksi server saat demo panggung.',
+      'Siswa berlatih menulis aksara di kanvas digital dengan umpan balik visual. Model AI eksperimen membandingkan gambar tulisan dengan kelas yang tersedia. Hasilnya bukan pemeriksaan posisi diakritik.',
   },
   {
     icon: LayersIcon,
     nomor: 'Pilar 2',
-    kategori: 'Paleografi Komparatif',
-    judul: 'Trinitas Aksara Nusantara',
+    kategori: 'Kurikulum Budaya',
+    judul: 'Mengenali Tiga Aksara Nusantara',
     teks:
-      'Spesialisasi mendalam pada Lontara, Sunda, dan Bali sebagai representasi kontras geometri Nusantara: sudut maritim, modular ngalagena, dan kurvalinier naskah lontar.',
+      'Siswa mempelajari bentuk konsonan dan tata cara penulisan aksara Lontara, Sunda, dan Bali dengan ragam bentuk geometris, modular, dan kurvalinier.',
   },
   {
     icon: Gamepad2Icon,
     nomor: 'Pilar 3',
-    kategori: 'Gamifikasi Naratif',
-    judul: 'Gamified Engagement & Narrative Story',
+    kategori: 'Naratif & Kinestetik',
+    judul: 'Belajar Lewat Cerita & Kartu Fisik',
     teks:
-      'Petualangan cerita rakyat interaktif Sawerigading, Lutung Kasarung, dan Calon Arang, dengan branching aman yang menjaga demo tetap deterministik di panggung.',
+      'Siswa mengikuti alur cerita rakyat interaktif serta dapat menghubungkan perangkat kartu fisik USB untuk menyusun karakter secara kinestetik.',
   },
   {
     icon: ScrollTextIcon,
     nomor: 'Pilar 4',
-    kategori: 'Preservasi Budaya',
-    judul: 'Human-in-the-Loop Digitalisasi Manuskrip',
+    kategori: 'Pelestarian Budaya',
+    judul: 'Transliterasi Naskah & Review Guru',
     teks:
-      'Siswa tingkat mahir membantu verifikasi hasil OCR naskah kuno dari arsip British Library Endangered Archives Programme dan koleksi manuskrip lokal.',
+      'Siswa berlatih membaca foto naskah kuno dan mengusulkan transliterasi teks yang kemudian ditinjau oleh guru atau ahli aksara.',
   },
 ];
 
 const METRIK = [
-  { nilai: '<50ms', label: 'Latensi Inferensi Evaluasi Kanvas' },
-  { nilai: 'ACL 2025', label: 'Fondasi Benchmark NusaAksara' },
-  { nilai: 'Web Serial API', label: 'Komunikasi Hardware Zero-Driver' },
-  { nilai: '100%', label: 'Unicode Compliant: Buginese, Sundanese, Balinese' },
+  { nilai: '3 Aksara', label: 'Lontara, Sunda, dan Bali' },
+  { nilai: 'Kanvas Digital', label: 'Latihan Menulis Berbasis Pointer Events' },
+  { nilai: 'USB Web Serial', label: 'Koneksi Konsol Kartu Fisik Langsung' },
+  { nilai: 'Review Guru', label: 'Kurasi dan Umpan Balik Transliterasi Manusia' },
 ];
 
 export default function TentangKamiPage() {
@@ -199,16 +199,14 @@ export default function TentangKamiPage() {
               animationDelay: '180ms',
             }}
           >
-            Menghidupkan Aksara, Menyentuh Tradisi
+            Tentang Aksantara
           </h1>
 
           <p
             className="mx-auto mt-6 max-w-2xl text-sm md:text-base text-[#F6F2E9]/80 leading-relaxed font-light animate-emerge-up"
             style={{ animationDelay: '280ms' }}
           >
-            Aksantara melawan krisis literasi aksara daerah lewat perpaduan kecerdasan buatan
-            presisi dan perangkat kinestetik fisik (Phygital), mengatasi kelelahan layar yang
-            dialami anak sekolah saat belajar lewat aplikasi digital semata.
+            Belajar membaca dan menulis aksara Lontara, Sunda, dan Bali melalui latihan kanvas, cerita, dan kartu fisik.
           </p>
         </section>
 
@@ -294,12 +292,10 @@ export default function TentangKamiPage() {
               </div>
               <ul className="space-y-3.5 text-sm text-[#F6F2E9]/75">
                 <li className="border-l-2 border-[#cf5600] pl-4 leading-relaxed">
-                  Universal Canvas berbasis PointerEvent API, mendukung stylus, touchscreen
-                  tablet, dan mouse laptop dengan latensi sub-50ms.
+                  Universal Canvas berbasis PointerEvent API, mendukung stylus, touchscreen tablet, dan mouse komputer.
                 </li>
                 <li className="border-l-2 border-[#cf5600] pl-4 leading-relaxed">
-                  Evaluasi bentuk akhir memakai Shape and Topology Classifier hasil fine-tuning
-                  benchmark akademis NusaAksara (ACL 2025), tanpa penalti urutan goresan kaku.
+                  Model AI eksperimen membandingkan gambar tulisan dengan kelas karakter yang tersedia, tanpa penalti urutan goresan kaku.
                 </li>
               </ul>
             </div>
@@ -327,13 +323,10 @@ export default function TentangKamiPage() {
               </div>
               <ul className="space-y-3.5 text-sm text-[#F6F2E9]/75">
                 <li className="border-l-2 border-[#ffd261] pl-4 leading-relaxed">
-                  Konsol mikrokontroler ESP32 dengan modul RFID/NFC 13.56 MHz, terhubung langsung
-                  ke browser laptop atau PC lewat Web Serial API: plug-and-play, zero-latency,
-                  tanpa ketergantungan WiFi.
+                  Konsol mikrokontroler ESP32 dengan pembaca kartu RFID, terhubung langsung ke browser komputer lewat Web Serial API melalui kabel USB.
                 </li>
                 <li className="border-l-2 border-[#ffd261] pl-4 leading-relaxed">
-                  30 kartu akrilik ber-RFID untuk menyusun suku kata, konsonan dan diakritik,
-                  secara sensorik dan kinestetik di luar layar tanpa kelelahan mata.
+                  Kartu fisik ber-RFID untuk menyusun karakter aksara secara kinestetik tanpa ketergantungan layar semata.
                 </li>
               </ul>
             </div>

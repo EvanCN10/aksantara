@@ -193,9 +193,9 @@ const DATA_AKSARA: Record<AksaraKey, AksaraData> = {
       },
     ],
     tantanganAI:
-      'Membedakan ketajaman sudut pada citra binarized tanpa bias urutan goresan, karena kesamaan morfologi antar konsonan belah ketupat sangat rentan memicu false-positive.',
+      'Model eksperimen membandingkan bentuk gambar goresan siswa dengan kelas konsonan dan vokal mandiri yang tersedia.',
     solusiModel:
-      'Feature extractor CNN/ViT terlatih NusaAksara mengisolasi rasio koordinat sudut dan densitas piksel biner terpusat.',
+      'Evaluasi AI mendukung 23 kelas konsonan dan vokal dasar. Penilaian posisi tanda baca atau diakritik belum didukung evaluasi AI.',
   },
   sunda: {
     key: 'sunda',
@@ -281,9 +281,9 @@ const DATA_AKSARA: Record<AksaraKey, AksaraData> = {
       },
     ],
     tantanganAI:
-      'Presisi verifikasi posisi spasial rarangken terhadap ngalagena dasar, karena ukuran diakritik yang mungil rentan tertukar koordinat atas-bawah pada citra resolusi rendah.',
+      'Konsonan ngalagena dan swara mandiri memiliki ciri tarikan garis modular vertikal-horizontal.',
     solusiModel:
-      'Pipeline segmentasi spasial hierarkis yang memvalidasi bounding-box konsonan induk sebelum mengevaluasi rarangken di sekitarnya.',
+      'Evaluasi AI mendukung 18 konsonan ngalagena dan 3 swara dasar (a, i, u). Tanda vokalisasi rarangken belum didukung evaluasi AI.',
   },
   bali: {
     key: 'bali',
@@ -369,9 +369,9 @@ const DATA_AKSARA: Record<AksaraKey, AksaraData> = {
       },
     ],
     tantanganAI:
-      'Segmentasi ligatur kontinu serta pemisahan gantungan aksara yang bertumpuk vertikal, rawan terdeteksi sebagai satu glif tunggal oleh model konvensional.',
+      'Aksara Bali memiliki kurvalinier dinamis dan variasi tarikan garis wianjana.',
     solusiModel:
-      'Model berbasis Vision Transformer (ViT) dengan mekanisme multi-head attention untuk memisahkan lapisan aksara induk dan gantungan bawah.',
+      'Evaluasi AI mendukung 18 aksara wianjana dasar (ka hingga ha). Bentuk gantungan, gempelan, dan pangangge belum didukung evaluasi AI.',
   },
 };
 
@@ -408,16 +408,16 @@ const MATRIKS_KOMPARASI: {
     bali: 'Tinggi (gantungan bertumpuk vertikal)',
   },
   {
-    parameter: 'Tantangan Model AI',
-    lontara: 'Diskriminasi sudut belah ketupat',
-    sunda: 'Verifikasi relasi spasial diakritik',
-    bali: 'Segmentasi multi-karakter dan ligatur',
+    parameter: 'Dukungan AI Saat Ini',
+    lontara: '23 konsonan & vokal dasar',
+    sunda: '18 ngalagena + 3 swara (a, i, u)',
+    bali: '18 wianjana dasar (ka - ha)',
   },
   {
-    parameter: 'Benchmark Akademis',
-    lontara: 'NusaAksara ACL 2025',
-    sunda: 'NusaAksara ACL 2025',
-    bali: 'NusaAksara ACL 2025',
+    parameter: 'Status Diakritik',
+    lontara: 'Materi belajar (belum dinilai AI)',
+    sunda: 'Materi belajar (belum dinilai AI)',
+    bali: 'Materi belajar (belum dinilai AI)',
   },
 ];
 
@@ -479,17 +479,17 @@ export default function TrinitasAksaraPage() {
               animationDelay: '180ms',
             }}
           >
-            Harmoni Trinitas Aksara Nusantara
+            Kenali Aksara Lontara, Sunda, dan Bali
           </h1>
 
           <p
             className="mx-auto mt-6 max-w-2xl text-sm md:text-base text-[#F6F2E9]/80 leading-relaxed font-light animate-emerge-up"
             style={{ animationDelay: '280ms' }}
           >
-            Aksantara mengunci fokus pada tiga aksara dengan karakteristik paleografi kontras:
-            Lontara dengan geometri maritim bersudut tajam, Sunda dengan ngalagena modular teratur,
-            dan Bali dengan kurvalinier kompleks warisan naskah lontar. Ketiganya menjadi tolok ukur
-            pengujian model AI klasifikasi visual yang tangguh dan objektif.
+            Aksantara berfokus pada tiga aksara dengan karakteristik paleografi kontras:
+            Lontara dengan geometri bersudut tajam, Sunda dengan ngalagena modular teratur,
+            dan Bali dengan kurvalinier dinamis. Materi kurikulum mengenalkan huruf dasar dan diakritik,
+            didampingi evaluasi AI eksperimen untuk karakter yang didukung.
           </p>
         </section>
 
@@ -672,9 +672,14 @@ export default function TrinitasAksaraPage() {
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
                     <Volume2Icon className="h-4 w-4 text-[#ffd261]" />
-                    <p className="text-xs uppercase tracking-[0.2em] text-[#D4A373] font-semibold">
-                      Vokalisasi &amp; Diakritik
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-xs uppercase tracking-[0.2em] text-[#D4A373] font-semibold">
+                        Vokalisasi &amp; Diakritik
+                      </p>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full border border-white/10 bg-white/5 text-[#F6F2E9]/60">
+                        Materi Belajar · Belum Didukung AI
+                      </span>
+                    </div>
                   </div>
                   {/* Living Acoustic Resonance Waves */}
                   <div className="flex items-center gap-1 h-5 px-2 py-0.5 rounded-full bg-[#D4A373]/10 border border-[#D4A373]/20" aria-label="Resonansi Akustik">
@@ -712,7 +717,7 @@ export default function TrinitasAksaraPage() {
                 <div className="flex items-center gap-2 mb-3">
                   <CpuIcon className="h-4 w-4 text-[#ffd261]" />
                   <p className="text-xs uppercase tracking-[0.2em] text-[#D4A373] font-semibold">
-                    Evaluasi AI Classifier
+                    Evaluasi AI Eksperimen
                   </p>
                 </div>
                 <div className="space-y-3">
@@ -726,7 +731,7 @@ export default function TrinitasAksaraPage() {
                   </div>
                   <div className="pt-2 border-t border-white/5">
                     <span className="text-[11px] font-semibold text-[#ffd261] uppercase tracking-wider block mb-1">
-                      Solusi Algoritma Aksantara:
+                      Cakupan Model Aksantara:
                     </span>
                     <p className="text-xs text-[#F6F2E9]/75 leading-relaxed">
                       {data.solusiModel}
@@ -864,11 +869,10 @@ export default function TrinitasAksaraPage() {
                 urutan tarikan pena.
               </p>
               <p>
-                Atas dasar riset tersebut, Aksantara mengimplementasikan Shape and Topology
-                Classifier: model mengevaluasi karakter berdasarkan keutuhan proporsi visual dan
-                koordinat spasial diakritik, bukan jejak lintasan gerak pena. Siswa yang memulai
-                goresan dari sudut berbeda tidak dipenalti selama karakter terbentuk secara utuh
-                dan dapat dibaca dengan benar.
+                Atas dasar riset tersebut, model membandingkan gambar tulisan siswa secara visual
+                dengan kelas karakter yang tersedia, bukan jejak urutan goresan pena. Siswa yang
+                memulai goresan dari sudut berbeda tidak dipenalti selama karakter terbentuk
+                dan dapat dikenali oleh model.
               </p>
             </div>
           </div>
@@ -903,7 +907,7 @@ export default function TrinitasAksaraPage() {
           </div>
           <div className="mt-10 flex items-center justify-center gap-2 text-xs text-[#F6F2E9]/45">
             <BookOpenIcon className="h-3.5 w-3.5" />
-            Disusun merujuk benchmark akademis NusaAksara, ACL 2025
+            Disusun merujuk naskah dan kurikulum muatan lokal daerah
           </div>
         </section>
       </div>

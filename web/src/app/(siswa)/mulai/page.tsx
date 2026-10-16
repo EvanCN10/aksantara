@@ -161,9 +161,9 @@ export default function MulaiPage() {
     if (!selectedAksara || !selectedJalur) {
       return 'Pilih 1 aksara dan 1 jalur belajar untuk mengaktifkan petualangan';
     }
-    if (selectedJalur === 'web') return `Menuju Kanvas AI: /latihan/web/${selectedAksara}`;
-    if (selectedJalur === 'hardware') return 'Menuju Setup Perangkat: /hardware/koneksi';
-    return 'Menuju Petualangan Cerita: /cerita';
+    if (selectedJalur === 'web') return 'Buka latihan kanvas untuk aksara pilihanmu';
+    if (selectedJalur === 'hardware') return 'Hubungkan perangkat kartu fisik';
+    return 'Pilih cerita untuk mulai belajar';
   };
 
   return (
@@ -457,7 +457,7 @@ export default function MulaiPage() {
               }`}
             />
           </div>
-          <p className="text-[11px] text-white/45 text-center font-mono">
+          <p className="text-[11px] text-white/60 text-center">
             {getRouteHint()}
           </p>
         </footer>

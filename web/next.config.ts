@@ -1,3 +1,4 @@
+import path from 'path';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
@@ -5,9 +6,18 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
 
+  turbopack: {
+    root: path.resolve(process.cwd(), '..'),
+  },
+
+  experimental: {
+    externalDir: true,
+  },
+
   // Optimasi format gambar modern untuk keringanan aset (AVIF & WebP)
   images: {
     formats: ['image/avif', 'image/webp'],
+    qualities: [75, 90],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 hari cache aset
   },
 

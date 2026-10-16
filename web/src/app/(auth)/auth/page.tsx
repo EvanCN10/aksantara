@@ -120,7 +120,6 @@ function AuthPageContent() {
             options: {
               data: {
                 nama: formData.nama || 'Penoreh Aksara',
-                role,
               },
             },
           });
@@ -425,10 +424,14 @@ function AuthPageContent() {
                 ? role === 'guru'
                   ? 'Masuk ke Dashboard Guru'
                   : 'Masuk ke Aksantara'
-                : role === 'guru'
-                ? 'Daftar sebagai Pendidik'
-                : 'Buat Akun Siswa'}
+                : 'Buat Akun'}
             </button>
+
+            {mode === 'register' && (
+              <p className="text-[11px] text-white/50 text-center pt-1">
+                Akun baru berperan siswa. Akses guru atau ahli diberikan oleh administrator.
+              </p>
+            )}
 
             {/* Divider */}
             <div className="relative my-4">

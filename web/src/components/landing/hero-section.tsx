@@ -22,11 +22,11 @@ const PILLARS: Pillar[] = [
     id: 'pilar-1',
     pilar: 'Pilar I',
     nama: 'Precision AI Writing Coach',
-    desc: 'Evaluasi bentuk akhir aksara di Web Canvas menggunakan AI Classifier serta validasi posisi diakritik secara real-time.',
+    desc: 'Latih tulisan aksara di kanvas dan lihat prediksi AI untuk karakter yang didukung.',
     img: '/images/ui/landing-page/card/black-bg-card.png',
     accent: '#D4A373',
-    tag: 'AI Classifier · NusaAksara',
-    href: '/latihan/web/lontara',
+    tag: 'Latihan kanvas · AI eksperimen',
+    href: '/mulai',
   },
   {
     id: 'pilar-2',
@@ -52,10 +52,10 @@ const PILLARS: Pillar[] = [
     id: 'pilar-4',
     pilar: 'Pilar IV',
     nama: 'Human-in-the-Loop Preservasi',
-    desc: 'Koreksi prediksi OCR naskah kuno oleh siswa mahir dan validasi kurator ahli filologi.',
+    desc: 'Tulis transliterasi dari foto naskah, lalu kirim untuk ditinjau guru atau ahli aksara.',
     img: '/images/ui/landing-page/card/yelllow-bg-card.png',
     accent: '#ffd261',
-    tag: 'OCR Manuskrip · Kurasi Ahli',
+    tag: 'Transliterasi manual · Review manusia',
     href: '/pelestarian',
   },
 ];
@@ -521,8 +521,6 @@ const EXIT_VECTORS: Record<string, [number, number]> = {
 export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
   const castleRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const section2Ref = useRef<HTMLDivElement>(null);
-  const dimOverlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isStarted) {
@@ -531,12 +529,6 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
       }
       if (sectionRef.current) {
         sectionRef.current.style.setProperty('--exit', '0');
-      }
-      if (section2Ref.current) {
-        delete section2Ref.current.dataset.inView;
-      }
-      if (dimOverlayRef.current) {
-        dimOverlayRef.current.style.opacity = '0';
       }
       return;
     }
@@ -558,30 +550,6 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
         castleRef.current.style.transform = `translate3d(0, ${(1 - castleProgress) * 64}px, 0)`;
       }
 
-      // 3. Trigger animasi masuk kartu Section 2: baru muncul ketika elemen sudah 75% muncul di viewport user
-      if (section2Ref.current) {
-        const rect = section2Ref.current.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const elemH = rect.height || 1;
-
-        // Porsi tinggi elemen Section 2 yang sudah berada di dalam viewport user
-        const visiblePx = Math.max(0, Math.min(elemH, vh - rect.top));
-        const visibleRatio = visiblePx / elemH;
-
-        // Baru muncul ketika elemennya sudah 75% (0.75) muncul di viewport user
-        if (visibleRatio >= 0.75 && !section2Ref.current.dataset.inView) {
-          section2Ref.current.dataset.inView = 'true';
-        } else if (visibleRatio < 0.2 && section2Ref.current.dataset.inView) {
-          delete section2Ref.current.dataset.inView;
-        }
-
-        // 4. Redupkan background secara halus saat masuk Section 2, dan kembali terang normal saat kembali ke Section 1
-        if (dimOverlayRef.current) {
-          const dimProgress = Math.min(1, Math.max(0, (visibleRatio - 0.2) / 0.55));
-          const dimOpacity = dimProgress * 0.42;
-          dimOverlayRef.current.style.opacity = String(dimOpacity);
-        }
-      }
     };
 
     const handleScroll = () => {
@@ -608,12 +576,12 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
       ref={sectionRef}
       data-node-id="1:54"
       aria-label="Hero Aksantara"
-      className="@container relative w-full overflow-hidden bg-[#0c1a2c] min-h-[1850px] lg:min-h-0"
+      className="@container relative w-full overflow-hidden bg-[#0c1a2c]"
       style={{
-        aspectRatio: `${DESIGN_W} / ${DESIGN_H}`,
+        minHeight: `calc(${DESIGN_H} / ${DESIGN_W} * 100cqw)`,
         containerType: 'inline-size',
-        ['--exit' as any]: '0',
-      }}
+        ['--exit' as string]: '0',
+      } as React.CSSProperties}
     >
       {/* 0. White Overlay Fade Out (Cinematic entrance dari putih) */}
       <div
@@ -752,28 +720,15 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
         </div>
       </div>
 
-      {/* 2.15 Background Dimming Overlay saat masuk Section 2 */}
-      <div
-        ref={dimOverlayRef}
-        aria-hidden="true"
-        className="absolute inset-0 z-[25] pointer-events-none transition-opacity duration-500 ease-out"
-        style={{
-          backgroundColor: '#060b14',
-          opacity: 0,
-        }}
-      />
-
       {/* 2.2 Section 2: Empat Pilar Revitalisasi (Bento Grid di dalam Main Background) */}
       <div
-        ref={section2Ref}
         data-name="Section 2 Pillars"
         aria-label="Empat Pilar Revitalisasi Aksantara"
-        className="absolute z-30 w-full px-4 sm:px-6 lg:px-10 pointer-events-auto flex flex-col items-center select-none"
+        className="relative z-30 w-full px-4 sm:px-6 lg:px-10 pointer-events-auto flex flex-col items-center select-none"
         style={{
-          top: `${(SECTION_2_TOP_PX / DESIGN_H) * 100}%`,
-          left: '0',
+          paddingTop: `${(SECTION_2_TOP_PX / DESIGN_W) * 100}%`,
+          paddingBottom: '64px',
           isolation: 'isolate',
-          contain: 'layout style',
         }}
       >
         {/* Header Section 2 */}
