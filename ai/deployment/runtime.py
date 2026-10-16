@@ -22,6 +22,39 @@ INPUT_NAME = "input"
 OUTPUT_NAME = "logits"
 LOGGER = logging.getLogger(__name__)
 CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "shared" / "aksara-classifier.json"
+LONTARA_SYLLABLE_BASE: dict[str, str] = {
+    "Be": "Ba", "Bi": "Ba", "Bo": "Ba", "Bu": "Ba",
+    "Ce": "Ca", "Ci": "Ca", "Co": "Ca", "Cu": "Ca",
+    "De": "Da", "Di": "Da", "Do": "Da", "Du": "Da",
+    "E": "A", "I": "A", "O": "A", "U": "A",
+    "Ge": "Ga", "Gi": "Ga", "Go": "Ga", "Gu": "Ga",
+    "He": "Ha", "Hi": "Ha", "Ho": "Ha", "Hu": "Ha",
+    "Je": "Ja", "Ji": "Ja", "Jo": "Ja", "Ju": "Ja",
+    "Ke": "Ka", "Ke_": "Ka", "Ki": "Ka", "Ko": "Ka", "Ku": "Ka",
+    "Le": "La", "Li": "La", "Lo": "La", "Lu": "La",
+    "Me": "Ma", "Mi": "Ma", "Mo": "Ma", "Mu": "Ma",
+    "Mpe": "Mpa", "Mpi": "Mpa", "Mpo": "Mpa", "Mpu": "Mpa",
+    "Ne": "Na", "Ni": "Na", "No": "Na", "Nu": "Na",
+    "Nce": "Nca", "Nci": "Nca", "Nco": "Nca", "Ncu": "Nca",
+    "Nge": "Nga", "Ngi": "Nga", "Ngo": "Nga", "Ngu": "Nga",
+    "Nke": "Nka", "Nki": "Nka", "Nko": "Nka", "Nku": "Nka",
+    "Nre": "Nra", "Nri": "Nra", "Nro": "Nra", "Nru": "Nra",
+    "Nye": "Nya", "Nyi": "Nya", "Nyo": "Nya", "Nyu": "Nya",
+    "Pe": "Pa", "Pi": "Pa", "Po": "Pa", "Pu": "Pa",
+    "Re": "Ra", "Ri": "Ra", "Ro": "Ra", "Ru": "Ra",
+    "Se": "Sa", "Si": "Sa", "So": "Sa", "Su": "Sa",
+    "Te": "Ta", "Ti": "Ta", "To": "Ta", "Tu": "Ta",
+    "We": "Wa", "Wi": "Wa", "Wo": "Wa", "Wu": "Wa",
+    "Ye": "Ya", "Yi": "Ya", "Yo": "Ya",
+}
+
+
+def get_base_consonant_source_label(script: str, target_source_label: str) -> str | None:
+    if script != "lontara":
+        return None
+    return LONTARA_SYLLABLE_BASE.get(target_source_label)
+
+
 
 
 def load_shared_config(path: Path = CONFIG_PATH) -> dict[str, object]:
@@ -64,7 +97,7 @@ class Manifest(BaseModel):
     schema_version: Literal[1]
     script: Script
     architecture: str = Field(min_length=1)
-    format: Literal["fp32"]
+    format: Literal["fp32", "int8"]
     num_classes: int = Field(gt=0)
     input_name: Literal["input"]
     output_name: Literal["logits"]
@@ -152,11 +185,16 @@ def validate_session(session: ort.InferenceSession, class_count: int) -> None:
         raise ValueError("ONNX output class count differs from labels")
 
 
-def stable_softmax(logits: np.ndarray, class_count: int) -> np.ndarray:
+def stable_softmax(logits: np.ndarray, class_count: int, mask_index: int | None = None) -> np.ndarray:
     if logits.shape != (1, class_count) or logits.dtype != np.float32 or not np.isfinite(logits).all():
         raise ModelUnavailable("Model menghasilkan logits tidak valid.")
     values = logits[0].astype(np.float64)
-    values -= values.max()
+    if mask_index is not None and 0 <= mask_index < class_count:
+        values[mask_index] = -np.inf
+    finite_mask = np.isfinite(values)
+    if not finite_mask.any():
+        raise ModelUnavailable("Seluruh logits tereduksi.")
+    values -= np.max(values[finite_mask])
     np.exp(values, out=values)
     values /= values.sum()
     return values
@@ -171,16 +209,29 @@ class Specialist:
     display_names: dict[str, str]
     target_indices: dict[str, int]
 
-    def probabilities(self, tensor: np.ndarray) -> np.ndarray:
+    def logits(self, tensor: np.ndarray) -> np.ndarray:
         try:
-            logits = self.session.run([OUTPUT_NAME], {INPUT_NAME: tensor[None]})[0]
-            return stable_softmax(logits, len(self.labels))
+            return self.session.run([OUTPUT_NAME], {INPUT_NAME: tensor[None]})[0]
         except ModelUnavailable:
             raise
         except Exception as error:
             LOGGER.exception("Specialist ONNX inference failed")
             raise ModelUnavailable("Inferensi ONNX tidak tersedia.") from error
 
+    def probabilities(self, tensor: np.ndarray, mask_index: int | None = None) -> np.ndarray:
+        return stable_softmax(self.logits(tensor), len(self.labels), mask_index=mask_index)
+
+    def evaluate_probabilities(
+        self, tensor: np.ndarray, mask_index: int | None = None
+    ) -> tuple[np.ndarray, np.ndarray]:
+        logits = self.logits(tensor)
+        raw_probs = stable_softmax(logits, len(self.labels))
+        constrained_probs = (
+            stable_softmax(logits, len(self.labels), mask_index=mask_index)
+            if mask_index is not None
+            else raw_probs
+        )
+        return raw_probs, constrained_probs
     def target_index(self, slug: str) -> int | None:
         return self.target_indices.get(slug)
 
