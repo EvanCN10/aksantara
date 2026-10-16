@@ -15,7 +15,6 @@ Indonesia memiliki lebih dari 700 bahasa daerah dan puluhan aksara tradisional, 
 2. **Hardware Mode (Phygital IoT):** Pembelajaran motorik sensorik anak melalui konsol fisik **Aksantara Tactile Pad** (ESP32 + RFID Reader) menggunakan kartu fisik akrilik ber-tag RFID yang tersambung instan via **Web Serial API (USB Plug-and-Play)** langsung ke browser dengan *zero-latency* dan *zero-dependency* terhadap jaringan WiFi panggung demo.
 3. **Narrative Story Mode:** Gamifikasi cerita rakyat interaktif (*Sawerigading, Lutung Kasarung, Calon Arang*) dengan percabangan cerita deterministik.
 4. **Preservasi Manuskrip Kuno:** Modul *Human-in-the-Loop* untuk koreksi dan transliterasi digital naskah lontar kuno.
-
 ---
 
 ## 🏛️ Trinitas Aksara Nusantara (Scope Terkunci)
@@ -59,28 +58,42 @@ flowchart TD
 
 ---
 
-## 📂 Struktur Repositori (Monorepo Structure)
+## 📂 Peta Monorepo Aksantara
 
-Repositori ini diatur dengan arsitektur modular yang memisahkan ranah tanggung jawab tim secara bersih:
+Repositori ini diatur dengan arsitektur modular yang memisahkan ranah aplikasi, runtime AI, eksperimen, basis data, dan dokumentasi:
 
+| Direktori | Ranah & Peruntukan | Rujukan Utama |
+|---|---|---|
+| `web/` | Aplikasi Web Edukasi (Next.js 16 App Router, React 19, Tailwind CSS v4) | [`web/package.json`](web/package.json) |
+| `ai/deployment/` | Runtime serving model ONNX specialist lokal (FastAPI, ONNX Runtime CPU) | [`docs/AI_MODEL_HANDOFF.md`](docs/AI_MODEL_HANDOFF.md) |
+| `ai/` & `ai/notebooks/` | Eksperimen pelatihan model, visualisasi EDA, dan notebook modular | [`ai/notebooks/`](ai/notebooks/) |
+| `shared/` | Kontrak kanonis bersama: pemetaan slug target kurikulum ke label model | [`shared/aksara-classifier.json`](shared/aksara-classifier.json) |
+| `supabase/` | DDL basis data PostgreSQL, proteksi role, dan migrasi inkremental | [`supabase/schema.sql`](supabase/schema.sql) |
+| `datasets/` | Dataset citra lokal untuk latihan klasifikasi karakter | `datasets/canvas_classifier/` |
+| `context/` | Spesifikasi resmi sistem dan panduan kompetisi | [`context/AKSANTARA-SSOT-v3.1.md`](context/AKSANTARA-SSOT-v3.1.md) |
+| `docs/` | Dokumentasi handoff teknis dan rencana implementasi | [`docs/INTEGRATION_HANDOFF.md`](docs/INTEGRATION_HANDOFF.md) |
+| `iot/` | Firmware mikrokontroler ESP32 + skema Aksantara Tactile Pad | [`iot/`](iot/) |
+| `qc/` | Catatan audit historis perbaikan kualitas | [`qc/15-10-26-rkaaa.md`](qc/15-10-26-rkaaa.md) |
+
+## 🚀 Quickstart Runtime (Tanpa Training Ulang)
+
+Untuk menjalankan seluruh platform secara lokal:
+
+### 1. Jalankan Backend Classifier AI (Terminal 1)
+```bash
+# Dari root repositori
+python -m pip install -r ai/deployment/requirements.txt
+python -m uvicorn ai.deployment.server:app --host 127.0.0.1 --port 8000
 ```
-aksantara/
-├── .agent/                    # Konfigurasi AI agent rules (Next.js 16, Anti-Slop, Ponytail)
-├── context/                   # Dokumentasi resmi & SSOT (AKSANTARA-SSOT-v3.1.md)
-├── web/                       # Aplikasi Web Frontend (Next.js 16 App Router + Tailwind v4)
-├── ai/                        # Eksperimen classifier karakter, harness canvas & ekspor ONNX
-├── iot/                       # Firmware mikrokontroler ESP32 + skema Aksantara Tactile Pad
-├── .gitignore                 # Filter proteksi monorepo (Node, Python, ESP32, Secrets)
-└── README.md                  # Dokumentasi utama proyek
+*Verifikasi kesiapan model: buka `http://127.0.0.1:8000/health` (mengembalikan HTTP 200 saat ketiga specialist siap).*
+
+### 2. Jalankan Aplikasi Web (Terminal 2)
+```bash
+cd web
+npm ci
+npm run dev
 ```
-
-SSOT resmi berada di [`context/AKSANTARA-SSOT-v3.1.md`](context/AKSANTARA-SSOT-v3.1.md); panduan kompetisi berada di [`context/competition/guidebook-joints-2026.md`](context/competition/guidebook-joints-2026.md).
-
-Folder `datasets/` disimpan lokal dan tidak diikutkan ke Git. Konfigurasi asisten lokal `.agents/` dan `.omp/` juga di-ignore; aturan tim yang dilacak berada di `.agent/`.
-
-Branch `main` mengikuti struktur dasar monorepo. Implementasi frontend yang sudah tersedia di remote berada pada branch `web`.
-
-### Kaggle MCP untuk Training
+*Buka `http://localhost:3000` pada peramban Chromium (Chrome, Edge).*
 
 Konfigurasi lokal OMP berada di `.omp/mcp.json` (di-ignore Git):
 
