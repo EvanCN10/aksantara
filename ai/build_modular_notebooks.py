@@ -172,32 +172,57 @@ print(f"Project root aktif: {{PROJECT_ROOT}}")
 import zipfile
 import matplotlib.pyplot as plt
 
-# Ekstraksi dataset lokal jika belum diekstrak
-dataset_zip_candidates = [
-    drive_root / "canvas_classifier.zip",
-    Path("/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/canvas_classifier.zip"),
-    PROJECT_ROOT / "datasets/canvas_classifier.zip",
-    PROJECT_ROOT / "canvas_classifier.zip",
-    Path("datasets/canvas_classifier.zip"),
-    Path("dataset-joints-1/canvas_classifier.zip"),
-]
+# Pemuatan dataset kanonis
+if IN_COLAB:
+    data_root = Path("/content/dataset")
+    if not data_root.is_dir():
+        colab_zips = [
+            drive_root / "canvas_classifier.zip",
+            Path("/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/canvas_classifier.zip"),
+            PROJECT_ROOT / "datasets/canvas_classifier.zip",
+        ]
+        for candidate in colab_zips:
+            if candidate.is_file():
+                print(f"Mengekstrak dataset: {{candidate}} -> {{data_root}}...")
+                data_root.mkdir(parents=True, exist_ok=True)
+                with zipfile.ZipFile(candidate, "r") as z:
+                    z.extractall(data_root)
+                break
+    if (data_root / "canvas_classifier").is_dir():
+        data_root = data_root / "canvas_classifier"
+else:
+    # Lokal: Utamakan direktori kanonis PROJECT_ROOT / "datasets/canvas_classifier"
+    canonical_dir = PROJECT_ROOT / "datasets/canvas_classifier"
+    if not canonical_dir.is_dir():
+        dataset_zip_candidates = [
+            PROJECT_ROOT / "datasets/canvas_classifier.zip",
+            PROJECT_ROOT / "canvas_classifier.zip",
+            Path("datasets/canvas_classifier.zip"),
+        ]
+        extracted_dest = PROJECT_ROOT / "datasets"
+        for candidate in dataset_zip_candidates:
+            if candidate.is_file():
+                print(f"Mengekstrak dataset arsip: {{candidate}} -> {{extracted_dest}}...")
+                extracted_dest.mkdir(parents=True, exist_ok=True)
+                with zipfile.ZipFile(candidate, "r") as z:
+                    z.extractall(extracted_dest)
+                break
 
-extracted_dir = Path("/content/dataset") if IN_COLAB else PROJECT_ROOT / "extracted/canvas_classifier"
-data_root = extracted_dir
+    data_root = canonical_dir
+    if not data_root.is_dir():
+        nested_candidate = PROJECT_ROOT / "datasets" / "canvas_classifier" / "canvas_classifier"
+        if nested_candidate.is_dir():
+            data_root = nested_candidate
 
-for candidate in dataset_zip_candidates:
-    if candidate.is_file() and not extracted_dir.is_dir():
-        print(f"Mengekstrak dataset: {{candidate}} -> {{extracted_dir}}...")
-        extracted_dir.mkdir(parents=True, exist_ok=True)
-        with zipfile.ZipFile(candidate, "r") as z:
-            z.extractall(extracted_dir)
-        break
+if not data_root.is_dir():
+    raise FileNotFoundError(f"Direktori dataset tidak ditemukan di {{data_root}}. Pastikan dataset tersedia di datasets/canvas_classifier.")
 
-if (extracted_dir / "canvas_classifier").is_dir():
-    data_root = extracted_dir / "canvas_classifier"
+required_scripts = ["sunda", "lontara", "bali"]
+missing_scripts = [s for s in required_scripts if not (data_root / s).is_dir()]
+if missing_scripts:
+    raise FileNotFoundError(f"Direktori aksara wajib tidak lengkap pada {{data_root}}. Kurang: {{missing_scripts}}")
 
-print(f"Direktori data citra: {{data_root}}")
-
+print(f"Direktori data citra terverifikasi: {{data_root}}")
 # Load manifest labels & split
 from ai.data import load_labels, load_split_manifest
 from ai.notebook_visualizer import plot_glyph_grid, plot_class_distribution

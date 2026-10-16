@@ -104,18 +104,17 @@ Batas citra: maksimal 4 MiB decoded, sisi maksimal 2048 piksel, total maksimal 1
 | `predictedSymbol` | Label sumber mentah, bukan simbol Unicode terverifikasi. |
 | `confidence` | Probabilitas softmax top-1 pada rentang 0–1, belum terkalibrasi. |
 | `top3` | Tiga objek berisi `labelId`, `sourceLabel`, dan `probability`. |
-| `score` | Persentase probabilitas target jika satu label cocok persis secara case-insensitive; jika tidak, persentase probabilitas top-1. Bukan nilai kualitas tulisan. |
-| `targetSupported` | Apakah target memiliki satu kecocokan label sumber. Jangan menafsirkan skor sebagai keberhasilan target jika `false`. |
-| `status` | Selalu `perlu_review` pada kontrak eksperimen ini. |
+| `score` | Persentase probabilitas target jika didukung; jika tidak, persentase probabilitas top-1. Bukan nilai kualitas tulisan. |
+| `targetSupported` | Apakah slug kurikulum terdaftar pada target classifier di `shared/aksara-classifier.json`. |
+| `status` | `'benar'` jika targetSupported bernilai true, prediksi top-1 sesuai target, dan probabilitas target ≥ 0,85; jika tidak, `'perlu_review'`. |
 | `modelSource` / `modelId` | `onnx_backend` / SHA-256 model. |
 | `latencyMs` | Latensi layanan Python, bukan total browser/network/render. |
 | `mappingVerified` / `probabilitiesCalibrated` | Keduanya `false`. |
-| `kriteria` / `ringkasan` | Array kriteria kosong; ringkasan menjelaskan klasifikasi dan keterbatasannya. |
+| `kriteria` / `ringkasan` | Array kriteria kosong; ringkasan menjelaskan klasifikasi dan batasannya. |
 
-Target Bali `ka` belum otomatis cocok dengan `aksara wyajana ka`. Label seperti Lontara `Ke` dan `Ke_`, serta Sunda `ae` dan `e`, tidak boleh disamakan tanpa verifikasi. Inventaris model tidak mencakup seluruh karakter/diakritik yang dapat ditampilkan materi web.
+Pemetaan target kurikulum ke label model dan display name siswa dikelola terpusat pada `shared/aksara-classifier.json`. Ambang batas penerimaan `0.85` berlaku sebagai kebijakan produk sementara, bukan klaim akurasi hasil eksperimen.
 
-Hasil eksperimen tidak boleh otomatis dijadikan mastery, XP, status tulisan benar, atau validasi topologi diakritik. Kanvas kosong/PNG rusak menghasilkan 400, request tidak valid 422, layanan/aset tidak tersedia atau respons tidak sesuai kontrak 503. Tampilkan error; jangan menggantinya dengan skor acak atau kelulusan otomatis.
-
+Hasil eksperimen tidak boleh otomatis dijadikan mastery, XP, atau validasi topologi diakritik. Kanvas kosong/PNG rusak menghasilkan 400, request tidak valid 422, layanan/aset tidak tersedia atau respons tidak sesuai kontrak 503. Tampilkan error; jangan menggantinya dengan skor acak atau kelulusan otomatis.
 ## 5. Menjalankan lokal
 
 Dari root repositori, terminal pertama:
@@ -170,6 +169,5 @@ Fokus AIoT engineer: classifier ONNX canvas dan integrasi ESP32/RFID/Web Serial.
 ## 8. Catatan untuk penerima handoff
 
 - Mulai dari dokumen ini dan paket `ai/deployment/models/`; tidak perlu menjalankan notebook training untuk integrasi web lokal.
-- Bagian awal [AI_IOT_HANDOVER.md](../web/AI_IOT_HANDOVER.md) masih menyebut model browser di `public/models`, ukuran 64×64/224×224, dan helper `preprocessCanvasForOnnx()` yang tidak tersedia pada adapter aktif. Gunakan kontrak backend di atas untuk implementasi saat ini.
-- TODO `/api/evaluasi-goresan` di panel evaluasi juga merupakan komentar lama; endpoint aktif adalah `/api/ai/classify`.
-- Ringkasan ini ditambahkan sebagai dokumentasi, tanpa mengganti model, menjalankan ulang training, atau mengubah kode aplikasi. File baru perlu masuk commit dan push sebelum tersedia pada clone teman; pembuatan dokumen lokal tidak otomatis memublikasikannya.
+- Panduan integrasi web, Web Serial hardware, dan Supabase dirangkum pada [INTEGRATION_HANDOFF.md](INTEGRATION_HANDOFF.md).
+- Seluruh kontrak model dan pemetaan target merujuk pada dokumen ini serta `shared/aksara-classifier.json`.

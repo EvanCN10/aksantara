@@ -17,7 +17,9 @@ from fastapi.responses import JSONResponse
 from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel, ConfigDict, Field
 
-from ai.deployment.runtime import INPUT_SIZE, ModelRegistry, ModelUnavailable, Script, Specialist
+from ai.deployment.runtime import INPUT_SIZE, ModelRegistry, ModelUnavailable, Script, Specialist, load_shared_config
+
+CLASSIFICATION_ACCEPTANCE_THRESHOLD: float = float(load_shared_config()["acceptanceThreshold"])
 from ai.preprocess import preprocess_image
 
 PNG_PREFIX = "data:image/png;base64,"
@@ -49,7 +51,7 @@ class PredictResponse(BaseModel):
     model_config = ConfigDict(strict=True, extra="forbid")
 
     score: float = Field(ge=0, le=100, allow_inf_nan=False)
-    status: Literal["perlu_review"] = "perlu_review"
+    status: Literal["benar", "perlu_review"]
     predictedSymbol: str
     confidence: float = Field(ge=0, le=1, allow_inf_nan=False)
     latencyMs: float = Field(ge=0, allow_inf_nan=False)
@@ -97,33 +99,77 @@ def canvas_tensor(data_url: str) -> np.ndarray:
     return result["tensor"]
 
 
-def classification_summary(source_label: str, confidence: float, supported: bool) -> str:
-    target_note = (
-        "Skor adalah probabilitas kelas label sumber target, bukan nilai kualitas tulisan."
-        if supported else "Target tidak memiliki satu kecocokan label sumber persis; skor memakai probabilitas kelas teratas."
-    )
-    return (
-        f"Model eksperimen memprediksi label sumber '{source_label}' dengan probabilitas {confidence:.1%}. "
-        f"{target_note} Probabilitas belum dikalibrasi dan mapping Unicode belum diverifikasi. "
-        "Hasil perlu review manusia; tidak membuktikan ketepatan bentuk atau posisi diakritik."
-    )
+def classification_summary(
+    display_name: str,
+    confidence: float,
+    supported: bool,
+    status: Literal["benar", "perlu_review"],
+    top_is_target: bool,
+) -> str:
+    prob = f"{confidence * 100:.1f}".replace(".", ",")
+    if not supported:
+        return "Karakter ini belum didukung evaluasi AI."
+    if status == "benar":
+        return f"Tulisan {display_name} terdeteksi dengan keyakinan {prob}%."
+    # perlu_review + supported
+    if not top_is_target:
+        return (
+            f"Model mengenali sebagai {display_name} ({prob}%), bukan target saat ini. "
+            "Coba perbaiki bentuknya."
+        )
+    return f"Kemiripan dengan {display_name} masih {prob}%, belum cukup yakin. Perkuat bentuknya."
 
 
-def prediction_response(model: Specialist, request: PredictRequest, probabilities: np.ndarray, start: float) -> PredictResponse:
+def prediction_response(
+    model: Specialist,
+    request: PredictRequest,
+    probabilities: np.ndarray,
+    start: float,
+) -> PredictResponse:
     ranked = np.argsort(-probabilities, kind="stable")[:3]
     top_index = int(ranked[0])
     top_label = model.labels[top_index].source_label
     confidence = float(probabilities[top_index])
     target_index = model.target_index(request.karakterSlug)
-    top3 = [ClassProbability(labelId=model.labels[int(index)].id,
-                             sourceLabel=model.labels[int(index)].source_label,
-                             probability=float(probabilities[index])) for index in ranked]
+    supported = target_index is not None
+
+    target_prob = float(probabilities[target_index]) if supported else confidence
+    is_benar = supported and (top_index == target_index) and (target_prob >= CLASSIFICATION_ACCEPTANCE_THRESHOLD)
+    status: Literal["benar", "perlu_review"] = "benar" if is_benar else "perlu_review"
+    score = 100.0 * target_prob if supported else 100.0 * confidence
+
+    display_name = model.display_names.get(top_label, "Kelas belum dipetakan")
+    summary = classification_summary(
+        display_name=display_name,
+        confidence=confidence,
+        supported=supported,
+        status=status,
+        top_is_target=(top_index == target_index),
+    )
+
+    top3 = [
+        ClassProbability(
+            labelId=model.labels[int(index)].id,
+            sourceLabel=model.labels[int(index)].source_label,
+            probability=float(probabilities[index]),
+        )
+        for index in ranked
+    ]
+
     return PredictResponse(
-        score=100 * float(probabilities[top_index if target_index is None else target_index]),
-        predictedSymbol=top_label, confidence=confidence,
+        score=score,
+        status=status,
+        predictedSymbol=top_label,
+        confidence=confidence,
         latencyMs=(perf_counter() - start) * 1000,
-        ringkasan=classification_summary(top_label, confidence, target_index is not None),
-        targetSupported=target_index is not None, modelId=model.manifest.model_sha256, top3=top3,
+        ringkasan=summary,
+        kriteria=[],
+        modelSource="onnx_backend",
+        targetSupported=supported,
+        probabilitiesCalibrated=False,
+        mappingVerified=False,
+        modelId=model.manifest.model_sha256,
+        top3=top3,
     )
 
 

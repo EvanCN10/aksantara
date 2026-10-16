@@ -21,7 +21,42 @@ INPUT_SIZE = 128
 INPUT_NAME = "input"
 OUTPUT_NAME = "logits"
 LOGGER = logging.getLogger(__name__)
+CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "shared" / "aksara-classifier.json"
 
+
+def load_shared_config(path: Path = CONFIG_PATH) -> dict[str, object]:
+    if not path.is_file():
+        raise ModelUnavailable(f"Berkas pemetaan classifier tidak ditemukan: {path}")
+    try:
+        with path.open(encoding="utf-8") as source:
+            data = json.load(source)
+    except Exception as error:
+        raise ModelUnavailable(f"Gagal membaca konfigurasi classifier: {error}") from error
+
+    if not isinstance(data, dict):
+        raise ModelUnavailable("Konfigurasi classifier harus berupa objek JSON.")
+
+    threshold = data.get("acceptanceThreshold")
+    if not isinstance(threshold, (int, float)) or not np.isfinite(threshold) or not (0.0 <= float(threshold) <= 1.0):
+        raise ModelUnavailable("acceptanceThreshold harus berupa float berhingga antara 0 dan 1.")
+
+    scripts = data.get("scripts")
+    if not isinstance(scripts, dict) or set(scripts.keys()) != set(CLASS_COUNTS.keys()):
+        raise ModelUnavailable("scripts dalam konfigurasi classifier harus mencakup lontara, sunda, dan bali.")
+
+    for script_name, item in scripts.items():
+        if not isinstance(item, dict) or "targets" not in item or "displayNames" not in item:
+            raise ModelUnavailable(f"Konfigurasi script {script_name} harus memuat targets dan displayNames.")
+        if not isinstance(item["targets"], dict) or not isinstance(item["displayNames"], dict):
+            raise ModelUnavailable(f"targets dan displayNames untuk {script_name} harus berupa dict.")
+        for k, v in item["targets"].items():
+            if not isinstance(k, str) or not isinstance(v, str):
+                raise ModelUnavailable(f"targets untuk {script_name} harus berupa string key dan value.")
+        for k, v in item["displayNames"].items():
+            if not isinstance(k, str) or not isinstance(v, str):
+                raise ModelUnavailable(f"displayNames untuk {script_name} harus berupa string key dan value.")
+
+    return data
 
 class Manifest(BaseModel):
     model_config = ConfigDict(strict=True)
@@ -132,6 +167,9 @@ class Specialist:
     session: ort.InferenceSession
     manifest: Manifest
     labels: tuple[SourceLabel, ...]
+    targets: dict[str, str]
+    display_names: dict[str, str]
+    target_indices: dict[str, int]
 
     def probabilities(self, tensor: np.ndarray) -> np.ndarray:
         try:
@@ -144,15 +182,28 @@ class Specialist:
             raise ModelUnavailable("Inferensi ONNX tidak tersedia.") from error
 
     def target_index(self, slug: str) -> int | None:
-        target = slug.casefold()
-        matches = [label.class_id for label in self.labels if label.source_label.casefold() == target]
-        return matches[0] if len(matches) == 1 else None
+        return self.target_indices.get(slug)
 
-
-def load_specialist(directory: Path, script: Script) -> Specialist:
+def load_specialist(directory: Path, script: Script, config: dict[str, object] | None = None) -> Specialist:
     manifest, labels = validate_metadata(directory, script)
     model_path = directory / "model.onnx"
     validate_model_file(model_path, manifest)
+
+    shared_config = load_shared_config() if config is None else config
+    scripts_data = shared_config["scripts"]
+    assert isinstance(scripts_data, dict)
+    script_config = scripts_data[script]
+    assert isinstance(script_config, dict)
+    targets = dict(script_config["targets"])
+    display_names = dict(script_config["displayNames"])
+
+    source_to_class = {label.source_label: label.class_id for label in labels}
+    target_indices: dict[str, int] = {}
+    for slug, source_label in targets.items():
+        if source_label not in source_to_class:
+            raise ModelUnavailable(f"Target label '{source_label}' untuk slug '{slug}' tidak ditemukan pada labels model {script}.")
+        target_indices[slug] = source_to_class[source_label]
+
     options = ort.SessionOptions()
     options.intra_op_num_threads = 2
     options.inter_op_num_threads = 1
@@ -160,7 +211,14 @@ def load_specialist(directory: Path, script: Script) -> Specialist:
     options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
     session = ort.InferenceSession(str(model_path), sess_options=options, providers=["CPUExecutionProvider"])
     validate_session(session, len(labels))
-    specialist = Specialist(session, manifest, labels)
+    specialist = Specialist(
+        session=session,
+        manifest=manifest,
+        labels=labels,
+        targets=targets,
+        display_names=display_names,
+        target_indices=target_indices,
+    )
     # Warm once so health means the validated graph can actually execute.
     specialist.probabilities(np.zeros((3, INPUT_SIZE, INPUT_SIZE), dtype=np.float32))
     return specialist

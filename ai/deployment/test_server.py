@@ -94,20 +94,82 @@ class SpecialistServerTests(unittest.TestCase):
             self.assertEqual(result["modelSource"], "onnx_backend")
             self.assertIs(model.session, registry.get(script).session)
 
-    def test_source_targets_preserve_casefold_and_underscore_distinction(self):
-        model = self.application.state.registry.get("lontara")
-        self.assertEqual(model.target_index("kE"), 34)
-        self.assertEqual(model.target_index("ke_"), 35)
-        probabilities = np.zeros(114, dtype=np.float64)
-        probabilities[34], probabilities[35], probabilities[0] = 0.2, 0.7, 0.1
-        for slug, score, supported in (("kE", 20, True), ("ke_", 70, True), ("unicode-guess", 70, False)):
-            request = PredictRequest(**payload(self.data_url, "lontara", slug))
-            result = prediction_response(model, request, probabilities, perf_counter())
-            self.assertAlmostEqual(result.score, score)
-            self.assertEqual(result.targetSupported, supported)
-            self.assertEqual(result.predictedSymbol, "Ke_")
-            self.assertAlmostEqual(result.confidence, 0.7)
+    def test_source_targets_curriculum_and_distinct_labels(self):
+        registry = self.application.state.registry
+        lontara = registry.get("lontara")
+        sunda = registry.get("sunda")
+        bali = registry.get("bali")
 
+        # 1. Bali ka -> source label exact 'aksara wyajana ka'
+        bali_ka_idx = bali.target_index("ka")
+        self.assertIsNotNone(bali_ka_idx)
+        self.assertEqual(bali.labels[bali_ka_idx].source_label, "aksara wyajana ka")
+
+        # 2. Sunda swara-i -> 'i'
+        sunda_i_idx = sunda.target_index("swara-i")
+        self.assertIsNotNone(sunda_i_idx)
+        self.assertEqual(sunda.labels[sunda_i_idx].source_label, "i")
+
+        # 3. Lontara ngka -> 'Nka'
+        lontara_ngka_idx = lontara.target_index("ngka")
+        self.assertIsNotNone(lontara_ngka_idx)
+        self.assertEqual(lontara.labels[lontara_ngka_idx].source_label, "Nka")
+
+        # 4. Diakritik / slug tidak dikenal -> None (unsupported)
+        self.assertIsNone(bali.target_index("tedung"))
+        self.assertIsNone(sunda.target_index("pamepet"))
+        self.assertIsNone(lontara.target_index("titi_riaseq"))
+        self.assertIsNone(lontara.target_index("unknown"))
+
+        # 5. Ke and Ke_ serta ae and e tidak boleh dilebur
+        lontara_labels = [label.source_label for label in lontara.labels]
+        self.assertIn("Ke", lontara_labels)
+        self.assertIn("Ke_", lontara_labels)
+        self.assertNotEqual(lontara_labels.index("Ke"), lontara_labels.index("Ke_"))
+
+        sunda_labels = [label.source_label for label in sunda.labels]
+        self.assertIn("ae", sunda_labels)
+        self.assertIn("e", sunda_labels)
+        self.assertNotEqual(sunda_labels.index("ae"), sunda_labels.index("e"))
+
+    def test_prediction_response_deterministic_boundary_vectors(self):
+        model = self.application.state.registry.get("lontara")
+        target_idx = model.target_index("ka")
+        self.assertIsNotNone(target_idx)
+
+        # Match 0.8499 -> status == 'perlu_review' (below 0.85 threshold)
+        probs_8499 = np.zeros(114, dtype=np.float64)
+        probs_8499[target_idx] = 0.8499
+        probs_8499[0] = 0.1501
+        res_8499 = prediction_response(model, PredictRequest(**payload(self.data_url, "lontara", "ka")), probs_8499, perf_counter())
+        self.assertEqual(res_8499.status, "perlu_review")
+        self.assertAlmostEqual(res_8499.score, 84.99)
+        self.assertTrue(res_8499.targetSupported)
+
+        # Match 0.8500 -> status == 'benar'
+        probs_8500 = np.zeros(114, dtype=np.float64)
+        probs_8500[target_idx] = 0.8500
+        probs_8500[0] = 0.1500
+        res_8500 = prediction_response(model, PredictRequest(**payload(self.data_url, "lontara", "ka")), probs_8500, perf_counter())
+        self.assertEqual(res_8500.status, "benar")
+        self.assertAlmostEqual(res_8500.score, 85.0)
+        self.assertTrue(res_8500.targetSupported)
+
+        # Mismatch 0.9900 -> status == 'perlu_review'
+        probs_mismatch = np.zeros(114, dtype=np.float64)
+        probs_mismatch[0] = 0.9900  # Top-1 is class 0 ("A")
+        probs_mismatch[target_idx] = 0.0100
+        res_mismatch = prediction_response(model, PredictRequest(**payload(self.data_url, "lontara", "ka")), probs_mismatch, perf_counter())
+        self.assertEqual(res_mismatch.status, "perlu_review")
+        self.assertAlmostEqual(res_mismatch.score, 1.0)
+        self.assertTrue(res_mismatch.targetSupported)
+        self.assertEqual(res_mismatch.predictedSymbol, "A")
+
+        # Unsupported 0.9900 -> status == 'perlu_review'
+        res_unsupported = prediction_response(model, PredictRequest(**payload(self.data_url, "lontara", "diakritik-ancece")), probs_mismatch, perf_counter())
+        self.assertEqual(res_unsupported.status, "perlu_review")
+        self.assertFalse(res_unsupported.targetSupported)
+        self.assertAlmostEqual(res_unsupported.score, 99.0)
     def test_strokes_are_ignored_and_unsupported_target_still_classifies(self):
         request = payload(self.data_url, slug="not-a-source-label")
         first = self.client.post("/predict", json={**request, "strokes": [[{"x": 1}], [{"x": 2}]]})
