@@ -17,7 +17,7 @@ Direktori ini memuat seluruh sistem aturan (*ruleset*) resmi untuk proyek **Aksa
 | [05-performance-budget.md](rules/05-performance-budget.md) | **Performa:** Anggaran bundle, lazy loading model ONNX, Web Workers, LCP < 1.2s. |
 | [06-accessibility.md](rules/06-accessibility.md) | **Aksesibilitas (A11y):** WCAG 2.1 AA, multi-modal PointerEvent canvas, live regions Web Serial. |
 | [07-hardware-integration.md](rules/07-hardware-integration.md) | **IoT Hardware:** ESP32 + RFID RC522, protokol Web Serial USB, kontrak schema JSON event. |
-| [08-git-and-ai-disclosure.md](rules/08-git-and-ai-disclosure.md) | **Git & Etika AI:** Conventional Commits dan pencatatan transparansi AI di `docs/AI_USAGE.md`. |
+| [08-git-and-ai-disclosure.md](rules/08-git-and-ai-disclosure.md) | **Git & Etika AI:** Conventional Commits dan pencatatan transparansi AI di `docs/usage.md`. |
 
 ---
 

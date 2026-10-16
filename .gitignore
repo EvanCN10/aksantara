@@ -37,13 +37,13 @@ build/
 develop-eggs/
 dist/
 downloads/
-docs/USAGE.*
 extracted/*
 eggs/
 .eggs/
 /ai/lib/
 /ai/lib64/
 parts/
+qc/
 sdist/
 var/
 wheels/
@@ -108,9 +108,6 @@ Thumbs.db
 /ai/harness/colab_command.json
 /ai/harness/colab_command_result.json
 
-# Local development documentation and AI usage records
-/docs/usage.md
-/docs/USAGE.md
 
 # --- Figma Local Tooling & Automation Bridge ---
 figma-bridge/

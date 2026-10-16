@@ -120,6 +120,8 @@ Model didukung: `cnn`, `mobile`, `efficient`, `hybrid`, `mobile-scratch`, `resne
 
 #### Notebook Interaktif Modular (Jupyter & Colab)
 
+Panduan untuk penerima handoff: **[Model AI Terpilih, Hasil Evaluasi, dan Integrasi Canvas](docs/AI_MODEL_HANDOFF.md)** — sumber artefak aktif, metrik selection, kontrak backend, cara menjalankan lokal, dan batas klaim.
+
 Tersedia 4 notebook modular interaktif di `ai/notebooks/` untuk inspeksi langsung, visualisasi data paleografi, dan evaluasi diagnostik:
 - [`01_sunda_classifier.ipynb`](ai/notebooks/01_sunda_classifier.ipynb): 30 kelas, champion EfficientNet-B0, selection Macro-F1 **100.00%** (180 sampel).
 - [`02_lontara_classifier.ipynb`](ai/notebooks/02_lontara_classifier.ipynb): 114 kelas, champion ResNet-18, selection Macro-F1 **99.82%** (990 sampel).

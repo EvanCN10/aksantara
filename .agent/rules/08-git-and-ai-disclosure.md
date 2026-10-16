@@ -21,7 +21,7 @@ Setiap pesan commit wajib mengikuti format terstruktur:
 ## 2. Kewajiban Pengungkapan AI (JOINTS Guidebook Compliance)
 Sesuai regulasi transparansi kompetisi Hackathon JOINTS UGM 2026:
 - Tim wajib transparan mengenai pemanfaatan AI generative.
-- **Log Penggunaan AI:** Setiap kali modul signifikan dibuat atau dirombak menggunakan AI Agent, catat ringkasannya ke berkas `docs/AI_USAGE.md` dengan format tabel:
+- **Log Penggunaan AI:** Setiap kali modul signifikan dibuat atau dirombak menggunakan AI Agent, catat ringkasannya ke berkas `docs/usage.md` dengan format tabel:
 
 | Tanggal | Komponen / Modul | Peran AI Agent | Verifikasi & Validasi Tim Manusia |
 |---|---|---|---|
