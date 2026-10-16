@@ -1,3 +1,9 @@
+import classifierConfig from '../../../../shared/aksara-classifier.json';
+
+export const CLASSIFICATION_ACCEPTANCE_THRESHOLD = classifierConfig.acceptanceThreshold;
+
+export type ClassifierStatus = 'benar' | 'perlu_review';
+
 export interface GlyphInferenceInput {
   aksaraId: 'lontara' | 'sunda' | 'bali';
   karakterSlug: string;
@@ -15,7 +21,7 @@ export interface GlyphClassProbability {
 
 export interface GlyphInferenceOutput {
   score: number; // Target-class probability percentage, or top-1 when unsupported; not writing quality.
-  status: 'perlu_review';
+  status: ClassifierStatus;
   predictedSymbol: string; // Raw source_label, not a verified Unicode glyph.
   confidence: number;
   latencyMs: number;
@@ -27,6 +33,20 @@ export interface GlyphInferenceOutput {
   mappingVerified: false;
   modelId: string;
   top3: GlyphClassProbability[];
+}
+
+export function getClassifierTarget(aksaraId: GlyphInferenceInput['aksaraId'], slug: string): string | null {
+  const scriptConfig = classifierConfig.scripts[aksaraId];
+  if (!scriptConfig) return null;
+  const targets = scriptConfig.targets as Record<string, string>;
+  return targets[slug] ?? null;
+}
+
+export function getPredictionDisplayName(aksaraId: GlyphInferenceInput['aksaraId'], sourceLabel: string): string {
+  const scriptConfig = classifierConfig.scripts[aksaraId];
+  if (!scriptConfig) return 'Kelas belum dipetakan';
+  const displayNames = scriptConfig.displayNames as Record<string, string>;
+  return displayNames[sourceLabel] ?? 'Kelas belum dipetakan';
 }
 
 export const PNG_DATA_URL_PREFIX = 'data:image/png;base64,';
@@ -70,18 +90,33 @@ function isClassProbability(value: unknown): value is GlyphClassProbability {
 }
 export function isGlyphInferenceOutput(value: unknown): value is GlyphInferenceOutput {
   if (!isRecord(value) || Object.keys(value).length !== 13) return false;
-  return isBoundedNumber(value.score, 0, 100)
-    && value.status === 'perlu_review'
-    && isNonemptyString(value.predictedSymbol, 512)
-    && isBoundedNumber(value.confidence, 0, 1)
-    && isBoundedNumber(value.latencyMs, 0, Number.MAX_SAFE_INTEGER)
-    && isNonemptyString(value.ringkasan, 4096)
-    && Array.isArray(value.kriteria) && value.kriteria.length === 0
-    && value.modelSource === 'onnx_backend'
-    && typeof value.targetSupported === 'boolean'
-    && value.probabilitiesCalibrated === false && value.mappingVerified === false
-    && typeof value.modelId === 'string' && /^[a-fA-F0-9]{64}$/.test(value.modelId)
-    && Array.isArray(value.top3) && value.top3.length === 3 && value.top3.every(isClassProbability);
+  const statusValid = value.status === 'benar' || value.status === 'perlu_review';
+  if (!statusValid) return false;
+
+  if (
+    !isBoundedNumber(value.score, 0, 100) ||
+    !isNonemptyString(value.predictedSymbol, 512) ||
+    !isBoundedNumber(value.confidence, 0, 1) ||
+    !isBoundedNumber(value.latencyMs, 0, Number.MAX_SAFE_INTEGER) ||
+    !isNonemptyString(value.ringkasan, 4096) ||
+    !Array.isArray(value.kriteria) || value.kriteria.length !== 0 ||
+    value.modelSource !== 'onnx_backend' ||
+    typeof value.targetSupported !== 'boolean' ||
+    value.probabilitiesCalibrated !== false ||
+    value.mappingVerified !== false ||
+    typeof value.modelId !== 'string' || !/^[a-fA-F0-9]{64}$/.test(value.modelId) ||
+    !Array.isArray(value.top3) || value.top3.length !== 3 || !value.top3.every(isClassProbability)
+  ) {
+    return false;
+  }
+
+  if (value.status === 'benar') {
+    if (!value.targetSupported || value.confidence < CLASSIFICATION_ACCEPTANCE_THRESHOLD) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 export function classifierErrorMessage(value: unknown, fallback: string): string {
@@ -105,5 +140,14 @@ export async function evaluateGlyph(input: GlyphInferenceInput): Promise<GlyphIn
   const data: unknown = await response.json().catch(() => null);
   if (!response.ok) throw new Error(classifierErrorMessage(data, 'Klasifikasi gagal; tidak ada hasil penilaian.'));
   if (!isGlyphInferenceOutput(data)) throw new Error('Respons layanan klasifikasi tidak sesuai kontrak eksperimen.');
+  if (data.status === 'benar') {
+    const expectedTarget = getClassifierTarget(input.aksaraId, input.karakterSlug);
+    if (!expectedTarget || data.predictedSymbol !== expectedTarget) {
+      throw new Error('Respons status benar kontradiktif: simbol prediksi tidak sesuai target.');
+    }
+    if (Math.abs(data.score - data.confidence * 100) > 0.01) {
+      throw new Error('Respons status benar kontradiktif: skor tidak sesuai probabilitas target.');
+    }
+  }
   return data;
 }

@@ -19,7 +19,7 @@ import {
 } from '@/components/canvas/drawing-canvas';
 import { CanvasToolbar } from '@/components/canvas/canvas-toolbar';
 import { AiEvaluationPanel } from '@/components/canvas/ai-evaluation-panel';
-import { evaluateGlyph, type GlyphInferenceOutput } from '@/lib/onnx/onnx-classifier';
+import { evaluateGlyph, getClassifierTarget, type GlyphInferenceOutput } from '@/lib/onnx/onnx-classifier';
 
 interface LatihanCanvasPageProps {
   params: Promise<{ aksara: string; karakter: string }>;
@@ -151,6 +151,8 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
   // Experimental class probabilities never award mastery, XP, or practice progress.
   const handleEvaluate = async () => {
     if (strokeCount === 0 || isEvaluating) return;
+    const isSupported = getClassifierTarget(aksaraKey as 'lontara' | 'sunda' | 'bali', glif.slug) !== null;
+    if (!isSupported) return;
     const requestId = ++evaluationRequestRef.current;
     setIsEvaluating(true);
     setEvaluationResult(null);

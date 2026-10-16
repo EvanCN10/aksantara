@@ -5,11 +5,15 @@ import Link from 'next/link';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { ShinyButton } from '@/components/ui/shiny-button';
 import type { GlifData, AksaraDetail } from '@/data/aksara/trinitas';
-import type { GlyphInferenceOutput } from '@/lib/onnx/onnx-classifier';
+import {
+  type GlyphInferenceOutput,
+  getClassifierTarget,
+  getPredictionDisplayName,
+} from '@/lib/onnx/onnx-classifier';
 
 export interface EvaluationResult {
   score: number;
-  status: 'sempurna' | 'bagus' | 'kurang' | 'perlu_review';
+  status: 'benar' | 'perlu_review';
   ringkasan: string;
   kriteria?: {
     label: string;
@@ -89,8 +93,8 @@ export function AiEvaluationPanel({
   onResetEvaluation,
   onPlayPronunciation,
 }: AiEvaluationPanelProps) {
-  const canEvaluate = strokeCount > 0 && !isEvaluating;
-
+  const isSupported = getClassifierTarget(aksara.id as 'lontara' | 'sunda' | 'bali', glif.slug) !== null;
+  const canEvaluate = isSupported && strokeCount > 0 && !isEvaluating;
   return (
     <OrnateFrame className="w-full bg-[#0c1a2c]/85 backdrop-blur-xl border border-[#D4A373]/30 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
       <div className="p-5 sm:p-6 flex flex-col gap-5">
@@ -191,8 +195,8 @@ export function AiEvaluationPanel({
               <span>Evaluasi AI Real-time</span>
             </div>
             {evaluationResult && (
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
-                AI Analisis Selesai
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-300">
+                Analisis Berhasil
               </span>
             )}
           </div>
@@ -209,19 +213,33 @@ export function AiEvaluationPanel({
               {/* Score Gauge Card */}
               <div className="rounded-xl border border-[#ffd261]/30 bg-gradient-to-r from-[#ffd261]/15 via-white/[0.03] to-transparent p-4 flex items-center justify-between shadow-[0_0_20px_rgba(255,210,97,0.15)]">
                 <div>
-                  <span className="text-[10px] font-medium text-white/60 block">Akurasi Bentuk Glif</span>
+                  <span className="text-[10px] font-medium text-white/60 block">
+                    {isSupported ? 'Probabilitas Target' : 'Probabilitas Prediksi'}
+                  </span>
                   <div className="text-3xl font-extrabold text-[#ffd261] font-mono animate-score-pop">
-                    {evaluationResult.score}%
+                    {evaluationResult.score.toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
                   </div>
-                  <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1 mt-0.5">
-                    <CheckIcon className="w-3.5 h-3.5" />
-                    {evaluationResult.status === 'sempurna'
-                      ? 'Goresan Sangat Akurat!'
-                      : evaluationResult.status === 'bagus'
-                      ? 'Bentuk Cukup Presisi'
-                      : evaluationResult.status === 'kurang'
-                      ? 'Perlu Sedikit Perbaikan'
-                      : 'Perlu Ditinjau'}
+                  <span
+                    className={`text-xs font-semibold flex items-center gap-1 mt-0.5 ${
+                      evaluationResult.status === 'benar'
+                        ? 'text-emerald-400'
+                        : evaluationResult.score >= 50
+                        ? 'text-red-400'
+                        : 'text-amber-300'
+                    }`}
+                  >
+                    {evaluationResult.status === 'benar' ? (
+                      <>
+                        <CheckIcon className="w-3.5 h-3.5" />
+                        Benar! Bentuk sesuai target.
+                      </>
+                    ) : isSupported ? (
+                      evaluationResult.score >= 50
+                        ? 'Model mengenali bentuk lain — kemungkinan kurang tepat'
+                        : 'Kemiripan terlalu rendah, coba lagi'
+                    ) : (
+                      'Karakter ini belum didukung evaluasi AI'
+                    )}
                   </span>
                 </div>
 
@@ -239,14 +257,17 @@ export function AiEvaluationPanel({
                     Prediksi Model Specialist:
                   </div>
                   <div className="flex flex-wrap gap-1.5">
-                    {evaluationResult.top3.map((item, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/80 font-mono text-[11px]"
-                      >
-                        {item.sourceLabel}: {(item.probability * 100).toFixed(1)}%
-                      </span>
-                    ))}
+                    {evaluationResult.top3.map((item, idx) => {
+                      const displayName = getPredictionDisplayName(aksara.id as 'lontara' | 'sunda' | 'bali', item.sourceLabel);
+                      return (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/80 font-mono text-[11px]"
+                        >
+                          {displayName} ({item.sourceLabel}): {(item.probability * 100).toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -308,16 +329,31 @@ export function AiEvaluationPanel({
           ) : (
             /* STATE B: IDLE / READY TO EVALUATE VIEW */
             <div className="space-y-3">
-              <p className="text-xs text-white/60 leading-relaxed">
-                {strokeCount === 0
-                  ? 'Goreskan karakter pada kanvas di samping, lalu tekan tombol periksa untuk menganalisis akurasi geometri goresanmu.'
-                  : `Tercatat ${strokeCount} goresan. Kanvas siap dievaluasi oleh sistem pengenal AI.`}
-              </p>
+              {!isSupported ? (
+                <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-white/70 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/10 text-white/70">
+                      Belum Didukung Evaluasi AI
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-white/60 leading-relaxed pt-1">
+                    Karakter ini dapat digambar dan dipelajari di kanvas, namun evaluasi klasifikasi otomatis belum didukung model saat ini.
+                  </p>
+                </div>
+              ) : (
+                <p className="text-xs text-white/60 leading-relaxed">
+                  {strokeCount === 0
+                    ? 'Goreskan karakter pada kanvas di samping, lalu tekan tombol periksa untuk menganalisis akurasi geometri goresanmu.'
+                    : `Tercatat ${strokeCount} goresan. Kanvas siap dievaluasi oleh sistem pengenal AI.`}
+                </p>
+              )}
 
               {/* Primary Evaluate Trigger */}
               <ShinyButton
                 label={
-                  isEvaluating
+                  !isSupported
+                    ? 'Belum Didukung Evaluasi AI'
+                    : isEvaluating
                     ? 'Memindai Goresan AI...'
                     : strokeCount === 0
                     ? 'Buat Goresan Terlebih Dahulu'
@@ -330,7 +366,6 @@ export function AiEvaluationPanel({
                     : 'opacity-40 cursor-not-allowed pointer-events-none'
                 }`}
               />
-
               {/* Navigation to catalog or summary */}
               <div className="pt-2 flex items-center justify-between text-xs text-white/50 border-t border-white/10">
                 <Link

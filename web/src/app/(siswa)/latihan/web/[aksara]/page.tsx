@@ -14,7 +14,7 @@ import {
   type GlifData,
   type AksaraDetail,
 } from '@/data/aksara/trinitas';
-
+import { getClassifierTarget } from '@/lib/onnx/onnx-classifier';
 
 // ============================================================================
 // ICONS (INLINE SVG)
@@ -85,9 +85,15 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
 
   const dataAksara = KATALOG_DATA[aksaraKey];
 
+  // Only glifs that have a classifier target mapping are shown in the grid.
+  // Characters can still be accessed directly via /latihan/web/[aksara]/[slug].
+  const supportedGlifList = dataAksara.glifList.filter(
+    (g) => getClassifierTarget(aksaraKey as 'lontara' | 'sunda' | 'bali', g.slug) !== null,
+  );
+
   // State: selected Glif & active filter tab
   const [activeFilter, setActiveFilter] = useState<'semua' | KategoriGlif>('semua');
-  const [selectedSlug, setSelectedSlug] = useState<string>(dataAksara.glifList[0]?.slug || 'ka');
+  const [selectedSlug, setSelectedSlug] = useState<string>(supportedGlifList[0]?.slug || 'ka');
 
   // TODO: ganti 'belum' / 'statusBawaan' dengan data dari API GET /api/progress/[userId]/[aksara]
   // Contoh hook nanti: const { data: userProgress } = useUserProgress(aksaraKey);
@@ -101,20 +107,20 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
 
   // TODO: sort berdasarkan rekomendasi SRS (Spaced Repetition System) jika user memilih mode adaptif
   const filteredGlifList = useMemo(() => {
-    if (activeFilter === 'semua') return dataAksara.glifList;
-    return dataAksara.glifList.filter((g) => g.kategori === activeFilter);
-  }, [dataAksara, activeFilter]);
+    if (activeFilter === 'semua') return supportedGlifList;
+    return supportedGlifList.filter((g) => g.kategori === activeFilter);
+  }, [supportedGlifList, activeFilter]);
 
   // Selected glif object (fallback to first filtered if current slug filtered out)
   const selectedGlif = useMemo(() => {
     const found = dataAksara.glifList.find((g) => g.slug === selectedSlug);
     if (found) return found;
-    return dataAksara.glifList[0];
-  }, [dataAksara, selectedSlug]);
+    return supportedGlifList[0] ?? dataAksara.glifList[0];
+  }, [dataAksara, supportedGlifList, selectedSlug]);
 
   // Progress metrics
   // TODO: ganti dengan data real-time dari API GET /api/progress/[userId]/[aksara]
-  const totalGlif = dataAksara.glifList.length;
+  const totalGlif = supportedGlifList.length;
   const dikuasaiCount = useMemo(() => {
     return Object.values(userProgress).filter((st) => st === 'dikuasai').length;
   }, [userProgress]);
@@ -250,8 +256,9 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                   const isActive = activeFilter === tab.id;
                   const count =
                     tab.id === 'semua'
-                      ? dataAksara.glifList.length
-                      : dataAksara.glifList.filter((g) => g.kategori === tab.id).length;
+                      ? supportedGlifList.length
+                      : supportedGlifList.filter((g) => g.kategori === tab.id).length;
+                  if (tab.id !== 'semua' && count === 0) return null;
 
                   return (
                     <button
@@ -284,11 +291,11 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {filteredGlifList.map((glif, idx) => {
                 const isSelected = selectedGlif?.slug === glif.slug;
+                const isSupported = getClassifierTarget(aksaraKey as 'lontara' | 'sunda' | 'bali', glif.slug) !== null;
                 const status = userProgress[glif.slug] || 'belum';
 
                 return (
                   <button
-                    key={glif.slug}
                     type="button"
                     onClick={() => setSelectedSlug(glif.slug)}
                     style={{ animationDelay: `${Math.min(idx * 28, 450)}ms` }}
@@ -308,7 +315,14 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                       </div>
 
                       {/* Status indicator badge */}
-                      {status === 'dikuasai' ? (
+                      {!isSupported ? (
+                        <span
+                          className="text-[9px] font-medium text-white/50 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded-full"
+                          title="Materi pengenalan (belum didukung evaluasi AI)"
+                        >
+                          Materi
+                        </span>
+                      ) : status === 'dikuasai' ? (
                         <span
                           className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/15 border border-emerald-500/35 px-1.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(52,211,153,0.2)]"
                           title="Glif telah dikuasai"
@@ -369,7 +383,7 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                 <span className="font-semibold text-[#ffd261] block mb-0.5">
                   Karakter Visual Paleografi:
                 </span>
-                {dataAksara.karakter} Setiap simbol dirancang presisi untuk evaluasi goresan kanvas AI tanpa bias urutan tarikan pena.
+                {supportedGlifList.length} Setiap simbol dirancang presisi untuk evaluasi goresan kanvas AI tanpa bias urutan tarikan pena.
               </div>
             </div>
           </section>
@@ -471,7 +485,11 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                         Status Saat Ini:
                       </span>
                       <div className="flex items-center gap-1.5 font-medium text-[11px]">
-                        {userProgress[selectedGlif.slug] === 'dikuasai' ? (
+                        {!getClassifierTarget(aksaraKey as 'lontara' | 'sunda' | 'bali', selectedGlif.slug) ? (
+                          <span className="text-white/50 text-[11px]">
+                            Belum didukung AI
+                          </span>
+                        ) : userProgress[selectedGlif.slug] === 'dikuasai' ? (
                           <span className="text-emerald-400 flex items-center gap-1 font-bold">
                             <CheckCircleIcon className="w-3.5 h-3.5" />
                             Dikuasai
@@ -489,6 +507,11 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                       </div>
                     </div>
                   </div>
+                  {!getClassifierTarget(aksaraKey as 'lontara' | 'sunda' | 'bali', selectedGlif.slug) && (
+                    <p className="text-[10px] text-white/50 pt-1 leading-relaxed">
+                      Karakter ini dapat dipelajari dan digambar di kanvas, namun evaluasi klasifikasi AI belum didukung.
+                    </p>
+                  )}
                 </div>
 
                 {/* Primary Action Button: Mulai Latih Karakter */}
@@ -498,9 +521,6 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                     onClick={handleMulaiLatih}
                     className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01] transition-all"
                   />
-                  <p className="text-[10px] text-white/40 text-center font-mono mt-2">
-                    Menuju Kanvas AI: /latihan/web/{aksaraKey}/{selectedGlif.slug}
-                  </p>
                 </div>
               </div>
             </OrnateFrame>
