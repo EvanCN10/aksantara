@@ -537,11 +537,11 @@
 
 @keyframes ghostBreathe {
   0%, 100% {
-    opacity: 0.12;
+    opacity: 0.28;
     transform: scale(1);
   }
   50% {
-    opacity: 0.22;
+    opacity: 0.42;
     transform: scale(1.015);
   }
 }

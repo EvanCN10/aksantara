@@ -118,3 +118,6 @@ temp/
 tmp/
 *.log
 
+# --- Local Proposals & Video Scripts ---
+context/proposal/
+context/script-video/

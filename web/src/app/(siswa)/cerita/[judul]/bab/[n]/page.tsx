@@ -248,7 +248,7 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
       }));
 
       if (nextWrong === 1) {
-        setRecoveryMessage('Belum tepat. Mari perhatikan petunjuknya.');
+        setRecoveryMessage(null);
       } else if (nextWrong === 2) {
         requestAssistance(
           currentBeat,

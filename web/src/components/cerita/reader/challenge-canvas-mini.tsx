@@ -2,7 +2,11 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { DrawingCanvas, type DrawingCanvasRef } from '@/components/canvas/drawing-canvas';
-import { evaluateGlyph, type GlyphInferenceOutput } from '@/lib/onnx/onnx-classifier';
+import {
+  evaluateGlyph,
+  getPredictionDisplayName,
+  type GlyphInferenceOutput,
+} from '@/lib/onnx/onnx-classifier';
 import { ShinyButton } from '@/components/ui/shiny-button';
 import { playSuccessGamelan } from '@/lib/audio/sound-effects';
 
@@ -67,10 +71,6 @@ export function ChallengeCanvasMini({
 
   const handleStrokeChange = (count: number) => {
     setStrokeCount(count);
-    if (!passed) {
-      setEvaluationError(null);
-      setEvaluationResult(null);
-    }
   };
 
   const handleUndo = () => {
@@ -166,14 +166,15 @@ export function ChallengeCanvasMini({
       </div>
 
       {/* Canvas Container */}
-      <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] max-h-[300px] rounded-xl overflow-hidden border border-white/20 bg-[#060d16] shadow-inner">
+      <div className="relative w-full h-[280px] sm:h-[320px] rounded-xl overflow-hidden shadow-inner">
         <DrawingCanvas
           ref={canvasRef}
           aksaraId={aksaraId}
           targetSymbol={targetGlif.simbol}
           targetLabel={targetGlif.label}
+          variant="compact"
           showGhostGuide={true}
-          showGrid={false}
+          showGrid={true}
           onStrokeChange={handleStrokeChange}
           isEvaluating={isVerifying || isPassed}
         />
@@ -235,17 +236,81 @@ export function ChallengeCanvasMini({
         </div>
       </div>
 
-      {/* Error / Feedback Notice */}
+      {/* Error Notice */}
       {evaluationError && (
         <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200 animate-emerge-up">
           {evaluationError}
         </div>
       )}
 
-      {evaluationResult && !isPassed && (
-        <div className="p-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-200 animate-emerge-up">
-          <p className="font-semibold mb-0.5">Perlu ditinjau:</p>
-          <p className="text-white/80">{evaluationResult.ringkasan}</p>
+      {/* Rich AI Evaluation Feedback Card (mirrors /latihan) */}
+      {evaluationResult && (
+        <div
+          className={`p-3.5 rounded-xl border animate-emerge-up space-y-2.5 ${
+            isPassed
+              ? 'bg-emerald-500/10 border-emerald-500/30'
+              : 'bg-amber-500/10 border-amber-500/30'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-white/50">
+                Probabilitas Target:
+              </span>
+              <span
+                className={`font-mono font-bold text-base ${
+                  isPassed ? 'text-emerald-400' : 'text-[#ffd261]'
+                }`}
+              >
+                {evaluationResult.score.toLocaleString('id-ID', {
+                  minimumFractionDigits: 1,
+                  maximumFractionDigits: 1,
+                })}%
+              </span>
+              <span
+                className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                  isPassed
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                    : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                }`}
+              >
+                {isPassed ? '✓ Akurat (Lulus)' : 'Perlu Penajaman Bentuk'}
+              </span>
+            </div>
+
+            <span className="text-[10px] font-mono text-white/40">
+              {Math.round(evaluationResult.latencyMs)}ms
+            </span>
+          </div>
+
+          <p className="text-xs text-white/80 leading-relaxed">
+            {evaluationResult.ringkasan}
+          </p>
+
+          {/* Top-3 predictions breakdown */}
+          {Array.isArray(evaluationResult.top3) && evaluationResult.top3.length > 0 && (
+            <div className="pt-2 border-t border-white/10 flex flex-wrap items-center gap-1.5 text-[11px]">
+              <span className="text-[10px] text-white/50 font-semibold uppercase tracking-wider mr-1">
+                Prediksi Model:
+              </span>
+              {evaluationResult.top3.map((item, idx) => {
+                const displayName = getPredictionDisplayName(aksaraId, item.sourceLabel);
+                const isTarget = item.sourceLabel.toLowerCase() === targetGlif.label.toLowerCase() || item.sourceLabel.toLowerCase() === targetGlif.slug.toLowerCase();
+                return (
+                  <span
+                    key={idx}
+                    className={`px-2 py-0.5 rounded border font-mono text-[10px] ${
+                      isTarget
+                        ? 'bg-[#ffd261]/15 border-[#ffd261]/40 text-[#ffd261] font-bold'
+                        : 'bg-white/5 border-white/10 text-white/70'
+                    }`}
+                  >
+                    {displayName}: {(item.probability * 100).toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
+                  </span>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>

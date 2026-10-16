@@ -34,6 +34,7 @@ interface DrawingCanvasProps {
   showGrid?: boolean;
   onStrokeChange?: (strokeCount: number) => void;
   isEvaluating?: boolean;
+  variant?: 'default' | 'compact';
 }
 
 const BRUSH_WIDTHS: Record<BrushSize, number> = {
@@ -73,9 +74,11 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
       showGrid = true,
       onStrokeChange,
       isEvaluating = false,
+      variant = 'default',
     },
     ref
   ) => {
+    const isCompact = variant === 'compact';
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -87,8 +90,10 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
     const currentStrokeRef = useRef<Point[]>([]);
     const isDrawingRef = useRef(false);
 
-    // Stroke width based on selection
-    const baseLineWidth = BRUSH_WIDTHS[brushSize];
+    // Stroke width based on selection (scaled proportionally on compact mode to preserve normalized ratio)
+    const baseLineWidth = isCompact
+      ? Math.max(3.5, Math.round(BRUSH_WIDTHS[brushSize] * 0.65))
+      : BRUSH_WIDTHS[brushSize];
 
     // Redraw all strokes onto canvas
     const redrawStrokes = useCallback(
@@ -320,7 +325,11 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
     return (
       <div
         ref={containerRef}
-        className="relative w-full h-[360px] sm:h-[420px] md:h-[480px] lg:h-[520px] rounded-2xl overflow-hidden bg-gradient-to-b from-[#090d16] to-[#05070b] border border-[#D4A373]/30 shadow-[inset_0_2px_12px_rgba(0,0,0,0.8)] select-none touch-none flex items-center justify-center"
+        className={`relative w-full ${
+          isCompact
+            ? 'h-full min-h-[260px] max-h-[320px] rounded-xl'
+            : 'h-[360px] sm:h-[420px] md:h-[480px] lg:h-[520px] rounded-2xl'
+        } overflow-hidden bg-gradient-to-b from-[#090d16] to-[#05070b] border border-[#D4A373]/30 shadow-[inset_0_2px_12px_rgba(0,0,0,0.8)] select-none touch-none flex items-center justify-center`}
       >
         {/* Subtle Manuscript Texture Background */}
         <div
@@ -340,7 +349,7 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
             <div className="absolute inset-y-8 left-1/2 -translate-x-1/2 w-px border-r border-dashed border-[#D4A373]/20" />
 
             {/* Proportion bounds box */}
-            <div className="w-[70%] h-[70%] max-w-[340px] max-h-[340px] rounded-xl border border-[#D4A373]/15 pointer-events-none relative flex items-center justify-center">
+            <div className={`${isCompact ? 'w-[70%] h-[70%] max-w-[240px] max-h-[240px]' : 'w-[70%] h-[70%] max-w-[340px] max-h-[340px]'} rounded-xl border border-[#D4A373]/15 pointer-events-none relative flex items-center justify-center`}>
               {/* Special Sulapa Eppa Diamond Guide for Lontara */}
               {aksaraId.toLowerCase() === 'lontara' && (
                 <div className="w-[78%] h-[78%] border border-[#ffd261]/20 rotate-45 pointer-events-none" />
@@ -359,12 +368,16 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
             aria-hidden="true"
           >
             <span
-              className="text-8xl sm:text-9xl md:text-[11rem] font-normal leading-none select-none text-[#ffd261]/[0.14] drop-shadow-[0_0_24px_rgba(255,210,97,0.1)] animate-ghost-breathe transition-transform"
+              className={`${
+                isCompact
+                  ? 'text-7xl sm:text-8xl md:text-9xl'
+                  : 'text-8xl sm:text-9xl md:text-[11rem]'
+              } font-normal leading-none select-none text-[#ffd261] drop-shadow-[0_0_28px_rgba(255,210,97,0.25)] animate-ghost-breathe transition-transform`}
               style={{ fontFamily: 'var(--font-philosopher)' }}
             >
               {targetSymbol}
             </span>
-            <span className="text-[11px] font-mono tracking-widest text-white/20 uppercase mt-2">
+            <span className={`${isCompact ? 'text-[10px] mt-1' : 'text-[11px] mt-2'} font-mono tracking-widest text-[#ffd261]/60 uppercase drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]`}>
               Panduan Bentuk • {targetLabel}
             </span>
           </div>
