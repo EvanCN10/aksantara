@@ -1,14 +1,37 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { User, GraduationCap } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 
-export function Navbar() {
+interface NavbarProps {
+  isStarted?: boolean;
+}
+
+export function Navbar({ isStarted: isStartedProp }: NavbarProps = {}) {
   const pathname = usePathname();
   const { user, isAuthenticated, logout } = useAuth();
+  // Di SSR, selalu deterministik: rute '/' mulai dari false jika video ada, selain itu true
+  const [internalStarted, setInternalStarted] = useState(pathname !== '/');
+
+  useEffect(() => {
+    if (pathname !== '/') {
+      setInternalStarted(true);
+      return;
+    }
+    // Cek sessionStorage hanya di sisi klien setelah mount
+    if (sessionStorage.getItem('aksantara_intro_seen') === 'true') {
+      setInternalStarted(true);
+    }
+    const onHeroStarted = () => setInternalStarted(true);
+    window.addEventListener('aksantara_hero_started', onHeroStarted);
+    return () => window.removeEventListener('aksantara_hero_started', onHeroStarted);
+  }, [pathname]);
+
+  const isStarted = isStartedProp !== undefined ? isStartedProp : internalStarted;
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (pathname === href) {
@@ -24,7 +47,12 @@ export function Navbar() {
     <header
       role="banner"
       aria-label="Navigasi Utama Aksantara"
-      className="fixed top-5 inset-x-0 mx-auto z-40 w-[92%] max-w-4xl pointer-events-auto"
+      className="fixed top-5 inset-x-0 mx-auto z-40 w-[92%] max-w-4xl pointer-events-auto transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] delay-300"
+      style={{
+        opacity: isStarted ? 1 : 0,
+        transform: isStarted ? 'translateY(0)' : 'translateY(-24px)',
+        pointerEvents: isStarted ? 'auto' : 'none',
+      }}
     >
       <nav className="flex items-center justify-between px-5 md:px-7 py-2.5 rounded-full backdrop-blur-xl backdrop-saturate-150 bg-white/12 border border-white/30 shadow-[0_8px_32px_rgba(12,26,44,0.18),inset_0_1px_0_rgba(255,255,255,0.45)] transition-all duration-300 hover:border-white/40">
         {/* 1. Brand Logo & Name (Kiri) */}

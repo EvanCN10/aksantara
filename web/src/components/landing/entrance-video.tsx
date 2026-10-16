@@ -90,15 +90,25 @@ export function EntranceVideo({ onComplete, onFadeStart }: EntranceVideoProps) {
     }
   };
 
+  const [showSkipPrompt, setShowSkipPrompt] = useState(false);
+
+  const handleScreenClick = () => {
+    if (!showSkipPrompt) {
+      setShowSkipPrompt(true);
+    }
+  };
+
   const handleSkip = (e: React.MouseEvent) => {
     e.stopPropagation();
+    startFade();
     finishVideo();
   };
 
   return (
     <div
       aria-label="Video Pembuka Aksantara"
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black select-none touch-none overscroll-none transition-opacity duration-800 ease-out ${
+      onClick={handleScreenClick}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black select-none touch-none overscroll-none transition-opacity duration-800 ease-out cursor-pointer ${
         isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >
@@ -114,18 +124,20 @@ export function EntranceVideo({ onComplete, onFadeStart }: EntranceVideoProps) {
         className="w-full h-full object-cover select-none pointer-events-none"
       />
 
-      {/* Tombol Lewati Intro tersedia sejak awal dan ramah keyboard */}
-      <button
-        onClick={handleSkip}
-        type="button"
-        aria-label="Lewati intro video"
-        className="absolute top-6 right-6 z-50 flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md bg-black/60 hover:bg-black/80 text-white text-sm font-medium border border-white/30 transition-all cursor-pointer shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd261]"
-      >
-        <span>Lewati intro</span>
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-        </svg>
-      </button>
+      {/* Tombol Skip muncul hanya setelah user mengklik layar */}
+      {showSkipPrompt && (
+        <button
+          onClick={handleSkip}
+          type="button"
+          aria-label="Lewati intro video"
+          className="absolute top-6 right-6 z-50 flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md bg-black/60 hover:bg-black/80 text-white text-sm font-medium border border-white/30 transition-all cursor-pointer shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd261] animate-fade-in"
+        >
+          <span>Klik untuk Lewati Intro</span>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }
