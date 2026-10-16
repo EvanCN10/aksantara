@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "provision:onnx": "node scripts/provision-onnx.mjs",
     "typecheck": "tsc --noEmit --incremental false"
   },
   "dependencies": {
@@ -14,6 +15,7 @@
     "@tailwindcss/postcss": "^4.3.3",
     "lucide-react": "^1.57.0",
     "next": "^16.4.0",
+    "onnxruntime-web": "1.22.0",
     "postcss": "^8.5.29",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

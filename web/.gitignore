@@ -31,3 +31,7 @@ yarn-error.log*
 # OS Files
 .DS_Store
 *.pem
+
+# Local inference binaries (provisioned from ai/deployment)
+/public/models/*/model.onnx
+/public/wasm/*.wasm

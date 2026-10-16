@@ -52,7 +52,7 @@ wheels/
 .coverage
 htmlcov/
 *.ipynb_checkpoints/
-
+docs/usage.md
 # --- Large AI Model Weights & Datasets (>50MB) ---
 # Store models on HuggingFace / Supabase Storage instead of Git
 *.pth

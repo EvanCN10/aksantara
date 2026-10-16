@@ -11,10 +11,9 @@ import {
   KATALOG_DATA,
   type KategoriGlif,
   type StatusKuasai,
-  type GlifData,
-  type AksaraDetail,
+  type VokalSuara,
 } from '@/data/aksara/trinitas';
-import { getClassifierTarget } from '@/lib/onnx/onnx-classifier';
+import { getModelTrainingCatalog } from '@/data/aksara/model-catalog';
 
 // ============================================================================
 // ICONS (INLINE SVG)
@@ -69,6 +68,23 @@ function CompassIcon({ className = 'w-4 h-4' }: { className?: string }) {
   );
 }
 
+const CATEGORY_TABS = [
+  { id: 'semua', label: 'Semua' },
+  { id: 'konsonan', label: 'Konsonan Dasar' },
+  { id: 'variasi-vokal', label: 'Variasi Vokal', hint: 'i, u, e, o' },
+  { id: 'vokal', label: 'Vokal Mandiri' },
+  { id: 'diakritik', label: 'Tanda Diakritik' },
+] as const;
+
+const VOWEL_SUB_FILTERS = [
+  { id: 'semua', label: 'Semua Vokal' },
+  { id: 'i', label: 'Variasi -i' },
+  { id: 'u', label: 'Variasi -u' },
+  { id: 'e', label: 'Variasi -e' },
+  { id: 'o', label: 'Variasi -o' },
+  { id: 'pepet', label: 'Variasi -ê' },
+] as const;
+
 // ============================================================================
 // MAIN PAGE COMPONENT
 // ============================================================================
@@ -78,45 +94,57 @@ interface KatalogAksaraPageProps {
 }
 
 export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
+  const { aksara } = use(params);
+  const rawKey = aksara.toLowerCase();
+  const aksaraKey = rawKey === 'sunda' || rawKey === 'bali' ? rawKey : 'lontara';
+  return <KatalogAksara key={aksaraKey} aksaraKey={aksaraKey} />;
+}
+
+function KatalogAksara({ aksaraKey }: { aksaraKey: 'lontara' | 'sunda' | 'bali' }) {
   const router = useRouter();
-  const unwrappedParams = use(params);
-  const rawKey = unwrappedParams?.aksara?.toLowerCase() || 'lontara';
-  const aksaraKey = rawKey in KATALOG_DATA ? rawKey : 'lontara';
-
   const dataAksara = KATALOG_DATA[aksaraKey];
+  const supportedGlifList = getModelTrainingCatalog(aksaraKey);
 
-  // Only glifs that have a classifier target mapping are shown in the grid.
-  // Characters can still be accessed directly via /latihan/web/[aksara]/[slug].
-  const supportedGlifList = dataAksara.glifList.filter(
-    (g) => getClassifierTarget(aksaraKey as 'lontara' | 'sunda' | 'bali', g.slug) !== null,
-  );
-
-  // State: selected Glif & active filter tab
+  // State: selected Glif, active filter tab, & active vowel sub-filter
   const [activeFilter, setActiveFilter] = useState<'semua' | KategoriGlif>('semua');
-  const [selectedSlug, setSelectedSlug] = useState<string>(supportedGlifList[0]?.slug || 'ka');
+  const [activeVowelFilter, setActiveVowelFilter] = useState<'semua' | VokalSuara>('semua');
+  const [selectedSlug, setSelectedSlug] = useState(supportedGlifList[0].slug);
 
+  const handleCategoryChange = (tabId: 'semua' | KategoriGlif) => {
+    setActiveFilter(tabId);
+    setActiveVowelFilter('semua');
+  };
   // TODO: ganti 'belum' / 'statusBawaan' dengan data dari API GET /api/progress/[userId]/[aksara]
   // Contoh hook nanti: const { data: userProgress } = useUserProgress(aksaraKey);
   const userProgress = useMemo<Record<string, StatusKuasai>>(() => {
     const map: Record<string, StatusKuasai> = {};
-    dataAksara.glifList.forEach((g) => {
+    supportedGlifList.forEach((g) => {
       map[g.slug] = g.statusBawaan || 'belum';
     });
     return map;
-  }, [dataAksara]);
+  }, [supportedGlifList]);
 
   // TODO: sort berdasarkan rekomendasi SRS (Spaced Repetition System) jika user memilih mode adaptif
   const filteredGlifList = useMemo(() => {
-    if (activeFilter === 'semua') return supportedGlifList;
-    return supportedGlifList.filter((g) => g.kategori === activeFilter);
-  }, [supportedGlifList, activeFilter]);
+    return supportedGlifList.filter((g) => {
+      if (activeFilter !== 'semua') {
+        const matchesCategory =
+          activeFilter === 'variasi-vokal' || (activeFilter as string) === 'suku-kata'
+            ? g.kategori === 'variasi-vokal' || (g.kategori as string) === 'suku-kata'
+            : g.kategori === activeFilter;
+        if (!matchesCategory) return false;
+      }
+      if (activeFilter === 'variasi-vokal' && activeVowelFilter !== 'semua') {
+        if (g.vokal !== activeVowelFilter) return false;
+      }
+      return true;
+    });
+  }, [supportedGlifList, activeFilter, activeVowelFilter]);
 
-  // Selected glif object (fallback to first filtered if current slug filtered out)
+  // A category change cannot retain a selection hidden from the current grid.
   const selectedGlif = useMemo(() => {
-    const found = dataAksara.glifList.find((g) => g.slug === selectedSlug);
-    if (found) return found;
-    return supportedGlifList[0] ?? dataAksara.glifList[0];
-  }, [dataAksara, supportedGlifList, selectedSlug]);
+    return filteredGlifList.find((g) => g.slug === selectedSlug) ?? filteredGlifList[0];
+  }, [filteredGlifList, selectedSlug]);
 
   // Progress metrics
   // TODO: ganti dengan data real-time dari API GET /api/progress/[userId]/[aksara]
@@ -195,11 +223,11 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
           </div>
 
           {/* Right: Gold Progress Bar (API Backend Ready) */}
-          <div className="flex items-center gap-3 w-full sm:w-auto sm:min-w-[280px]">
-            <div className="flex-1">
-              <div className="flex items-center justify-between text-[11px] mb-1">
-                <span className="text-white/60 font-medium">Progres Kuasai:</span>
-                <span className="text-[#ffd261] font-bold font-mono">
+          <div className="flex items-center gap-3 w-full sm:w-auto sm:min-w-[320px] md:min-w-[360px] lg:min-w-[420px] shrink-0">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-3 text-[11px] mb-1 whitespace-nowrap">
+                <span className="text-white/60 font-medium shrink-0">Progres Kuasai:</span>
+                <span className="text-[#ffd261] font-bold font-mono shrink-0">
                   {dikuasaiCount} / {totalGlif} Glif ({progressPercent}%)
                 </span>
               </div>
@@ -214,7 +242,7 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
               </div>
             </div>
 
-            <div className="hidden lg:flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md bg-[#ffd261]/10 border border-[#ffd261]/25 text-[#ffd261] font-medium whitespace-nowrap">
+            <div className="hidden lg:flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md bg-[#ffd261]/10 border border-[#ffd261]/25 text-[#ffd261] font-medium whitespace-nowrap shrink-0">
               <SparklesIcon className="w-3 h-3 text-[#ffd261]" />
               <span>Kanvas AI Ready</span>
             </div>
@@ -244,19 +272,16 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
               </div>
 
               {/* Filter Pills */}
-              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-md">
-                {(
-                  [
-                    { id: 'semua', label: 'Semua' },
-                    { id: 'konsonan', label: 'Konsonan' },
-                    { id: 'vokal', label: 'Vokal' },
-                    { id: 'diakritik', label: 'Diakritik' },
-                  ] as const
-                ).map((tab) => {
+              <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-md">
+                {CATEGORY_TABS.map((tab) => {
                   const isActive = activeFilter === tab.id;
                   const count =
                     tab.id === 'semua'
                       ? supportedGlifList.length
+                      : tab.id === 'variasi-vokal'
+                      ? supportedGlifList.filter(
+                          (g) => g.kategori === 'variasi-vokal' || (g.kategori as string) === 'suku-kata'
+                        ).length
                       : supportedGlifList.filter((g) => g.kategori === tab.id).length;
                   if (tab.id !== 'semua' && count === 0) return null;
 
@@ -264,7 +289,7 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                     <button
                       key={tab.id}
                       type="button"
-                      onClick={() => setActiveFilter(tab.id)}
+                      onClick={() => handleCategoryChange(tab.id)}
                       className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
                         isActive
                           ? 'bg-[#ffd261]/20 border border-[#ffd261] text-[#ffd261] shadow-[0_0_12px_rgba(255,210,97,0.25)] font-semibold'
@@ -272,6 +297,17 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                       }`}
                     >
                       <span>{tab.label}</span>
+                      {'hint' in tab && tab.hint && (
+                        <span
+                          className={`text-[10px] font-mono px-1 rounded ${
+                            isActive
+                              ? 'bg-[#ffd261]/30 text-[#ffd261]'
+                              : 'bg-white/10 text-white/50'
+                          }`}
+                        >
+                          ({tab.hint})
+                        </span>
+                      )}
                       <span
                         className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                           isActive
@@ -287,19 +323,69 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
               </div>
             </div>
 
+            {/* Sub-Filter Imbuhan Vokal (Hanya tampil pada Variasi Vokal) */}
+            {activeFilter === 'variasi-vokal' && (
+              <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-xl bg-[#ffd261]/[0.04] border border-[#ffd261]/20 backdrop-blur-sm animate-in fade-in slide-in-from-top-1 duration-200">
+                <span className="text-[11px] font-medium text-white/70 pl-1 shrink-0 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#ffd261]" />
+                  Filter Bunyi Imbuhan:
+                </span>
+                <div className="flex flex-wrap items-center gap-1">
+                  {VOWEL_SUB_FILTERS.map((sub) => {
+                    const isSubActive = activeVowelFilter === sub.id;
+                    const subCount =
+                      sub.id === 'semua'
+                        ? supportedGlifList.filter(
+                            (g) => g.kategori === 'variasi-vokal' || (g.kategori as string) === 'suku-kata'
+                          ).length
+                        : supportedGlifList.filter(
+                            (g) =>
+                              (g.kategori === 'variasi-vokal' || (g.kategori as string) === 'suku-kata') &&
+                              g.vokal === sub.id
+                          ).length;
+                    if (sub.id !== 'semua' && subCount === 0) return null;
+
+                    return (
+                      <button
+                        key={sub.id}
+                        type="button"
+                        onClick={() => setActiveVowelFilter(sub.id)}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${
+                          isSubActive
+                            ? 'bg-[#ffd261] text-[#0c1a2c] font-semibold shadow-[0_0_10px_rgba(255,210,97,0.3)]'
+                            : 'bg-white/[0.04] text-white/70 hover:text-white hover:bg-white/10 border border-white/5'
+                        }`}
+                      >
+                        <span>{sub.label}</span>
+                        <span
+                          className={`text-[9px] px-1.5 py-0.2 rounded-full ${
+                            isSubActive
+                              ? 'bg-black/20 text-[#0c1a2c] font-bold'
+                              : 'bg-white/10 text-white/50'
+                          }`}
+                        >
+                          {subCount}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Glif Cards Grid (4 cols desktop, 3 tablet, 2 mobile) */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {filteredGlifList.map((glif, idx) => {
                 const isSelected = selectedGlif?.slug === glif.slug;
-                const isSupported = getClassifierTarget(aksaraKey as 'lontara' | 'sunda' | 'bali', glif.slug) !== null;
                 const status = userProgress[glif.slug] || 'belum';
 
                 return (
                   <button
+                    key={glif.slug}
                     type="button"
                     onClick={() => setSelectedSlug(glif.slug)}
                     style={{ animationDelay: `${Math.min(idx * 28, 450)}ms` }}
-                    className={`group relative p-3 sm:p-3.5 rounded-2xl text-left border transition-all duration-200 cursor-pointer flex flex-col justify-between min-h-[125px] animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${
+                    className={`group relative p-3 sm:p-3.5 rounded-2xl text-left border transition-all duration-200 cursor-pointer flex flex-col justify-between min-h-[150px] sm:min-h-[158px] animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${
                       isSelected
                         ? 'bg-gradient-to-b from-[#ffd261]/15 via-white/[0.04] to-transparent border-[#ffd261] shadow-[0_0_24px_rgba(255,210,97,0.28)] scale-[1.02] ring-1 ring-[#ffd261]'
                         : 'bg-white/[0.03] border-white/10 hover:border-[#ffd261]/40 hover:bg-white/[0.06] hover:scale-[1.01]'
@@ -315,14 +401,7 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                       </div>
 
                       {/* Status indicator badge */}
-                      {!isSupported ? (
-                        <span
-                          className="text-[9px] font-medium text-white/50 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded-full"
-                          title="Materi pengenalan (belum didukung evaluasi AI)"
-                        >
-                          Materi
-                        </span>
-                      ) : status === 'dikuasai' ? (
+                      {status === 'dikuasai' ? (
                         <span
                           className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/15 border border-emerald-500/35 px-1.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(52,211,153,0.2)]"
                           title="Glif telah dikuasai"
@@ -346,14 +425,14 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                     </div>
 
                     {/* Middle: Native Unicode Character (Large Display) */}
-                    <div className="my-1.5 text-center">
-                      <span className="text-3xl sm:text-4xl text-[#ffd261] font-normal leading-none block select-none drop-shadow-[0_2px_10px_rgba(255,210,97,0.3)] transition-transform duration-200 group-hover:scale-110">
+                    <div className="h-16 sm:h-18 flex items-center justify-center -translate-y-1 my-0.5">
+                      <span className="text-3xl sm:text-4xl text-[#ffd261] font-normal leading-tight block select-none drop-shadow-[0_2px_10px_rgba(255,210,97,0.3)] transition-transform duration-200 group-hover:scale-110">
                         {glif.simbol}
                       </span>
                     </div>
 
                     {/* Bottom: Label, IPA, Articulation */}
-                    <div className="w-full text-center">
+                    <div className="w-full text-center mt-auto pt-1">
                       <div className="flex items-center justify-center gap-1.5">
                         <span
                           className="text-xs sm:text-sm font-bold text-white group-hover:text-[#ffd261] transition-colors"
@@ -383,7 +462,7 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                 <span className="font-semibold text-[#ffd261] block mb-0.5">
                   Karakter Visual Paleografi:
                 </span>
-                {supportedGlifList.length} Setiap simbol dirancang presisi untuk evaluasi goresan kanvas AI tanpa bias urutan tarikan pena.
+                {supportedGlifList.length} karakter model tersedia untuk latihan bentuk akhir, tanpa penilaian urutan tarikan pena.
               </div>
             </div>
           </section>
@@ -397,14 +476,21 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                 
                 {/* Top Row: Category Tag & XP Badge */}
                 <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#ffd261] px-2.5 py-0.5 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30">
                       {selectedGlif.kategori === 'konsonan'
-                        ? 'Konsonan Inti'
+                        ? 'Konsonan Dasar'
                         : selectedGlif.kategori === 'vokal'
-                        ? 'Vokal Swara'
+                        ? 'Vokal Mandiri'
+                        : selectedGlif.kategori === 'variasi-vokal' || (selectedGlif.kategori as string) === 'suku-kata'
+                        ? 'Variasi Vokal'
                         : 'Tanda Diakritik'}
                     </span>
+                    {(selectedGlif.kategori === 'variasi-vokal' || (selectedGlif.kategori as string) === 'suku-kata') && selectedGlif.vokal && (
+                      <span className="text-[10px] font-bold tracking-wide text-amber-200 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/25 font-mono">
+                        Imbuhan -{selectedGlif.vokal === 'pepet' ? 'ê' : selectedGlif.vokal}
+                      </span>
+                    )}
                     <span className="text-[10px] font-medium text-white/60">
                       • {dataAksara.nama}
                     </span>
@@ -417,7 +503,7 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                 </div>
 
                 {/* Hero Glif Display (Big Amber Glyph With Glow) */}
-                <div className="relative rounded-2xl border border-[#D4A373]/25 bg-gradient-to-b from-[#141721]/90 to-[#0A0C12]/95 p-6 sm:p-8 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] flex flex-col items-center justify-center min-h-[190px]">
+                <div className="relative rounded-2xl border border-[#D4A373]/25 bg-gradient-to-b from-[#141721]/90 to-[#0A0C12]/95 p-6 sm:p-7 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] flex flex-col items-center justify-between min-h-[260px] sm:min-h-[280px]">
                   <div
                     className="pointer-events-none absolute inset-0 rounded-2xl"
                     style={{
@@ -426,11 +512,13 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                     }}
                     aria-hidden="true"
                   />
-                  <div className="relative z-10 flex flex-col items-center">
-                    <span className="text-7xl sm:text-8xl md:text-9xl text-[#ffd261] font-normal leading-none drop-shadow-[0_4px_32px_rgba(255,210,97,0.5)] select-none transition-transform hover:scale-105 duration-300">
-                      {selectedGlif.simbol}
-                    </span>
-                    <div className="mt-3 flex items-center gap-2">
+                  <div className="relative z-10 flex flex-col items-center justify-between w-full h-full min-h-[210px]">
+                    <div className="flex-1 flex items-center justify-center -translate-y-2.5 pt-2">
+                      <span className="text-5xl sm:text-6xl text-[#ffd261] font-normal leading-none drop-shadow-[0_4px_32px_rgba(255,210,97,0.5)] select-none transition-transform hover:scale-105 duration-300">
+                        {selectedGlif.simbol}
+                      </span>
+                    </div>
+                    <div className="mt-auto pt-4 flex items-center gap-2">
                       <span
                         className="text-2xl font-bold text-white tracking-wide"
                         style={{ fontFamily: 'var(--font-philosopher)' }}
@@ -485,11 +573,7 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                         Status Saat Ini:
                       </span>
                       <div className="flex items-center gap-1.5 font-medium text-[11px]">
-                        {!getClassifierTarget(aksaraKey as 'lontara' | 'sunda' | 'bali', selectedGlif.slug) ? (
-                          <span className="text-white/50 text-[11px]">
-                            Belum didukung AI
-                          </span>
-                        ) : userProgress[selectedGlif.slug] === 'dikuasai' ? (
+                        {userProgress[selectedGlif.slug] === 'dikuasai' ? (
                           <span className="text-emerald-400 flex items-center gap-1 font-bold">
                             <CheckCircleIcon className="w-3.5 h-3.5" />
                             Dikuasai
@@ -507,11 +591,6 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
                       </div>
                     </div>
                   </div>
-                  {!getClassifierTarget(aksaraKey as 'lontara' | 'sunda' | 'bali', selectedGlif.slug) && (
-                    <p className="text-[10px] text-white/50 pt-1 leading-relaxed">
-                      Karakter ini dapat dipelajari dan digambar di kanvas, namun evaluasi klasifikasi AI belum didukung.
-                    </p>
-                  )}
                 </div>
 
                 {/* Primary Action Button: Mulai Latih Karakter */}

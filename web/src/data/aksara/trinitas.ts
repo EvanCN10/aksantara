@@ -2,7 +2,8 @@
 // TYPES & DATA STRUCTURES
 // ============================================================================
 
-export type KategoriGlif = 'konsonan' | 'vokal' | 'diakritik';
+export type KategoriGlif = 'konsonan' | 'vokal' | 'diakritik' | 'variasi-vokal' | 'suku-kata';
+export type VokalSuara = 'a' | 'i' | 'u' | 'e' | 'o' | 'pepet' | 'eu' | 'é';
 export type StatusKuasai = 'belum' | 'latihan' | 'dikuasai';
 
 export interface GlifData {
@@ -52,6 +53,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'dikuasai',
       },
       {
@@ -64,6 +67,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'dikuasai',
       },
       {
@@ -76,6 +81,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'latihan',
       },
       {
@@ -88,6 +95,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -100,6 +109,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -112,6 +123,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -124,6 +137,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -136,6 +151,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -148,6 +165,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'dikuasai',
       },
       {
@@ -160,6 +179,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -172,6 +193,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -184,6 +207,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -196,6 +221,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -208,6 +235,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -220,6 +249,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -232,6 +263,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -244,6 +277,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -256,6 +291,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -268,6 +305,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -280,6 +319,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -292,6 +333,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -304,6 +347,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'vokal',
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -316,6 +360,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       // DIAKRITIK / ANA' SURE'
@@ -329,6 +375,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'diakritik',
+        vokal: 'i',
         statusBawaan: 'belum',
       },
       {
@@ -341,6 +388,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'diakritik',
+        vokal: 'u',
         statusBawaan: 'belum',
       },
       {
@@ -353,6 +401,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'diakritik',
+        vokal: 'e',
         statusBawaan: 'belum',
       },
       {
@@ -365,6 +414,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'diakritik',
+        vokal: 'o',
         statusBawaan: 'belum',
       },
       {
@@ -377,6 +427,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'diakritik',
+        vokal: 'pepet',
         statusBawaan: 'belum',
       },
     ],
@@ -400,6 +451,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'dikuasai',
       },
       {
@@ -412,6 +465,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'dikuasai',
       },
       {
@@ -424,6 +479,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'latihan',
       },
       {
@@ -436,6 +493,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -448,6 +507,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -460,6 +521,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -472,6 +535,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'dikuasai',
       },
       {
@@ -484,6 +549,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -496,6 +563,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -508,6 +577,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -520,6 +591,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -532,6 +605,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -544,6 +619,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -556,6 +633,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -568,6 +647,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -580,6 +661,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -592,6 +675,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -604,6 +689,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       // VOKAL MANDIRI (SWARA)
@@ -617,6 +704,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'vokal',
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -629,6 +717,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'vokal',
+        vokal: 'i',
         statusBawaan: 'belum',
       },
       {
@@ -641,6 +730,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'vokal',
+        vokal: 'u',
         statusBawaan: 'belum',
       },
       // DIAKRITIK (RARANGKEN)
@@ -654,6 +744,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'diakritik',
+        vokal: 'i',
         statusBawaan: 'belum',
       },
       {
@@ -666,6 +757,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'diakritik',
+        vokal: 'u',
         statusBawaan: 'belum',
       },
       {
@@ -678,6 +770,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'diakritik',
+        vokal: 'pepet',
         statusBawaan: 'belum',
       },
       {
@@ -690,6 +783,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'diakritik',
+        vokal: 'eu',
         statusBawaan: 'belum',
       },
       {
@@ -702,6 +796,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'diakritik',
+        vokal: 'o',
         statusBawaan: 'belum',
       },
       {
@@ -737,18 +832,22 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'dikuasai',
       },
       {
         slug: 'kha',
         simbol: 'ᬔ',
-        label: 'Kha (Mahaprana)',
+        label: 'Kha',
         ipa: '[kʰa]',
-        artikulasi: 'Kanthya aspirat',
-        catatan: 'Glif bernapas panjang dengan ornamen lingkar di puncak kurva.',
+        artikulasi: 'Kanthya aspirat (Kha Kantia)',
+        catatan: 'Glif Kha (swalalita khakantia) bernapas panjang dengan ornamen lingkar di puncak kurva.',
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -761,18 +860,22 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'dikuasai',
       },
       {
         slug: 'gha',
         simbol: 'ᬖ',
-        label: 'Gha (Mahaprana)',
+        label: 'Gha',
         ipa: '[ɡʱa]',
-        artikulasi: 'Aspirat bersuara',
-        catatan: 'Karakter langka dalam naskah Sansekerta dan Kakawin Kawi kuno.',
+        artikulasi: 'Aspirat bersuara (Ga Gora)',
+        catatan: 'Karakter Gha (swalalita gagora), langka dalam naskah Sansekerta dan Kakawin Kawi kuno.',
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -785,6 +888,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'latihan',
       },
       {
@@ -797,6 +902,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -809,6 +916,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -821,6 +930,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -833,6 +944,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'dikuasai',
       },
       {
@@ -845,6 +958,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -857,6 +972,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -869,6 +986,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -881,6 +1000,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -893,6 +1014,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -905,6 +1028,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -917,6 +1042,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -929,6 +1056,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -941,6 +1070,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -953,6 +1084,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -965,6 +1098,8 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
+
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       // VOKAL MANDIRI (SWARA)
@@ -978,6 +1113,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'vokal',
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -990,6 +1126,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'vokal',
+        vokal: 'i',
         statusBawaan: 'belum',
       },
       // DIAKRITIK (PANGANGGE)
@@ -1003,6 +1140,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'diakritik',
+        vokal: 'i',
         statusBawaan: 'belum',
       },
       {
@@ -1015,6 +1153,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'diakritik',
+        vokal: 'u',
         statusBawaan: 'belum',
       },
       {
@@ -1027,6 +1166,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'diakritik',
+        vokal: 'e',
         statusBawaan: 'belum',
       },
       {
@@ -1039,6 +1179,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'diakritik',
+        vokal: 'a',
         statusBawaan: 'belum',
       },
       {
@@ -1069,6 +1210,171 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
   },
 };
 
+// Model-only additions keep standalone teaching diacritics out of the training catalogue.
+// Mapping evidence: docs/AI_MODEL_HANDOFF.md, catalogue Unicode mapping section.
+const LONTARA_VOWELS = {
+  e: { sign: '\u1A19', ipa: 'e', note: 'Tanda e di depan aksara induk.' },
+  i: { sign: '\u1A17', ipa: 'i', note: 'Titik i di atas aksara induk.' },
+  o: { sign: '\u1A1A', ipa: 'o', note: 'Tanda o di belakang aksara induk.' },
+  u: { sign: '\u1A18', ipa: 'u', note: 'Titik u di bawah aksara induk.' },
+  pepet: { sign: '\u1A1B', ipa: 'ə', note: 'Tanda pepet di atas aksara induk, berbeda dari e di depan.' },
+} as const;
+
+function createLontaraSyllable(
+  classId: number, baseSlug: string, vowel: keyof typeof LONTARA_VOWELS, label: string,
+): GlifData {
+  const base = KATALOG_DATA.lontara.glifList.find((glif) => glif.slug === baseSlug);
+  if (!base) throw new Error(`Missing Lontara base glyph: ${baseSlug}`);
+  const mark = LONTARA_VOWELS[vowel];
+  return {
+    ...base,
+    slug: `kelas-${classId}`,
+    simbol: base.simbol + mark.sign,
+    label,
+    ipa: base.ipa.replace(/a\]$/, `${mark.ipa}]`),
+    artikulasi: `${base.artikulasi}; vokal /${mark.ipa}/`,
+    catatan: `${base.label} dengan imbuhan vokal /${mark.ipa}/ (${mark.note})`,
+    kategori: 'variasi-vokal',
+    vokal: vowel === 'pepet' ? 'pepet' : vowel,
+    kesulitan: 2,
+    xp: 75,
+    statusBawaan: 'belum',
+  };
+}
+
+function createModelGlyph(
+  classId: number, simbol: string, label: string, ipa: string,
+  kategori: KategoriGlif, catatan: string,
+  vokal?: VokalSuara,
+): GlifData {
+  return {
+    slug: `kelas-${classId}`, simbol, label, ipa, kategori, catatan,
+    artikulasi: kategori === 'vokal' ? 'Swara mandiri' : 'Konsonan serapan',
+    kesulitan: 2, xp: 75, statusBawaan: 'belum',
+    ...(vokal ? { vokal } : {}),
+  };
+}
+
+export const MODEL_GLIF_DATA: Record<'lontara' | 'sunda' | 'bali', readonly GlifData[]> = {
+  lontara: [
+    createLontaraSyllable(2, "ba", "e", "Be"),
+    createLontaraSyllable(3, "ba", "i", "Bi"),
+    createLontaraSyllable(4, "ba", "o", "Bo"),
+    createLontaraSyllable(5, "ba", "u", "Bu"),
+    createLontaraSyllable(7, "ca", "e", "Ce"),
+    createLontaraSyllable(8, "ca", "i", "Ci"),
+    createLontaraSyllable(9, "ca", "o", "Co"),
+    createLontaraSyllable(10, "ca", "u", "Cu"),
+    createLontaraSyllable(12, "da", "e", "De"),
+    createLontaraSyllable(13, "da", "i", "Di"),
+    createLontaraSyllable(14, "da", "o", "Do"),
+    createLontaraSyllable(15, "da", "u", "Du"),
+    createLontaraSyllable(16, "a", "e", "E"),
+    createLontaraSyllable(18, "ga", "e", "Ge"),
+    createLontaraSyllable(19, "ga", "i", "Gi"),
+    createLontaraSyllable(20, "ga", "o", "Go"),
+    createLontaraSyllable(21, "ga", "u", "Gu"),
+    createLontaraSyllable(23, "ha", "e", "He"),
+    createLontaraSyllable(24, "ha", "i", "Hi"),
+    createLontaraSyllable(25, "ha", "o", "Ho"),
+    createLontaraSyllable(26, "ha", "u", "Hu"),
+    createLontaraSyllable(27, "a", "i", "I"),
+    createLontaraSyllable(29, "ja", "e", "Je"),
+    createLontaraSyllable(30, "ja", "i", "Ji"),
+    createLontaraSyllable(31, "ja", "o", "Jo"),
+    createLontaraSyllable(32, "ja", "u", "Ju"),
+    createLontaraSyllable(34, "ka", "e", "Ke"),
+    createLontaraSyllable(35, "ka", "pepet", "Kê"),
+    createLontaraSyllable(36, "ka", "i", "Ki"),
+    createLontaraSyllable(37, "ka", "o", "Ko"),
+    createLontaraSyllable(38, "ka", "u", "Ku"),
+    createLontaraSyllable(40, "la", "e", "Le"),
+    createLontaraSyllable(41, "la", "i", "Li"),
+    createLontaraSyllable(42, "la", "o", "Lo"),
+    createLontaraSyllable(43, "la", "u", "Lu"),
+    createLontaraSyllable(45, "ma", "e", "Me"),
+    createLontaraSyllable(46, "ma", "i", "Mi"),
+    createLontaraSyllable(47, "ma", "o", "Mo"),
+    createLontaraSyllable(49, "mpa", "e", "Mpe"),
+    createLontaraSyllable(50, "mpa", "i", "Mpi"),
+    createLontaraSyllable(51, "mpa", "o", "Mpo"),
+    createLontaraSyllable(52, "mpa", "u", "Mpu"),
+    createLontaraSyllable(53, "ma", "u", "Mu"),
+    createLontaraSyllable(56, "nca", "e", "Nce"),
+    createLontaraSyllable(57, "nca", "i", "Nci"),
+    createLontaraSyllable(58, "nca", "o", "Nco"),
+    createLontaraSyllable(59, "nca", "u", "Ncu"),
+    createLontaraSyllable(60, "na", "e", "Ne"),
+    createLontaraSyllable(62, "nga", "e", "Nge"),
+    createLontaraSyllable(63, "nga", "i", "Ngi"),
+    createLontaraSyllable(64, "nga", "o", "Ngo"),
+    createLontaraSyllable(65, "nga", "u", "Ngu"),
+    createLontaraSyllable(66, "na", "i", "Ni"),
+    createLontaraSyllable(68, "ngka", "e", "Ngke"),
+    createLontaraSyllable(69, "ngka", "i", "Ngki"),
+    createLontaraSyllable(70, "ngka", "o", "Ngko"),
+    createLontaraSyllable(71, "ngka", "u", "Ngku"),
+    createLontaraSyllable(72, "na", "o", "No"),
+    createLontaraSyllable(74, "nra", "e", "Nre"),
+    createLontaraSyllable(75, "nra", "i", "Nri"),
+    createLontaraSyllable(76, "nra", "o", "Nro"),
+    createLontaraSyllable(77, "nra", "u", "Nru"),
+    createLontaraSyllable(78, "na", "u", "Nu"),
+    createLontaraSyllable(80, "nya", "e", "Nye"),
+    createLontaraSyllable(81, "nya", "i", "Nyi"),
+    createLontaraSyllable(82, "nya", "o", "Nyo"),
+    createLontaraSyllable(83, "nya", "u", "Nyu"),
+    createLontaraSyllable(84, "a", "o", "O"),
+    createLontaraSyllable(86, "pa", "e", "Pe"),
+    createLontaraSyllable(87, "pa", "i", "Pi"),
+    createLontaraSyllable(88, "pa", "o", "Po"),
+    createLontaraSyllable(89, "pa", "u", "Pu"),
+    createLontaraSyllable(91, "ra", "e", "Re"),
+    createLontaraSyllable(92, "ra", "i", "Ri"),
+    createLontaraSyllable(93, "ra", "o", "Ro"),
+    createLontaraSyllable(94, "ra", "u", "Ru"),
+    createLontaraSyllable(96, "sa", "e", "Se"),
+    createLontaraSyllable(97, "sa", "i", "Si"),
+    createLontaraSyllable(98, "sa", "o", "So"),
+    createLontaraSyllable(99, "sa", "u", "Su"),
+    createLontaraSyllable(101, "ta", "e", "Te"),
+    createLontaraSyllable(102, "ta", "i", "Ti"),
+    createLontaraSyllable(103, "ta", "u", "Tu"),
+    createLontaraSyllable(104, "a", "u", "U"),
+    createLontaraSyllable(106, "wa", "e", "We"),
+    createLontaraSyllable(107, "wa", "i", "Wi"),
+    createLontaraSyllable(108, "wa", "o", "Wo"),
+    createLontaraSyllable(109, "wa", "u", "Wu"),
+    createLontaraSyllable(111, "ya", "e", "Ye"),
+    createLontaraSyllable(112, "ya", "i", "Yi"),
+    createLontaraSyllable(113, "ya", "o", "Yo"),
+  ],
+  sunda: [
+    createModelGlyph(1, "ᮆ", "É (Swara)", "[ɛ]", "vokal", "Swara é (Unicode AE), berbeda dari e pepet.", "é"),
+    createModelGlyph(5, "ᮈ", "E (Swara)", "[ə]", "vokal", "Swara e pepet, berbeda dari é (Unicode AE).", "pepet"),
+    createModelGlyph(6, "ᮉ", "Eu (Swara)", "[ɤ]", "vokal", "Swara eu khas Sunda.", "eu"),
+    createModelGlyph(7, "ᮖ", "Fa", "[fa]", "konsonan", "Ngalagena fa untuk bunyi serapan.", "a"),
+    createModelGlyph(18, "ᮇ", "O (Swara)", "[o]", "vokal", "Swara o mandiri tanpa konsonan induk.", "o"),
+    createModelGlyph(20, "ᮋ", "Qa", "[qa]", "konsonan", "Ngalagena qa untuk bunyi serapan.", "a"),
+    createModelGlyph(25, "ᮗ", "Va", "[va]", "konsonan", "Ngalagena va untuk bunyi serapan.", "a"),
+    createModelGlyph(27, "ᮟ", "Xa", "[xa]", "konsonan", "Ngalagena xa untuk bunyi serapan.", "a"),
+    createModelGlyph(29, "ᮐ", "Za", "[za]", "konsonan", "Ngalagena za untuk bunyi serapan.", "a"),
+  ],
+  bali: [
+    createModelGlyph(0, "ᬪ", "Bha", "[bʱa]", "konsonan", "Ba kembang (bha), konsonan swalalita beraspirasi.", "a"),
+    createModelGlyph(1, "ᬙ", "Cha", "[t͡ʃʰa]", "konsonan", "Ca laca (cha), konsonan swalalita beraspirasi.", "a"),
+    createModelGlyph(2, "ᬥ", "Dha", "[dʱa]", "konsonan", "Da madu (dha), berbeda dari da biasa.", "a"),
+    createModelGlyph(4, "ᬛ", "Jha", "[d͡ʒʱa]", "konsonan", "Ja jera (jha), berbeda dari ja biasa.", "a"),
+    createModelGlyph(6, "ᬡ", "Na Rambat", "[ɳa]", "konsonan", "Na rambat, konsonan nasal retrofleks swalalita.", "a"),
+    createModelGlyph(7, "ᬨ", "Pha", "[pʰa]", "konsonan", "Pa kapal (pha), konsonan swalalita beraspirasi.", "a"),
+    createModelGlyph(8, "ᬰ", "Sa Saga", "[ʃa]", "konsonan", "Sa saga, berbeda dari sa sapa dan sa biasa.", "a"),
+    createModelGlyph(9, "ᬱ", "Sa Sapa", "[ʂa]", "konsonan", "Sa sapa, berbeda dari sa saga dan sa biasa.", "a"),
+    createModelGlyph(10, "ᬝ", "Ta Latik", "[ʈa]", "konsonan", "Ta latik, konsonan retrofleks swalalita.", "a"),
+    createModelGlyph(11, "ᬣ", "Tha", "[tʰa]", "konsonan", "Ta tawa (tha), berbeda dari ta biasa.", "a"),
+  ],
+};
+
+
 // ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
@@ -1076,30 +1382,4 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
 export function getAksaraData(aksaraId: string): AksaraDetail | undefined {
   const key = aksaraId.toLowerCase();
   return KATALOG_DATA[key];
-}
-
-export function getGlifBySlug(aksaraId: string, glifSlug: string): GlifData | undefined {
-  const aksara = getAksaraData(aksaraId);
-  if (!aksara) return undefined;
-  return aksara.glifList.find((g) => g.slug.toLowerCase() === glifSlug.toLowerCase());
-}
-
-export function getNextGlif(aksaraId: string, currentSlug: string): GlifData | undefined {
-  const aksara = getAksaraData(aksaraId);
-  if (!aksara) return undefined;
-  const currentIndex = aksara.glifList.findIndex((g) => g.slug.toLowerCase() === currentSlug.toLowerCase());
-  if (currentIndex === -1 || currentIndex === aksara.glifList.length - 1) {
-    return aksara.glifList[0];
-  }
-  return aksara.glifList[currentIndex + 1];
-}
-
-export function getPrevGlif(aksaraId: string, currentSlug: string): GlifData | undefined {
-  const aksara = getAksaraData(aksaraId);
-  if (!aksara) return undefined;
-  const currentIndex = aksara.glifList.findIndex((g) => g.slug.toLowerCase() === currentSlug.toLowerCase());
-  if (currentIndex <= 0) {
-    return aksara.glifList[aksara.glifList.length - 1];
-  }
-  return aksara.glifList[currentIndex - 1];
 }

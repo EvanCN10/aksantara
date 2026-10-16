@@ -6,12 +6,9 @@ import { useRouter } from 'next/navigation';
 import {
   KATALOG_DATA,
   getAksaraData,
-  getGlifBySlug,
-  getNextGlif,
-  getPrevGlif,
-  type GlifData,
   type AksaraDetail,
 } from '@/data/aksara/trinitas';
+import { getModelTrainingCatalog } from '@/data/aksara/model-catalog';
 import {
   DrawingCanvas,
   type DrawingCanvasRef,
@@ -68,11 +65,11 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
   const aksaraKey = rawAksara in KATALOG_DATA ? rawAksara : 'lontara';
   const dataAksara: AksaraDetail = getAksaraData(aksaraKey) || KATALOG_DATA['lontara'];
 
-  const glif: GlifData =
-    getGlifBySlug(aksaraKey, rawKarakter) || dataAksara.glifList[0];
-
-  const nextGlif = getNextGlif(aksaraKey, glif.slug);
-  const prevGlif = getPrevGlif(aksaraKey, glif.slug);
+  const trainingCatalog = getModelTrainingCatalog(aksaraKey as 'lontara' | 'sunda' | 'bali');
+  const glif = trainingCatalog.find((entry) => entry.slug === rawKarakter);
+  const currentIndex = trainingCatalog.findIndex((entry) => entry.slug === rawKarakter);
+  const nextGlif = trainingCatalog[currentIndex + 1];
+  const prevGlif = trainingCatalog[currentIndex - 1];
 
   // Canvas Reference & State
   const canvasRef = useRef<DrawingCanvasRef | null>(null);
@@ -94,7 +91,7 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
     setStrokeCount(0);
     canvasRef.current?.clear();
     return () => { evaluationRequestRef.current += 1; };
-  }, [aksaraKey, glif.slug]);
+  }, [aksaraKey, rawKarakter]);
 
   // Canvas Handlers
   const handleStrokeChange = useCallback((count: number) => {
@@ -150,7 +147,7 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
 
   // Experimental class probabilities never award mastery, XP, or practice progress.
   const handleEvaluate = async () => {
-    if (strokeCount === 0 || isEvaluating) return;
+    if (!glif || strokeCount === 0 || isEvaluating) return;
     const isSupported = getClassifierTarget(aksaraKey as 'lontara' | 'sunda' | 'bali', glif.slug) !== null;
     if (!isSupported) return;
     const requestId = ++evaluationRequestRef.current;
@@ -158,13 +155,13 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
     setEvaluationResult(null);
     setEvaluationError(null);
     try {
-      const image = canvasRef.current?.getCanvasBase64();
-      if (!image) throw new Error('Snapshot kanvas tidak tersedia. Silakan coba lagi.');
+      const imageData = canvasRef.current?.getImageData();
+      if (!imageData) throw new Error('Snapshot kanvas tidak tersedia. Silakan coba lagi.');
       const result = await evaluateGlyph({
         aksaraId: aksaraKey as 'lontara' | 'sunda' | 'bali',
         karakterSlug: glif.slug,
-        image,
-      });
+        image: '',
+      }, imageData);
       if (requestId === evaluationRequestRef.current) setEvaluationResult(result);
     } catch (error: unknown) {
       if (requestId === evaluationRequestRef.current) {
@@ -178,6 +175,17 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
   const handleResetEvaluation = () => {
     handleClear();
   };
+
+  if (!glif) {
+    return (
+      <main className="min-h-screen bg-[#0c1a2c] p-8 text-[#F6F2E9]">
+        <h1 className="text-xl font-semibold">Karakter ini tidak tersedia dalam model latihan.</h1>
+        <Link href={`/latihan/web/${aksaraKey}`} className="mt-6 inline-block text-[#ffd261] underline">
+          Kembali ke katalog {dataAksara.nama}
+        </Link>
+      </main>
+    );
+  }
 
   return (
     <main className="relative min-h-screen bg-[#0c1a2c] text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col">

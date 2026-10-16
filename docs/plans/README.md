@@ -1,6 +1,6 @@
 # Dokumentasi Rencana & Arsitektur AI Aksantara
 
-Folder ini mengonsolidasikan seluruh dokumen perencanaan, arsitektur, dan peta jalan riset klasifikasi Trinitas Aksara Nusantara (JOINTS UGM 2026):
+Folder ini mengarsipkan rencana riset klasifikasi Trinitas Aksara Nusantara (JOINTS UGM 2026). Isi rencana, asumsi, nama tensor dan langkah yang belum dikerjakan pada saat penulisan adalah konteks historis, bukan kontrak runtime saat ini. Kontrak aktif: [AI_MODEL_HANDOFF.md](../AI_MODEL_HANDOFF.md); setup lintas modul: [INTEGRATION_HANDOFF.md](../INTEGRATION_HANDOFF.md). Studio kini memakai ONNX Runtime Web dengan input `input`; jangan menyalin kontrak input `image` dari rencana harness lama.
 
 | Berkas Dokumen | Judul & Cakupan | Status / Deliverable |
 |---|---|---|
@@ -9,4 +9,4 @@ Folder ini mengonsolidasikan seluruh dokumen perencanaan, arsitektur, dan peta j
 | [`03_modular_classifier_notebooks_plan.md`](03_modular_classifier_notebooks_plan.md) | **Modular Interactive Notebooks & Architectural Exploration Plan:** Dekonstruksi pipeline worker background menjadi 4 notebook Jupyter modular interaktif dengan visualisasi diagnostik paleografi mendalam dan ekspor ONNX terverifikasi. | Terlaksana (4 Notebooks di `ai/notebooks/`) |
 
 ---
-*Status eksekusi mutakhir dan artefak checkpoint selalu dicatat di [`PROGRESS_HANDOFF.md](../../PROGRESS_HANDOFF.md).*
+Status model aktif dan bukti integrasi dicatat di [AI_MODEL_HANDOFF.md](../AI_MODEL_HANDOFF.md), artefak `ai/deployment/models/`, dan log historis [usage.md](../usage.md). Status deliverable di tabel ini tidak membuktikan gate release, kalibrasi, benchmark browser atau pengesahan paleografi.
