@@ -1,162 +1,53 @@
-# AKSANTARA — Panduan Integrasi Teknis Web, Hardware & Database
-### Integration Handoff Guide
+# Setup
 
-> **Kompetisi:** Hackathon JOINTS UGM 2026 — Tema: Education  
-> **Target:** Grand Final FMIPA UGM (1 November 2026)  
-> **Dokumen Terkait:** [Handoff Model AI](AI_MODEL_HANDOFF.md) • [Spesifikasi Sistem SSOT v3.1](../context/AKSANTARA-SSOT-v3.1.md)
+How to run Aksantara locally and what each service needs. Scope and rules: [`CONTEXT.md`](CONTEXT.md). Classifier contract: [`AI_MODEL.md`](AI_MODEL.md).
 
----
+## 1. Run the web app
 
-## 1. Arsitektur Integrasi Sistem
-
-Platform Aksantara terdiri dari 4 pilar edukasi dan 2 mode penggunaan:
-1. **Pilar 1 — Latihan Kanvas Digital & AI Eksperimen:** Studio Web Canvas menjalankan specialist langsung di browser melalui ONNX Runtime Web 1.22.0, WASM satu thread. Cerita mini canvas tetap memakai `/api/ai/classify` dan backend Python. Kontrak model/preprocessing merujuk ke [AI_MODEL_HANDOFF.md](AI_MODEL_HANDOFF.md).
-2. **Pilar 2 — Trinitas Aksara Nusantara:** Kurikulum pembelajaran tiga aksara (Lontara, Sunda, Bali) dengan karakteristik paleografi sudut, modular, dan kurvalinier.
-3. **Pilar 3 — Gamifikasi Naratif & Hardware Phygital:**
-   - **Mode Hardware:** Konsol fisik *Aksantara Tactile Pad* (ESP32 + RC522 RFID) terhubung via Web Serial API (USB Plug-and-Play).
-   - **Mode Cerita:** Petualangan naratif interaktif (*Sawerigading*, *Lutung Kasarung*, *Calon Arang*) dengan bantuan kurasi lokal dan pengayaan dialog Gemini AI.
-4. **Pilar 4 — Transliterasi Manual & Review Manusia:** Siswa membaca foto manuskrip kuno (koleksi British Library EAP dan PNRI) lalu menuliskan usulan transliterasi Latin yang ditinjau langsung oleh guru atau kurator ahli.
-
----
-
-## 2. Quickstart Lingkungan Pengembangan
-
-### A. Menjalankan Aplikasi Web (Next.js 16)
 ```bash
-# Masuk ke direktori web
 cd web
-
-# Pasang dependensi
-npm install
-
-# Salin model/labels dan runtime lokal sebelum dev maupun build/deploy
-npm run provision:onnx
-
-# Jalankan server pengembangan
-npm run dev
+npm ci
+npm run dev        # http://localhost:3000
 ```
-Akses di peramban: `http://localhost:3000`
 
-Studio tidak membutuhkan Python atau `AI_CLASSIFIER_URL`. Sumber provisioning harus tersedia di `ai/deployment/models/{script}/` dan `ai/artifacts/runtime/`; biner model/WASM ignored, sehingga checkout Git saja belum cukup. Saat deploy, jalankan provisioning sebelum build. Petunjuk aset: [README model browser](../web/public/models/README.md).
+Checks: `npx tsc --noEmit` (there is no lint script) and `npm run build`.
 
-Katalog `/latihan/web/lontara`, `/latihan/web/sunda`, dan `/latihan/web/bali` mencakup seluruh 114/30/30 kelas model. Unicode/font tetap dipakai; gabungan seperti Mi berkategori **Suku Kata**, tanda diakritik mandiri yang bukan kelas model tidak ditawarkan. Grid/filter/progres/pilihan/navigasi studio memakai adaptor `getModelTrainingCatalog()` yang sama. URL target unsupported tidak membuka evaluasi.
+Copy `web/.env.example` to `web/.env.local` and fill the variables (section 3). Never commit `.env.local`.
 
-Evaluasi variasi vokal (suku kata seperti *Bi*, *Be*, *Bu*) menerapkan *Contextual Base-Consonant Prior Suppression*, di mana indeks konsonan dasar (*Ba*) disaring dari penyebut softmax saat variasi vokal dilatih agar probabilitas tidak terserap ke bentuk dasar induknya. Jika siswa menggambar konsonan dasar tanpa tanda diakritik vokal, sistem memberikan diagnostik cerdas: *"Bentuk konsonan dasar Ba sudah terbaca dengan baik, namun tanda diakritik vokal untuk Bi belum terdeteksi. Tambahkan tanda titik/imbuhan vokal yang sesuai!"*.
+### Model and WASM runtime
+The practice studio runs the Bali classifier in the browser with ONNX Runtime Web 1.22.0 (single-thread WASM). Assets are served from `web/public/`:
+- `models/bali/` — `model.onnx`, `labels.json`, `manifest.json`
+- `wasm/` — ONNX Runtime Web runtime files
 
-Top-1 sesuai target dan probabilitas target ≥85% tampil benar. Prediksi berbeda menampilkan “Tulisan terbaca sebagai Ma, bukan Pa. Coba perbaiki bentuknya.”, dengan badge “Belum sesuai target”. Probabilitas kelas bukan skor kualitas paleografi dan tidak memberikan XP/penguasaan otomatis.
-### B. Backend Classifier AI — hanya untuk cerita mini canvas / jalur proxy
-Jalankan dari root repositori bila memakai pemanggil `evaluateGlyph(input)` tanpa ImageData. Studio selalu memakai ImageData/WASM dan tidak beralih otomatis ke backend saat ada error:
+No Python process is needed for this path. The model loads lazily on the first evaluation.
+
+## 2. Database (Supabase)
+- `supabase/schema.sql` — full PostgreSQL schema: enums, tables, profile-protection trigger, RLS policies.
+- `supabase/migrations/20261016_manual_transliteration.sql` — incremental migration: role-escalation lock, manuscript review fields, immutability trigger for transliteration proposals.
+
+Access rules for manuscript transliteration:
+1. New sign-ups always get role `siswa`. `guru`, `filolog` and `admin` can only be assigned by the database administrator.
+2. A student reads only their own proposals and can submit only proposals with status `menunggu`.
+3. Reviewers (`is_reviewer`) read the whole queue and set status `terverifikasi` or `tinjauan` with a mandatory note (max 4000 characters).
+4. A reviewer cannot review their own proposal; a review is immutable.
+
+## 3. Environment variables (`web/.env.local`)
+| Variable | Needed for | Notes |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Auth and data | Required |
+| `SUPABASE_SERVICE_ROLE_KEY` | Admin scripts only | Optional, server-only, never exposed to the browser |
+| `GEMINI_API_KEY`, `GEMINI_MODEL` | Story narrator dialog | Optional. Default model `gemini-2.5-flash` |
+
+## 4. Story dialog enrichment
+- Endpoint: `web/src/app/api/ai/story-enrich/route.ts`, model from `GEMINI_MODEL`.
+- Fallback: if the key is missing, quota is exhausted or the call exceeds 8 seconds, the endpoint returns curated local text with `source: "deterministic_lore"`. The UI must show which source produced the text.
+
+## 5. Interim: Python classifier proxy
+Mini-canvas challenges inside Story Mode still call `/api/ai/classify`, which proxies to a Python FastAPI service. This path is scheduled for removal once the browser classifier covers it (see [`MIGRATION.md`](MIGRATION.md)). Until then:
+
 ```bash
 python -m pip install -r ai/deployment/requirements.txt
-python -m uvicorn ai.deployment.server:app --host 127.0.0.1 --port 8000
-```
-Verifikasi status layanan: `GET http://127.0.0.1:8000/health` (mengembalikan HTTP 200 saat ketiga specialist siap).
-
-Konfigurasi opsional di `web/.env.local`:
-```env
-AI_CLASSIFIER_URL=http://127.0.0.1:8000
-```
-*(Variabel ini server-only; jangan menggunakan awalan `NEXT_PUBLIC_`)*.
-
----
-
-## 3. Integrasi Hardware IoT (Aksantara Tactile Pad)
-
-Koneksi konsol fisik ke browser memanfaatkan **Web Serial API** langsung melalui kabel USB:
-- Bebas dependensi jaringan WiFi panggung demo.
-- Tidak memerlukan instalasi driver khusus pada peramban berbasis Chromium (Google Chrome, Microsoft Edge, Brave).
-
-### A. Parameter Serial Port
-- **Baud Rate:** `115200`
-- **Data Bits:** `8`
-- **Parity:** `None`
-- **Stop Bits:** `1`
-- **Line Ending:** `\n` (Newline)
-
-### B. Format Payload Serial (ESP32 → Browser)
-Konsol mikrokontroler mengirim data pembacaan tag RFID melalui serial print:
-
-```json
-{"slot": 1, "uid": "SD-KA-01", "aksara": "sunda", "tipe": "konsonan"}
-```
-Untuk pelepasan kartu:
-```json
-{"slot": 1, "event": "tag_removed"}
+python -m uvicorn ai.deployment.server:app --host 127.0.0.1 --port 8000   # from repo root
 ```
 
-Frontend Web Serial stream reader di `web/src/lib/serial/use-tactile-serial.ts` juga mendukung string UID polos:
-```text
-SD-KA-01\n
-```
-
-### C. Daftar Preset UID Kartu Fisik RFID
-
-| UID Tag | Aksara | Kategori | Glif | Label Latin | Bunyi Fonetik |
-|---|---|---|:---:|---|---|
-| `SD-KA-01` | Sunda | Konsonan | ᮊ | Ka | /ka/ |
-| `SD-GA-02` | Sunda | Konsonan | ᮌ | Ga | /ga/ |
-| `SD-TA-03` | Sunda | Konsonan | ᮒ | Ta | /ta/ |
-| `SD-BA-04` | Sunda | Konsonan | ᮘ | Ba | /ba/ |
-| `SD-PANGHULU-05` | Sunda | Diakritik | ᮤ | Panghulu (i) | /i/ |
-| `SD-PANYUKU-06` | Sunda | Diakritik | ᮥ | Panyuku (u) | /u/ |
-| `LT-KA-07` | Lontara | Konsonan | ᨀ | Ka | /ka/ |
-| `LT-GA-08` | Lontara | Konsonan | ᨁ | Ga | /ga/ |
-| `LT-TA-09` | Lontara | Konsonan | ᨈ | Ta | /ta/ |
-| `LT-TETTA-10` | Lontara | Diakritik | ᨗ | Tetta (i) | /i/ |
-| `LT-TUKKI-11` | Lontara | Diakritik | ᨘ | Tukki (u) | /u/ |
-| `BL-KA-12` | Bali | Konsonan | ᬓ | Ka | /ka/ |
-| `BL-GA-13` | Bali | Konsonan | ᬕ | Ga | /ga/ |
-| `BL-TA-14` | Bali | Konsonan | ᬢ | Ta | /ta/ |
-| `BL-ULU-15` | Bali | Diakritik | ᬶ | Ulu (i) | /i/ |
-| `BL-SUKU-16` | Bali | Diakritik | ᬸ | Suku (u) | /u/ |
-
-*(Daftar 30 kartu lengkap terdapat pada `web/src/lib/serial/tactile-serial-types.ts`).*
-
----
-
-## 4. Integrasi Basis Data (Supabase)
-
-### A. DDL dan Migrasi
-- `supabase/schema.sql`: Definisi basis data lengkap (DDL PostgreSQL, enum, tabel, trigger proteksi profil, dan kebijakan RLS).
-- `supabase/migrations/20261016_manual_transliteration.sql`: Migrasi inkremental untuk penguncian eskalasi role, penambahan field review manuskrip, serta trigger imutabilitas usulan transliterasi.
-
-### B. Hak Akses & Keamanan Transliterasi
-1. Pendaftaran baru akun (`auth.signUp`) selalu menghasilkan role `siswa`. Role `guru`, `filolog`, dan `admin` hanya dapat ditetapkan oleh administrator basis data.
-2. Siswa hanya dapat membaca usulan miliknya sendiri dan mengirim usulan berstatus `menunggu`.
-3. Kurator / Guru (`is_reviewer`) dapat membaca seluruh antrean dan memberikan evaluasi status (`terverifikasi` atau `tinjauan`) beserta catatan evaluasi wajib (maksimal 4000 karakter).
-4. Peninjau dilarang mereview usulan miliknya sendiri, dan hasil peninjauan bersifat immutable.
-
-### C. Konfigurasi Lingkungan (`web/.env.local`)
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://[YOUR-PROJECT].supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI...
-DATABASE_URL="postgresql://postgres:[PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
-GEMINI_API_KEY=AIzaSy...
-GEMINI_MODEL=gemini-2.5-flash
-```
-
----
-
-## 5. Pengayaan Dialog Cerita (AI Story Enrichment)
-
-1. **Endpoint:** `web/src/app/api/ai/story-enrich/route.ts`
-2. **Model:** Google Gemini API melalui model yang ditentukan di `GEMINI_MODEL` (default: `gemini-2.5-flash`).
-3. **Mekanisme Fallback:** Jika `GEMINI_API_KEY` tidak tersedia, kuota habis, atau waktu tunggu melebihi 8 detik, sistem mengembalikan petunjuk materi lokal terkurasi (`deterministic_lore`) dengan label "Petunjuk dari materi" agar alur pembelajaran cerita tidak terputus.
-
-## 6. Membaca artefak Drive melalui Colab MCP
-
-Browser otomatis yang belum login tidak mempunyai akses ke Drive pribadi. Mengubah skill tidak memberikan autentikasi Google. Gunakan bridge proyek dengan browser pengguna yang sudah login:
-
-```powershell
-# Dari root repo; membutuhkan uv dan akses ke dependensi googlecolab/colab-mcp
-powershell -NoProfile -File ai/harness/connect_colab.ps1 -Status -NoBrowser
-powershell -NoProfile -File ai/harness/connect_colab.ps1 -Script lontara -Timeout 600
-```
-
-`-Status` hanya memeriksa apakah listener loopback pada state tersimpan masih hidup; ia tidak mencetak token dan tidak mengklaim Drive sudah ter-mount. `not_running` berarti state `connected` lama tidak boleh dipercaya. `listener_running` juga bukan bukti autentikasi Google, handshake notebook, atau izin membaca Drive.
-
-Launcher membuka notebook yang dikonfigurasi pada `ai/configs/colab_targets.json`, dengan URL handshake unik. Pada browser pengguna, izinkan koneksi lokal Colab bila diminta. Bridge yang benar-benar tersambung mencetak `GOOGLE COLAB CONNECTED` dan mendaftarkan tool notebook. Jangan memulai training atau menjalankan semua sel hanya untuk membaca file model.
-
-Jika runtime belum terhubung atau Drive belum di-mount, pengguna perlu menyetujui koneksi/runtime dan dialog otorisasi `drive.mount` Google. Jangan menyalin cookie login, password, atau OAuth token ke chat, kode, atau konfigurasi repositori. Token handshake lokal di state/URL bridge juga jangan dipublikasikan.
-
-Audit model bersifat baca-saja: cari ekspor per aksara pada folder proyek di `/content/drive/MyDrive/Colab Notebooks/dataset-joints-1/`, catat path, ukuran, waktu modifikasi, metadata run dan SHA-256 `*-champion-int8.onnx`. Cocokkan hash dengan file lokal yang di-benchmark; bila berbeda, hasil benchmark lama tidak boleh diasumsikan berlaku untuk versi Drive. Jangan mengubah notebook training, menjalankan training ulang, atau menimpa deployment sebagai bagian pemeriksaan hash.
+Set `AI_CLASSIFIER_URL=http://127.0.0.1:8000` (server-only; never prefix with `NEXT_PUBLIC_`). `GET /health` returns 200 when the model is ready.
