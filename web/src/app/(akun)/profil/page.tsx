@@ -85,7 +85,7 @@ export default function ProfilPage() {
 
       {/* 3. Footer */}
       <footer className="w-full border-t border-white/10 py-4 px-6 text-center text-xs text-white/40">
-        Aksantara Student Cultural Dashboard • Platform Phygital Aksara Nusantara 2026
+        Aksantara Student Cultural Dashboard • Platform Edukasi Aksara Bali Dwipa 2026
       </footer>
     </main>
   );

@@ -20,7 +20,7 @@ export const SiswaTeacherNotes: React.FC<SiswaTeacherNotesProps> = ({
   const presetTemplates = [
     'Tingkatkan kelenturan garis belah ketupat Sulapa Eppa pada latihan kanvas.',
     'Pertahankan konsistensi ritme goresan; proporsi wianjana sangat harmonis.',
-    'Sempurnakan vokalisasi sandhangan Panghulu dan Pamepet pada naskah Sunda.',
+    'Sempurnakan vokalisasi gantungan dan gempelan pada naskah rontal Bali.',
     'Apresiasi tinggi atas ketelitian kontribusi preservasi naskah kuno rontal.',
   ];
 

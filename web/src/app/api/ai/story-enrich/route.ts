@@ -4,7 +4,7 @@ interface StoryEnrichRequest {
   karakterId: string;
   pembicaraNama: string;
   konteksCerita: string;
-  aksaraId: 'lontara' | 'sunda' | 'bali';
+  aksaraId: 'bali';
   glifTarget?: string;
 }
 
@@ -15,7 +15,7 @@ function isNonEmptyString(val: unknown, maxLen: number): val is string {
 function isStoryEnrichRequest(val: unknown): val is StoryEnrichRequest {
   if (typeof val !== 'object' || val === null || Array.isArray(val)) return false;
   const obj = val as Record<string, unknown>;
-  const aksaraValid = obj.aksaraId === 'lontara' || obj.aksaraId === 'sunda' || obj.aksaraId === 'bali';
+  const aksaraValid = obj.aksaraId === 'bali';
   if (!aksaraValid) return false;
   if (!isNonEmptyString(obj.karakterId, 128)) return false;
   if (!isNonEmptyString(obj.pembicaraNama, 128)) return false;
@@ -83,18 +83,12 @@ Fokus pada ciri visual, bentuk garis, atau petunjuk praktis cara membedakannya. 
 
   // Fallback deterministik berbasis lore lokal terkurasi
   const personaQuotes: Record<string, string> = {
-    sawerigading:
-      'Perhatikan bentuk sudut belah ketupat Sulapa Eppa Lontara. Garis-garisnya tegas dan mencerminkan unsur alam laut Luwu.',
-    purbasari:
-      'Aksara Sunda memiliki struktur ngalagena yang modular dan teratur. Amati lekukan cabang dan garis penopang di sekelilingnya.',
-    'lutung-kasarung':
-      'Perhatikan lekukan simetris pada aksara Sunda. Budi yang luhur tampak dari ketelitian setiap goresan.',
     'mpu-bharadah':
       'Aksara Bali dialirkan dengan kurvalinier yang luwes. Ikuti gelombang garis wianjana dengan tenang.',
     'calon-arang-arya':
       'Keseimbangan adalah kunci menulis aksara Bali. Cermati busur lengkung dan titik temu garisnya.',
     'guru-pamomong':
-      "Dalam aksara Lontara, bedakan induk huruf Ina' Sureq dan tanda vokalisasi Ana' Sureq dengan teliti.",
+      'Perhatikan lekukan anggah-ungguhing aksara Bali. Awali goresan dengan tarikan nafas tenang.',
   };
 
   const dialog =

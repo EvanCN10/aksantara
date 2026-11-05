@@ -40,7 +40,7 @@ export function Navbar({ isStarted: isStartedProp }: NavbarProps = {}) {
     }
   };
 
-  const isTrinitasActive = pathname === '/trinitas';
+  const isAksaraBaliActive = pathname === '/aksara-bali';
   const isTentangActive = pathname === '/tentang';
 
   return (
@@ -81,7 +81,7 @@ export function Navbar({ isStarted: isStartedProp }: NavbarProps = {}) {
               Aksantara
             </span>
             <span className="text-[10px] tracking-widest text-white/70 italic font-serif hidden sm:inline -mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]">
-              Harmoni Tiga Aksara
+              Pelestarian Aksara Bali
             </span>
           </div>
         </Link>
@@ -90,15 +90,15 @@ export function Navbar({ isStarted: isStartedProp }: NavbarProps = {}) {
         <ul className="hidden md:flex items-center gap-7 text-xs lg:text-sm font-medium tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]">
           <li>
             <Link
-              href="/trinitas"
-              onClick={(e) => handleNavClick(e, '/trinitas')}
+              href="/aksara-bali"
+              onClick={(e) => handleNavClick(e, '/aksara-bali')}
               className={`transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-[#ffd261] after:transition-all after:duration-300 ${
-                isTrinitasActive
+                isAksaraBaliActive
                   ? 'text-[#ffd261] font-semibold after:w-full'
                   : 'text-white/90 hover:text-[#ffd261] after:w-0 hover:after:w-full'
               }`}
             >
-              Trinitas Aksara
+              Aksara Bali
             </Link>
           </li>
           <li>

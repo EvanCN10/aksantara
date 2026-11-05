@@ -14,7 +14,7 @@
 import { createClient } from './client';
 
 export interface GlyphProgressPayload {
-  aksaraId: 'lontara' | 'sunda' | 'bali';
+  aksaraId: 'bali';
   glifSlug: string;
   simbol: string;
   score: number;

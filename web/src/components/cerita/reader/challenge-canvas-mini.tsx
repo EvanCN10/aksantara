@@ -11,7 +11,7 @@ import { ShinyButton } from '@/components/ui/shiny-button';
 import { playSuccessGamelan } from '@/lib/audio/sound-effects';
 
 interface ChallengeCanvasMiniProps {
-  aksaraId: 'lontara' | 'sunda' | 'bali';
+  aksaraId: 'bali';
   targetGlif: {
     slug: string;
     simbol: string;

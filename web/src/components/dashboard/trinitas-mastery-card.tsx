@@ -16,31 +16,31 @@ export const TrinitasMasteryCard: React.FC<TrinitasMasteryCardProps> = ({
 }) => {
   const aksaraMastery = [
     {
-      id: 'lontara',
-      nama: 'Lontara Bugis (Sulapa Eppa)',
-      persen: 86.4,
+      id: 'wianjana',
+      nama: 'Konsonan Wianjana (18 Glif)',
+      persen: 91.2,
       totalSiswa: 32,
       warna: 'from-amber-500 to-yellow-600',
       aksen: 'text-amber-400',
-      simbol: 'ᨒᨚᨈᨑ',
+      simbol: 'ᬓᬔᬕ',
     },
     {
-      id: 'sunda',
-      nama: 'Sunda Parahyangan (Kaganga)',
-      persen: 91.8,
-      totalSiswa: 34,
+      id: 'swalalita',
+      nama: 'Aksara Swalalita (12 Glif)',
+      persen: 84.8,
+      totalSiswa: 30,
+      warna: 'from-orange-500 to-amber-600',
+      aksen: 'text-orange-400',
+      simbol: 'ᬰᬱᬲ',
+    },
+    {
+      id: 'diakritik',
+      nama: 'Pangangge Suara & Tengenan',
+      persen: 89.5,
+      totalSiswa: 31,
       warna: 'from-emerald-500 to-teal-600',
       aksen: 'text-emerald-400',
-      simbol: 'ᮞᮥᮔ᮪ᮓ',
-    },
-    {
-      id: 'bali',
-      nama: 'Bali Dwipa (Wianjana)',
-      persen: 88.5,
-      totalSiswa: 31,
-      warna: 'from-rose-500 to-red-600',
-      aksen: 'text-rose-400',
-      simbol: 'ᬩᬮᬶ',
+      simbol: 'ᬶᬸᬾ',
     },
   ];
 
@@ -50,14 +50,14 @@ export const TrinitasMasteryCard: React.FC<TrinitasMasteryCardProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
         <div>
           <span className="text-xs uppercase tracking-wider text-[#ffd261] font-semibold">
-            Pilar 2: Diagnostik Kohor
+            Pilar 4: Diagnostik Kohor Guru
           </span>
           <h2 className="text-xl font-serif font-bold text-white mt-0.5">
-            Peta Kemahiran Trinitas Aksara Nusantara
+            Peta Kemahiran Aksara Bali Dwipa
           </h2>
         </div>
         <span className="text-xs text-white/50 bg-white/5 px-3 py-1 rounded-full border border-white/10 self-start sm:self-auto">
-          Evaluasi NusaAksara CNN & ViT
+          Evaluasi EfficientNet-B0 ONNX
         </span>
       </div>
 

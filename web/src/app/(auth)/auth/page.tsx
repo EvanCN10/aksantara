@@ -217,7 +217,7 @@ function AuthPageContent() {
             Menoreh Jejak Kebudayaan di Kanvas Masa Depan
           </h2>
           <p className="text-xs sm:text-sm text-white/80 mt-1 drop-shadow">
-            Lontara Bugis, Sunda Parahyangan, dan Bali Dwipa dalam satu ekosistem terpadu.
+            Preservasi warisan aksara Bali Dwipa berbasis AI vision dan cerita rontal interaktif.
           </p>
         </div>
       </div>
@@ -237,7 +237,7 @@ function AuthPageContent() {
             </h1>
             <p className="text-xs sm:text-sm text-white/70">
               {mode === 'login'
-                ? 'Akses kanvas belajar, riwayat cerita epos, dan konsol hardware Anda.'
+                ? 'Akses kanvas belajar interaktif dan riwayat cerita rontal Anda.'
                 : 'Daftarkan diri Anda untuk merevitalisasi aksara daerah Nusantara.'}
             </p>
 
@@ -312,7 +312,7 @@ function AuthPageContent() {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-white">Siswa / Pelajar</p>
-                  <p className="text-[10px] text-white/50">Kanvas, Cerita, Hardware</p>
+                  <p className="text-[10px] text-white/50">Kanvas Belajar & Cerita Rontal</p>
                 </div>
               </button>
 

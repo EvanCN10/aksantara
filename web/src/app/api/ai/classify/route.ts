@@ -87,7 +87,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Request harus berupa JSON valid berukuran maksimal 6 MiB.' }, { status: 422 });
   }
   if (!isGlyphRequest(body)) {
-    return NextResponse.json({ error: 'aksaraId harus sunda/lontara/bali, karakterSlug 1–128 karakter, image string PNG, dan dimensi opsional positif hingga 2048.' }, { status: 422 });
+    return NextResponse.json({ error: 'aksaraId harus bali, karakterSlug 1–128 karakter, image string PNG, dan dimensi opsional positif hingga 2048.' }, { status: 422 });
   }
   if (!isBoundedPng(body.image)) {
     return NextResponse.json({ error: 'Citra harus PNG data URL valid, maksimal 4 MiB, sisi 2048 dan 1.048.576 piksel.' }, { status: 400 });

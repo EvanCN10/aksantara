@@ -20,7 +20,7 @@ interface SiswaPillarTabsProps {
 }
 
 export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
-  const [activeTab, setActiveTab] = useState<'canvas' | 'hardware' | 'cerita' | 'preservasi'>('canvas');
+  const [activeTab, setActiveTab] = useState<'canvas' | 'cerita' | 'preservasi'>('canvas');
 
   return (
     <OrnateFrame className="bg-[#0c1a2c]/85 backdrop-blur-md p-6 rounded-2xl border border-white/10 shadow-xl space-y-6">
@@ -38,17 +38,7 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
           <span>Pilar 1: AI Canvas ({siswa.riwayatCanvas.length})</span>
         </button>
 
-        <button
-          onClick={() => setActiveTab('hardware')}
-          className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 ${
-            activeTab === 'hardware'
-              ? 'bg-[#ffd261] text-[#0c1a2c] shadow-lg shadow-[#ffd261]/20 font-bold'
-              : 'text-white/70 hover:text-white bg-white/5 hover:bg-white/10'
-          }`}
-        >
-          <Sliders className="w-4 h-4" />
-          <span>Pilar 3: Hardware Pad ({siswa.riwayatHardware.length})</span>
-        </button>
+
 
         <button
           onClick={() => setActiveTab('cerita')}
@@ -59,7 +49,7 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
           }`}
         >
           <BookOpen className="w-4 h-4" />
-          <span>Pilar 3: Epos Cerita ({siswa.riwayatEpos.length})</span>
+          <span>Pilar 2: Epos Cerita ({siswa.riwayatEpos.length})</span>
         </button>
 
         <button
@@ -71,7 +61,7 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
           }`}
         >
           <Scroll className="w-4 h-4" />
-          <span>Pilar 4: Preservasi ({siswa.riwayatPreservasi.length})</span>
+          <span>Pilar 3: Preservasi ({siswa.riwayatPreservasi.length})</span>
         </button>
       </div>
 
@@ -149,66 +139,6 @@ export const SiswaPillarTabs: React.FC<SiswaPillarTabsProps> = ({ siswa }) => {
                 <div className="mt-3 pt-3 border-t border-white/5 text-xs text-white/70 flex items-start gap-2">
                   <Bot className="w-4 h-4 text-[#ffd261] shrink-0 mt-0.5" />
                   <p><span className="font-semibold text-white">Diagnosis AI:</span> {item.catatanAi}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Tab 2: Hardware Tactile Pad */}
-      {activeTab === 'hardware' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-serif font-bold text-white uppercase tracking-wider">
-              Log Interaksi Konsol Fisik IoT & Rekor Mini-Game
-            </h3>
-            <span className="text-xs text-purple-300">Web Serial API 115200 Baud</span>
-          </div>
-
-          <div className="space-y-3">
-            {siswa.riwayatHardware.map((item) => (
-              <div
-                key={item.id}
-                className="bg-[#060d16]/70 border border-white/10 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-purple-500/40 transition"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-300 shrink-0">
-                    <Sliders className="w-5 h-5" />
-                  </span>
-                  <div>
-                    <h4 className="text-sm font-bold text-white">{item.gameNama}</h4>
-                    <p className="text-xs text-white/50 mt-0.5">
-                      Target: <span className="font-serif font-bold text-[#ffd261] text-sm">{item.targetSukuKata}</span> • {item.tanggal}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      {item.kartuDigunakan.map((kartu, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-0.5 rounded text-[11px] bg-white/5 border border-white/10 text-white/80 inline-flex items-center gap-1"
-                        >
-                          <CreditCard className="w-3 h-3 text-white/60" />
-                          <span>{kartu}</span>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-6 justify-between md:justify-end border-t md:border-t-0 border-white/5 pt-2 md:pt-0">
-                  <div className="text-left md:text-right">
-                    <span className="text-[10px] text-white/50 block">Waktu Selesai</span>
-                    <span className="text-xs font-mono text-white/90">{item.durasiDetik} Detik</span>
-                  </div>
-                  <div className="text-left md:text-right">
-                    <span className="text-[10px] text-white/50 block">Skor Sesi</span>
-                    <span className="text-base font-mono font-bold text-purple-300">
-                      {item.skor} Pts
-                    </span>
-                  </div>
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    {item.status}
-                  </span>
                 </div>
               </div>
             ))}

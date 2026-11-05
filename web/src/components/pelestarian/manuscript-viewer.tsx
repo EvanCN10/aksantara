@@ -91,11 +91,7 @@ export function ManuscriptViewer({ manuskrip }: ManuscriptViewerProps) {
               className="absolute inset-0"
               style={{
                 background:
-                  manuskrip.aksaraId === 'bali'
-                    ? 'linear-gradient(90deg, #3d2817 0%, #523820 25%, #634529 50%, #523820 75%, #3d2817 100%)'
-                    : manuskrip.aksaraId === 'sunda'
-                    ? 'linear-gradient(90deg, #2b2216 0%, #473824 25%, #59472e 50%, #473824 75%, #2b2216 100%)'
-                    : 'linear-gradient(90deg, #261f1a 0%, #3d3128 25%, #4f4035 50%, #3d3128 75%, #261f1a 100%)',
+                  'linear-gradient(90deg, #3d2817 0%, #523820 25%, #634529 50%, #523820 75%, #3d2817 100%)',
               }}
             />
           )}

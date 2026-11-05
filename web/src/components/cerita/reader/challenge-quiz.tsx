@@ -83,7 +83,7 @@ export function ChallengeQuiz({
         {pertanyaan}
       </h3>
 
-      {/* Options List (Tactile Duolingo style 3D buttons) */}
+      {/* Options List (Interactive 3D buttons) */}
       <div className="space-y-2.5 pt-1">
         {opsiJawaban.map((opt) => {
           const isSelected = selectedId === opt.id;

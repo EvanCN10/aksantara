@@ -59,13 +59,13 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
   const router = useRouter();
   const unwrappedParams = use(params);
 
-  const rawAksara = unwrappedParams?.aksara?.toLowerCase() || 'lontara';
+  const rawAksara = unwrappedParams?.aksara?.toLowerCase() || 'bali';
   const rawKarakter = unwrappedParams?.karakter?.toLowerCase() || 'ka';
 
-  const aksaraKey = rawAksara in KATALOG_DATA ? rawAksara : 'lontara';
-  const dataAksara: AksaraDetail = getAksaraData(aksaraKey) || KATALOG_DATA['lontara'];
+  const aksaraKey = 'bali';
+  const dataAksara: AksaraDetail = getAksaraData('bali') || KATALOG_DATA['bali'];
 
-  const trainingCatalog = getModelTrainingCatalog(aksaraKey as 'lontara' | 'sunda' | 'bali');
+  const trainingCatalog = getModelTrainingCatalog('bali');
   const glif = trainingCatalog.find((entry) => entry.slug === rawKarakter);
   const currentIndex = trainingCatalog.findIndex((entry) => entry.slug === rawKarakter);
   const nextGlif = trainingCatalog[currentIndex + 1];
@@ -148,7 +148,7 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
   // Experimental class probabilities never award mastery, XP, or practice progress.
   const handleEvaluate = async () => {
     if (!glif || strokeCount === 0 || isEvaluating) return;
-    const isSupported = getClassifierTarget(aksaraKey as 'lontara' | 'sunda' | 'bali', glif.slug) !== null;
+    const isSupported = getClassifierTarget('bali', glif.slug) !== null;
     if (!isSupported) return;
     const requestId = ++evaluationRequestRef.current;
     setIsEvaluating(true);
@@ -158,7 +158,7 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
       const imageData = canvasRef.current?.getImageData();
       if (!imageData) throw new Error('Snapshot kanvas tidak tersedia. Silakan coba lagi.');
       const result = await evaluateGlyph({
-        aksaraId: aksaraKey as 'lontara' | 'sunda' | 'bali',
+        aksaraId: 'bali',
         karakterSlug: glif.slug,
         image: '',
       }, imageData);
@@ -336,11 +336,7 @@ export default function LatihanCanvasPage({ params }: LatihanCanvasPageProps) {
                 <strong className="text-[#ffd261] font-semibold block mb-0.5">
                   Petunjuk Tarikan Tradisional:
                 </strong>
-                {aksaraKey === 'lontara'
-                  ? 'Goreskan sudut-sudut belah ketupat sulapa eppa dengan tarikan tegas tanpa ragu. Setiap sudut merepresentasikan air, api, angin, dan tanah.'
-                  : aksaraKey === 'sunda'
-                  ? 'Konsonan ngalagena ditarik dari garis vertikal kiri penopang sebelum menyambung garis horizontal kubah.'
-                  : 'Aksara Bali dialirkan dengan satu nafas lengkungan kurvalinier, menjaga ketenangan layaknya menyurat di atas daun rontal.'}
+                {'Aksara Bali dialirkan dengan satu nafas lengkungan kurvalinier, menjaga ketenangan layaknya menyurat di atas daun rontal.'}
               </div>
             </div>
           </section>

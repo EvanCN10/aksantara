@@ -1,17 +1,13 @@
-import baliLabels from '../../../../ai/deployment/models/bali/labels.json';
-import baliManifest from '../../../../ai/deployment/models/bali/manifest.json';
-import lontaraLabels from '../../../../ai/deployment/models/lontara/labels.json';
-import lontaraManifest from '../../../../ai/deployment/models/lontara/manifest.json';
-import sundaLabels from '../../../../ai/deployment/models/sunda/labels.json';
-import sundaManifest from '../../../../ai/deployment/models/sunda/manifest.json';
-import classifierConfig from '../../../../shared/aksara-classifier.json';
+import baliLabels from '../../../public/models/bali/labels.json';
+import baliManifest from '../../../public/models/bali/manifest.json';
+import classifierConfig from '../model/aksara-classifier.json';
 
 import { KATALOG_DATA, MODEL_GLIF_DATA, type GlifData } from './trinitas';
 
-type AksaraId = 'lontara' | 'sunda' | 'bali';
+type AksaraId = 'bali';
 
-const MODEL_LABELS = { lontara: lontaraLabels, sunda: sundaLabels, bali: baliLabels };
-const MODEL_MANIFESTS = { lontara: lontaraManifest, sunda: sundaManifest, bali: baliManifest };
+const MODEL_LABELS = { bali: baliLabels };
+const MODEL_MANIFESTS = { bali: baliManifest };
 
 function indexGlyphs(aksaraId: AksaraId): Map<string, GlifData> {
   const glyphs = new Map<string, GlifData>();
@@ -53,11 +49,9 @@ function buildCatalog(aksaraId: AksaraId): readonly GlifData[] {
 }
 
 const MODEL_CATALOGS: Record<AksaraId, readonly GlifData[]> = {
-  lontara: buildCatalog('lontara'),
-  sunda: buildCatalog('sunda'),
   bali: buildCatalog('bali'),
 };
 
-export function getModelTrainingCatalog(aksaraId: AksaraId): readonly GlifData[] {
-  return MODEL_CATALOGS[aksaraId];
+export function getModelTrainingCatalog(aksaraId: string = 'bali'): readonly GlifData[] {
+  return MODEL_CATALOGS['bali'];
 }

@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { Navbar } from '@/components/layout/navbar';
 
 export const metadata: Metadata = {
-  title: 'Aksantara - Harmoni Tiga Aksara Nusantara',
+  title: 'Aksantara - Pelatih Menulis Aksara Bali Berbasis AI',
   description:
-    'Platform edukasi multi-modal berbasis AI klasifikasi dan perangkat kinestetik (Phygital) pelestarian Trinitas Aksara Nusantara (Lontara, Sunda, Bali).',
+    'Platform edukasi pelestarian Aksara Bali berbasis AI klasifikasi bentuk goresan kanvas.',
 };
 
 export default function PublikLayout({

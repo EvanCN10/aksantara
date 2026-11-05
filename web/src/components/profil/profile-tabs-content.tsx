@@ -6,19 +6,15 @@ import Link from 'next/link';
 import {
   PenTool,
   BookOpen,
-  Cpu,
   Award,
   ScrollText,
   Compass,
   Sparkles,
-  FlaskConical,
-  Zap,
   Star,
 } from 'lucide-react';
 import {
   SCRIPT_MASTERY_LIST,
   STORY_PROGRESS_LIST,
-  HARDWARE_RECORD_LIST,
   CULTURAL_BADGE_LIST,
 } from '@/data/profil/profil-data';
 
@@ -28,32 +24,19 @@ function renderBadgeIcon(iconName: string) {
       return <ScrollText className="w-7 h-7 stroke-[1.5]" />;
     case 'Compass':
       return <Compass className="w-7 h-7 stroke-[1.5]" />;
-    case 'Cpu':
-      return <Cpu className="w-7 h-7 stroke-[1.5]" />;
     case 'Sparkles':
     default:
       return <Sparkles className="w-7 h-7 stroke-[1.5]" />;
   }
 }
 
-function renderHardwareIcon(iconName: string) {
-  switch (iconName) {
-    case 'FlaskConical':
-      return <FlaskConical className="w-6 h-6 stroke-[1.5] text-[#ffd261]" />;
-    case 'Zap':
-    default:
-      return <Zap className="w-6 h-6 stroke-[1.5] text-[#38bdf8]" />;
-  }
-}
-
 export function ProfileTabsContent() {
-  const [activeTab, setActiveTab] = useState<'aksara' | 'cerita' | 'hardware' | 'lencana'>('aksara');
+  const [activeTab, setActiveTab] = useState<'aksara' | 'cerita' | 'lencana'>('aksara');
 
   const tabs = [
-    { id: 'aksara', label: '1. Penguasaan Aksara (AI)', Icon: PenTool },
-    { id: 'cerita', label: '2. Jejak Epos Cerita', Icon: BookOpen },
-    { id: 'hardware', label: '3. Rekor Hardware Pad', Icon: Cpu },
-    { id: 'lencana', label: '4. Piagam & Lencana Budaya', Icon: Award },
+    { id: 'aksara', label: '1. Penguasaan Aksara Bali', Icon: PenTool },
+    { id: 'cerita', label: '2. Jejak Epos Calon Arang', Icon: BookOpen },
+    { id: 'lencana', label: '3. Piagam & Lencana Budaya', Icon: Award },
   ] as const;
 
   return (
@@ -80,9 +63,9 @@ export function ProfileTabsContent() {
         })}
       </div>
 
-      {/* TAB 1: PENGUASAAN AKSARA (AI CANVAS MASTERY) */}
+      {/* TAB 1: PENGUASAAN AKSARA BALI (AI CANVAS MASTERY) */}
       {activeTab === 'aksara' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-in fade-in duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in duration-300">
           {SCRIPT_MASTERY_LIST.map((item) => {
             const percent = Math.round((item.glifDikuasai / item.totalGlif) * 100);
 
@@ -114,10 +97,10 @@ export function ProfileTabsContent() {
                   <div className="my-2">
                     <div className="flex items-baseline justify-between mb-1">
                       <span className="text-xl sm:text-2xl font-bold text-white">
-                        {item.glifDikuasai} / {item.totalGlif}
+                        {item.glifDikuasai} / {item.totalGlif} Glif
                       </span>
                       <span className="text-xs font-mono font-semibold text-emerald-400">
-                        {item.akurasiRataRata}% Akurasi AI
+                        {item.akurasiRataRata}% Akurasi Model
                       </span>
                     </div>
 
@@ -167,7 +150,7 @@ export function ProfileTabsContent() {
 
       {/* TAB 2: JEJAK EPOS CERITA (STORY CHAPTERS) */}
       {activeTab === 'cerita' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-in fade-in duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in duration-300">
           {STORY_PROGRESS_LIST.map((story) => (
             <div
               key={story.eposSlug}
@@ -229,58 +212,9 @@ export function ProfileTabsContent() {
         </div>
       )}
 
-      {/* TAB 3: REKOR HARDWARE PAD (TACTILE ARENA) */}
-      {activeTab === 'hardware' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-300">
-          {HARDWARE_RECORD_LIST.map((rec) => (
-            <div
-              key={rec.gameJenis}
-              className="rounded-2xl bg-[#141e2e]/90 border border-white/10 p-5 sm:p-6 flex flex-col justify-between shadow-lg"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#ffd261]">
-                    {renderHardwareIcon(rec.icon)}
-                  </div>
-                  <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                    Akurasi {rec.akurasiRataRata}%
-                  </span>
-                </div>
-
-                <h3
-                  className="text-base sm:text-lg font-bold text-white mb-1"
-                  style={{ fontFamily: 'var(--font-philosopher)' }}
-                >
-                  {rec.judul}
-                </h3>
-                <p className="text-xs text-white/60 mb-4">{rec.catatanKhusus}</p>
-
-                <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-black/40 border border-white/5 text-center">
-                  <div>
-                    <span className="text-[10px] font-mono text-white/40 block">Skor Tertinggi</span>
-                    <span className="text-lg font-bold text-[#ffd261]">{rec.skorTertinggi}</span>
-                  </div>
-                  <div className="border-l border-white/10">
-                    <span className="text-[10px] font-mono text-white/40 block">Total Sesi</span>
-                    <span className="text-lg font-bold text-white">{rec.totalSesiDimainkan} Sesi</span>
-                  </div>
-                </div>
-              </div>
-
-              <Link
-                href={`/hardware/game/${rec.gameJenis}`}
-                className="mt-5 w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 text-xs font-semibold text-center transition-all cursor-pointer block"
-              >
-                Mainkan di Tactile Pad →
-              </Link>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* TAB 4: PIAGAM & LENCANA BUDAYA (ANTI-SLOP METALLIC BADGES) */}
+      {/* TAB 3: PIAGAM & LENCANA BUDAYA */}
       {activeTab === 'lencana' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-in fade-in duration-300">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-300">
           {CULTURAL_BADGE_LIST.map((badge, idx) => {
             const isGold = badge.tier === 'emas';
             const isSilver = badge.tier === 'perak';
@@ -304,21 +238,16 @@ export function ProfileTabsContent() {
                 style={{ animationDelay: `${idx * 60}ms` }}
               >
                 <div>
-                  {/* Ornate Metallic Medal Container with 3D Periodic Shimmer */}
                   <div
                     className={`w-16 h-16 rounded-2xl border-2 flex items-center justify-center mb-3 mx-auto relative overflow-hidden transition-transform duration-300 group-hover:scale-110 ${tierBadgeStyle}`}
                   >
-                    {/* Corner shine highlight */}
                     <div className="absolute top-0 right-0 w-8 h-8 bg-white/10 rounded-full blur-sm" />
-                    
-                    {/* 3D Periodic Metallic Shimmer Ray */}
                     <div className="pointer-events-none absolute inset-0 z-10 w-full h-full overflow-hidden">
                       <div
                         className="w-8 h-full bg-gradient-to-r from-transparent via-white/45 to-transparent blur-[1px] animate-medal-shimmer"
                         style={{ animationDelay: `${(idx % 4) * 0.9}s` }}
                       />
                     </div>
-
                     {renderBadgeIcon(badge.icon)}
                   </div>
 

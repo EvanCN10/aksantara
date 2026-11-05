@@ -1,11 +1,11 @@
-import classifierConfig from '../../../../shared/aksara-classifier.json';
+import classifierConfig from '@/data/model/aksara-classifier.json';
 
 export const CLASSIFICATION_ACCEPTANCE_THRESHOLD = classifierConfig.acceptanceThreshold;
 
 export type ClassifierStatus = 'benar' | 'perlu_review';
 
 export interface GlyphInferenceInput {
-  aksaraId: 'lontara' | 'sunda' | 'bali';
+  aksaraId: 'bali';
   karakterSlug: string;
   image: string;
   strokes?: unknown;
@@ -35,48 +35,22 @@ export interface GlyphInferenceOutput {
   top3: GlyphClassProbability[];
 }
 
-export function getClassifierTarget(aksaraId: GlyphInferenceInput['aksaraId'], slug: string): string | null {
-  const scriptConfig = classifierConfig.scripts[aksaraId];
-  if (!scriptConfig) return null;
-  const targets = scriptConfig.targets as Record<string, string>;
-  return targets[slug] ?? null;
+export function getClassifierTarget(aksaraId: string, slug: string): string | null {
+  const scriptConfig = (classifierConfig.scripts as Record<string, unknown>)[aksaraId] ?? (classifierConfig.scripts as Record<string, unknown>)['bali'];
+  if (!scriptConfig || typeof scriptConfig !== 'object') return null;
+  const targets = (scriptConfig as { targets: Record<string, string> }).targets;
+  return targets?.[slug] ?? null;
 }
 
-export function getPredictionDisplayName(aksaraId: GlyphInferenceInput['aksaraId'], sourceLabel: string): string {
-  const scriptConfig = classifierConfig.scripts[aksaraId];
-  if (!scriptConfig) return 'Kelas belum dipetakan';
-  const displayNames = scriptConfig.displayNames as Record<string, string>;
-  return displayNames[sourceLabel] ?? 'Kelas belum dipetakan';
+export function getPredictionDisplayName(aksaraId: string, sourceLabel: string): string {
+  const scriptConfig = (classifierConfig.scripts as Record<string, unknown>)[aksaraId] ?? (classifierConfig.scripts as Record<string, unknown>)['bali'];
+  if (!scriptConfig || typeof scriptConfig !== 'object') return 'Kelas belum dipetakan';
+  const displayNames = (scriptConfig as { displayNames: Record<string, string> }).displayNames;
+  return displayNames?.[sourceLabel] ?? 'Kelas belum dipetakan';
 }
-export const LONTARA_SYLLABLE_BASE: Record<string, string> = {
-  Be: 'Ba', Bi: 'Ba', Bo: 'Ba', Bu: 'Ba',
-  Ce: 'Ca', Ci: 'Ca', Co: 'Ca', Cu: 'Ca',
-  De: 'Da', Di: 'Da', Do: 'Da', Du: 'Da',
-  E: 'A', I: 'A', O: 'A', U: 'A',
-  Ge: 'Ga', Gi: 'Ga', Go: 'Ga', Gu: 'Ga',
-  He: 'Ha', Hi: 'Ha', Ho: 'Ha', Hu: 'Ha',
-  Je: 'Ja', Ji: 'Ja', Jo: 'Ja', Ju: 'Ja',
-  Ke: 'Ka', Ke_: 'Ka', Ki: 'Ka', Ko: 'Ka', Ku: 'Ka',
-  Le: 'La', Li: 'La', Lo: 'La', Lu: 'La',
-  Me: 'Ma', Mi: 'Ma', Mo: 'Ma', Mu: 'Ma',
-  Mpe: 'Mpa', Mpi: 'Mpa', Mpo: 'Mpa', Mpu: 'Mpa',
-  Ne: 'Na', Ni: 'Na', No: 'Na', Nu: 'Na',
-  Nce: 'Nca', Nci: 'Nca', Nco: 'Nca', Ncu: 'Nca',
-  Nge: 'Nga', Ngi: 'Nga', Ngo: 'Nga', Ngu: 'Nga',
-  Nke: 'Nka', Nki: 'Nka', Nko: 'Nka', Nku: 'Nka',
-  Nre: 'Nra', Nri: 'Nra', Nro: 'Nra', Nru: 'Nra',
-  Nye: 'Nya', Nyi: 'Nya', Nyo: 'Nya', Nyu: 'Nya',
-  Pe: 'Pa', Pi: 'Pa', Po: 'Pa', Pu: 'Pa',
-  Re: 'Ra', Ri: 'Ra', Ro: 'Ra', Ru: 'Ra',
-  Se: 'Sa', Si: 'Sa', So: 'Sa', Su: 'Sa',
-  Te: 'Ta', Ti: 'Ta', To: 'Ta', Tu: 'Ta',
-  We: 'Wa', Wi: 'Wa', Wo: 'Wa', Wu: 'Wa',
-  Ye: 'Ya', Yi: 'Ya', Yo: 'Ya',
-};
 
-export function getBaseConsonantSourceLabel(aksaraId: string, targetSourceLabel: string): string | null {
-  if (aksaraId !== 'lontara') return null;
-  return LONTARA_SYLLABLE_BASE[targetSourceLabel] ?? null;
+export function getBaseConsonantSourceLabel(_aksaraId: string, _targetSourceLabel: string): string | null {
+  return null;
 }
 
 export const PNG_DATA_URL_PREFIX = 'data:image/png;base64,';
@@ -99,7 +73,7 @@ function isNonemptyString(value: unknown, maxLength: number): value is string {
 
 export function isGlyphRequest(value: unknown): value is GlyphInferenceInput {
   if (!isRecord(value)) return false;
-  return (value.aksaraId === 'lontara' || value.aksaraId === 'sunda' || value.aksaraId === 'bali')
+  return (value.aksaraId === 'bali')
     && isNonemptyString(value.karakterSlug, 128)
     && typeof value.image === 'string'
     && (value.canvasWidth === undefined || isBoundedNumber(value.canvasWidth, Number.MIN_VALUE, MAX_IMAGE_DIMENSION))
@@ -118,6 +92,7 @@ function isClassProbability(value: unknown): value is GlyphClassProbability {
     && isNonemptyString(value.sourceLabel, 512)
     && isBoundedNumber(value.probability, 0, 1);
 }
+
 export function isGlyphInferenceOutput(value: unknown): value is GlyphInferenceOutput {
   if (!isRecord(value) || Object.keys(value).length !== 13) return false;
   const statusValid = value.status === 'benar' || value.status === 'perlu_review';

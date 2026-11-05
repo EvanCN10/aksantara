@@ -4,7 +4,7 @@ export interface KurasiStatusItem {
   id: string;
   kodeArsip: string;
   judulNaskah: string;
-  aksaraId: 'lontara' | 'sunda' | 'bali';
+  aksaraId: 'bali';
   pengusulNama: string;
   submittedAt: string;
   proposedTranscription: string;

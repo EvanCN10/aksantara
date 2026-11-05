@@ -37,7 +37,7 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
   const router = useRouter();
   const unwrappedParams = use(params);
 
-  const rawJudul = unwrappedParams?.judul?.toLowerCase() || 'sawerigading';
+  const rawJudul = unwrappedParams?.judul?.toLowerCase() || 'calon-arang';
   const babNomor = Number(unwrappedParams?.n) || 1;
 
   // Load Scenario Data
@@ -140,7 +140,7 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        karakterId: beat.karakterId || 'sawerigading',
+        karakterId: beat.karakterId || 'calon-arang-arya',
         pembicaraNama: speaker,
         konteksCerita: `${beat.pertanyaan || beat.teks}. ${wrongContext}. Petunjuk: ${fallbackText}`,
         aksaraId: skenario.aksaraId,
@@ -266,17 +266,7 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
     setAssistanceDialog(null);
     setIsChapterFinished(false);
   };
-  const ambientCultureColor = useMemo(() => {
-    switch (skenario.aksaraId) {
-      case 'sunda':
-        return 'rgba(74,222,128,0.12)';
-      case 'bali':
-        return 'rgba(249,115,22,0.12)';
-      case 'lontara':
-      default:
-        return 'rgba(56,189,248,0.08)';
-    }
-  }, [skenario.aksaraId]);
+  const ambientCultureColor = 'rgba(249,115,22,0.12)';
 
   return (
     <main className="relative min-h-screen text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col justify-between">
@@ -478,7 +468,7 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
 // Body Payload:
 // {
 //   userId: string,
-//   eposSlug: string,       // e.g. "sawerigading"
+//   eposSlug: string,       // e.g. "calon-arang"
 //   babNomor: number,       // e.g. 1
 //   starsEarned: number,    // e.g. 3
 //   xpEarned: number        // e.g. 150

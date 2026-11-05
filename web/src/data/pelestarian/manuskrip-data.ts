@@ -1,5 +1,5 @@
 // ============================================================================
-// DATA KOLEKSI MANUSKRIP KUNO (PILAR 4 - PRESERVASI BUDAYA)
+// DATA KOLEKSI MANUSKRIP KUNO RONTAL (AKSARA BALI)
 // ============================================================================
 
 export interface ManuskripItem {
@@ -7,7 +7,7 @@ export interface ManuskripItem {
   kodeArsip: string;
   judul: string;
   imageUrl?: string;
-  aksaraId: 'lontara' | 'sunda' | 'bali';
+  aksaraId: 'bali';
   aksaraNama: string;
   asalKoleksi: string;
   abad: string;
@@ -32,31 +32,31 @@ export const DAFTAR_MANUSKRIP: ManuskripItem[] = [
     simbolSampel: 'ᬑᬁ ᬅᬯᬶᬖ᭄ᬦᬫᬲ᭄ᬢᬸ ᬦᬫᬲᬶᬤ᭄ᬥᬫ᭄',
   },
   {
-    id: 'sewaka-darma-pnri',
-    kodeArsip: 'PNRI/KROPAK-408',
-    judul: 'Carita Sewaka Darma Lembar 4',
-    imageUrl: '/images/manuscripts/manuskrip-sewaka-darma-sunda.webp',
-    aksaraId: 'sunda',
-    aksaraNama: 'Aksara Sunda Kuno (Kropak)',
-    asalKoleksi: 'Perpustakaan Nasional Republik Indonesia (PNRI)',
-    abad: 'Abad ke-15 Masehi',
-    mediaNaskah: 'Kertas Kulit Kayu Dluwang Saeh',
+    id: 'sutasoma-kirtya',
+    kodeArsip: 'GK/KROPAK-139/ST',
+    judul: 'Kakawin Sutasoma Pupuh 139',
+    imageUrl: '/images/manuscripts/manuskrip-calon-arang-bali.webp',
+    aksaraId: 'bali',
+    aksaraNama: 'Aksara Bali (Bhinneka Tunggal Ika)',
+    asalKoleksi: 'Gedong Kirtya Singaraja',
+    abad: 'Abad ke-14 Masehi',
+    mediaNaskah: 'Daun Lontar Rontal Bertali Benang Tridatu',
     deskripsi:
-      'Naskah tuntunan moral luhur spiritual Parahyangan beraksara Sunda Kuno Ngalagena purba. Menguraikan laku tapa dan kesucian budi manusia.',
-    simbolSampel: 'ᮔᮤᮠᮔ᮪ ᮞᮤᮔᮥᮛᮒ᮪ ᮓᮩᮚᮤ ᮕᮥᮔ᮪',
+      'Naskah rontal mahakarya Mpu Tantular yang memuat falsafah persatuan bangsa "Bhinneka Tunggal Ika tan Hana Dharma Mangrwa". Diukir dengan aksara Bali Swalalita klasik.',
+    simbolSampel: 'ᬩ᭄ᬳᬶᬦ᭄ᬦᬾᬓ ᬢᬸᬗ᭄ᬕᬮ᭄ ᬇᬓ ᬢᬦ᭄ ᬳᬦ ᬥᬃᬫ ᬫᬗ᭄ᬃᬯ',
   },
   {
-    id: 'sureq-galigo-eap',
-    kodeArsip: 'BL/EAP-153/LWU',
-    judul: 'Sureq Galigo Naskah Luwu Jilid 2',
-    imageUrl: '/images/manuscripts/manuskrip-sureq-galigo-lontara.webp',
-    aksaraId: 'lontara',
-    aksaraNama: 'Aksara Lontara Bugis (Sulapa Eppa)',
-    asalKoleksi: 'Koleksi Naskah Keraton Luwu & Arsip Leiden',
-    abad: 'Abad ke-18 Masehi',
-    mediaNaskah: 'Daun Lontar Ijuk Berbingkai Kayu Bitti',
+    id: 'usadha-bali',
+    kodeArsip: 'GK/LNT-042/PRM',
+    judul: 'Lontar Usadha Taru Pramana',
+    imageUrl: '/images/manuscripts/manuskrip-calon-arang-bali.webp',
+    aksaraId: 'bali',
+    aksaraNama: 'Aksara Bali (Pengobatan Tradisional)',
+    asalKoleksi: 'Pusat Dokumentasi Kebudayaan Bali',
+    abad: 'Abad ke-17 Masehi',
+    mediaNaskah: 'Daun Lontar Rontal Nyurat Usadha',
     deskripsi:
-      'Petikan naskah epik maritim terpanjang di dunia Sureq Galigo. Mengisahkan pelayaran Sawerigading mengarungi Laut Jawa bertuliskan aksara belah ketupat.',
-    simbolSampel: 'ᨕᨗᨐᨊ ᨔᨙᨓ ᨀᨑᨙᨅ ᨆᨊᨘᨑᨘ',
+      'Kompilasi pengetahuan medis dan botani tradisional Bali mengenai khasiat tanaman obat nusantara dalam tulisan aksara Bali Wianjana bersistem vokal lengkap.',
+    simbolSampel: 'ᬑᬁ ᬅᬯᬶᬖ᭄ᬦᬫᬲ᭄ᬢᬸ',
   },
 ];

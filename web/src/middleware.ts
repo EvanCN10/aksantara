@@ -6,7 +6,6 @@ const PROTECTED_PREFIXES = [
   '/mulai',
   '/latihan',
   '/cerita',
-  '/hardware',
   '/pelestarian',
   '/profil',
   '/guru',

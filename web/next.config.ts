@@ -41,8 +41,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            // Izinkan Web Serial API untuk hardware IoT di origin aplikasi
-            value: 'serial=(self), camera=(), microphone=(), geolocation=()',
+            value: 'camera=(), microphone=(), geolocation=()',
           },
         ],
       },

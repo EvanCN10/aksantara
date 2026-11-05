@@ -358,10 +358,7 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
 
             {/* Proportion bounds box */}
             <div className={`${isCompact ? 'w-[70%] h-[70%] max-w-[240px] max-h-[240px]' : 'w-[70%] h-[70%] max-w-[340px] max-h-[340px]'} rounded-xl border border-[#D4A373]/15 pointer-events-none relative flex items-center justify-center`}>
-              {/* Special Sulapa Eppa Diamond Guide for Lontara */}
-              {aksaraId.toLowerCase() === 'lontara' && (
-                <div className="w-[78%] h-[78%] border border-[#ffd261]/20 rotate-45 pointer-events-none" />
-              )}
+
               {/* Meanline & Baseline indicators */}
               <div className="absolute top-[28%] inset-x-0 h-px border-b border-dotted border-[#D4A373]/10" />
               <div className="absolute bottom-[28%] inset-x-0 h-px border-b border-dotted border-[#D4A373]/10" />

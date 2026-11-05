@@ -12,7 +12,7 @@ const philosopher = Philosopher({
 
 export const metadata: Metadata = {
   title: 'Aksantara',
-  description: 'Platform edukasi pelestarian Trinitas Aksara Nusantara (Lontara, Sunda, Bali)',
+  description: 'Platform edukasi pelestarian Aksara Bali Dwipa berbasis AI vision dan cerita rontal interaktif.',
   icons: {
     icon: '/images/ui/logo/MAIN LOGO AKSANTARA.png',
     shortcut: '/images/ui/logo/MAIN LOGO AKSANTARA.png',

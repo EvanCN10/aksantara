@@ -22,40 +22,40 @@ const PILLARS: Pillar[] = [
     id: 'pilar-1',
     pilar: 'Pilar I',
     nama: 'Precision AI Writing Coach',
-    desc: 'Latih tulisan aksara di kanvas dan lihat prediksi AI untuk karakter yang didukung.',
+    desc: 'Latih tulisan aksara Bali di kanvas dan evaluasi bentuk dengan model AI on-device.',
     img: '/images/ui/landing-page/card/black-bg-card.png',
     accent: '#D4A373',
-    tag: 'Latihan kanvas · AI eksperimen',
-    href: '/mulai',
+    tag: 'Latihan kanvas · AI Bali',
+    href: '/latihan/web/bali',
   },
   {
     id: 'pilar-2',
     pilar: 'Pilar II',
-    nama: 'Trinitas Aksara Nusantara',
-    desc: 'Kurikulum terstruktur tiga aksara dengan kontras visual tinggi: Lontara (sudut), Sunda (modular), dan Bali (kurvalinier).',
+    nama: 'Kurikulum Aksara Bali',
+    desc: 'Kurikulum terstruktur wianjana dan swalalita dengan kekayaan kurvalinier warisan naskah lontar Bali.',
     img: '/images/ui/landing-page/card/green-bg-card.png',
     accent: '#2A9D8F',
-    tag: 'Lontara · Sunda · Bali',
-    href: '/trinitas',
+    tag: 'Aksara Bali · 30 Glif',
+    href: '/aksara-bali',
   },
   {
     id: 'pilar-3',
     pilar: 'Pilar III',
-    nama: 'Gamified Engagement Layer',
-    desc: 'Petualangan naratif Story Mode dan tantangan fisik Tactile Phygital Arena berbasis sensor IoT.',
+    nama: 'Gamified Story Mode',
+    desc: 'Petualangan naratif Story Mode mengangkat kisah klasik Bali Calon Arang dan Prabu Airlangga.',
     img: '/images/ui/landing-page/card/purple-bg-card.png',
     accent: '#A78BFA',
-    tag: 'Story Mode · IoT Phygital',
+    tag: 'Story Mode · Calon Arang',
     href: '/cerita',
   },
   {
     id: 'pilar-4',
     pilar: 'Pilar IV',
     nama: 'Human-in-the-Loop Preservasi',
-    desc: 'Tulis transliterasi dari foto naskah, lalu kirim untuk ditinjau guru atau ahli aksara.',
+    desc: 'Tulis transliterasi dari foto naskah lontar kuno, lalu kirim untuk ditinjau guru atau ahli aksara.',
     img: '/images/ui/landing-page/card/yelllow-bg-card.png',
     accent: '#ffd261',
-    tag: 'Transliterasi manual · Review manusia',
+    tag: 'Transliterasi manual · Review guru',
     href: '/pelestarian',
   },
 ];
@@ -725,9 +725,9 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
             opacity: isStarted ? undefined : 0,
           }}
         >
-          Lestarikan Aksara Nusantara lewat AI dan permainan interaktif
+          Lestarikan Aksara Bali lewat AI dan pembelajaran interaktif
           <br className="hidden sm:inline" />
-          {' '}Revitalisasi harmoni Lontara, Sunda, dan Bali lewat presisi AI dan sentuhan kinestetik.
+          {' '}Revitalisasi warisan sastra naskah lontar Bali lewat presisi AI on-device.
         </p>
 
         <div

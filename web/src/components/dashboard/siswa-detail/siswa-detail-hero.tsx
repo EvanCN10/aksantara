@@ -144,26 +144,26 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
           </div>
         </div>
 
-        {/* Pilar 2 & 3: Hardware */}
+        {/* Glif Terlatih */}
         <div className="bg-[#0c1a2c]/75 backdrop-blur-md rounded-xl p-5 border border-white/10">
           <div className="flex items-center justify-between text-xs text-white/60 uppercase tracking-wider font-medium">
-            <span>Pilar 3: Hardware Pad</span>
-            <Sliders className="w-4 h-4 text-purple-400" />
+            <span>Glif Dikuasai</span>
+            <Target className="w-4 h-4 text-amber-400" />
           </div>
           <div className="mt-3">
             <div className="text-2xl md:text-3xl font-bold text-white font-mono">
-              {siswa.sesiHardware} <span className="text-sm font-normal text-white/50">Sesi</span>
+              {siswa.glifDikuasai} <span className="text-sm font-normal text-white/50">/ 30 Glif</span>
             </div>
-            <p className="text-xs text-purple-300 mt-1">
-              Ramu Mantra & Speed Match Aktif
+            <p className="text-xs text-amber-300 mt-1">
+              Model EfficientNet-B0 ONNX
             </p>
           </div>
         </div>
 
-        {/* Pilar 3: Epos Cerita */}
+        {/* Pilar 2: Epos Cerita */}
         <div className="bg-[#0c1a2c]/75 backdrop-blur-md rounded-xl p-5 border border-white/10">
           <div className="flex items-center justify-between text-xs text-white/60 uppercase tracking-wider font-medium">
-            <span>Pilar 3: Epos Cerita</span>
+            <span>Pilar 2: Epos Cerita</span>
             <BookOpen className="w-4 h-4 text-amber-400" />
           </div>
           <div className="mt-3">
@@ -173,15 +173,15 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
               <span className="text-sm font-normal text-white/50">Bab</span>
             </div>
             <p className="text-xs text-amber-300 mt-1">
-              3 Epos Daerah Terjelajahi
+              Epos Calon Arang Terjelajahi
             </p>
           </div>
         </div>
 
-        {/* Pilar 4: Preservasi */}
+        {/* Pilar 3: Preservasi */}
         <div className="bg-[#0c1a2c]/75 backdrop-blur-md rounded-xl p-5 border border-white/10">
           <div className="flex items-center justify-between text-xs text-white/60 uppercase tracking-wider font-medium">
-            <span>Pilar 4: Preservasi</span>
+            <span>Pilar 3: Preservasi</span>
             <Scroll className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="mt-3">

@@ -29,7 +29,7 @@ export function ProfileStatsStrip({ profile }: ProfileStatsStripProps) {
       label: 'Glif Dikuasai',
       value: `${profile.totalGlifDikuasai} Glif`,
       icon: PenTool,
-      sub: 'Lontara, Sunda, Bali',
+      sub: 'Wianjana, Swalalita, Diakritik',
       warna: '#4ade80',
     },
     {

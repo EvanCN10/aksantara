@@ -515,7 +515,7 @@
 }
 
 /* =========================================
-   CINEMATIC BATCH 3 MOTION SUITE (Kanvas AI & Phygital Hardware)
+   CINEMATIC BATCH 3 MOTION SUITE (Kanvas Belajar AI & Animasi Antarmuka)
    ========================================= */
 
 @keyframes scanLaser {
@@ -543,20 +543,6 @@
   50% {
     opacity: 0.42;
     transform: scale(1.015);
-  }
-}
-
-@keyframes rfidDockSnap {
-  0% {
-    opacity: 0;
-    transform: translateY(-14px) scale(0.92);
-  }
-  65% {
-    transform: translateY(2px) scale(1.02);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 
@@ -607,10 +593,6 @@
 
 .animate-ghost-breathe {
   animation: ghostBreathe 4.5s ease-in-out infinite;
-}
-
-.animate-rfid-snap {
-  animation: rfidDockSnap 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .animate-runic-synthesis {

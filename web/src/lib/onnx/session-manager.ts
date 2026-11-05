@@ -1,10 +1,7 @@
 import type { InferenceSession } from 'onnxruntime-web';
 
 import type { GlyphInferenceInput } from './onnx-classifier';
-
-import lontaraManifest from '../../../../ai/deployment/models/lontara/manifest.json';
-import sundaManifest from '../../../../ai/deployment/models/sunda/manifest.json';
-import baliManifest from '../../../../ai/deployment/models/bali/manifest.json';
+import baliManifest from '../../../public/models/bali/manifest.json';
 
 type AksaraId = GlyphInferenceInput['aksaraId'];
 
@@ -20,12 +17,13 @@ export interface SessionEntry {
   modelId: string;
 }
 
-const MANIFESTS = { lontara: lontaraManifest, sunda: sundaManifest, bali: baliManifest };
-const sessionCache = new Map<AksaraId, Promise<SessionEntry>>();
+const MANIFESTS: Record<string, typeof baliManifest> = { bali: baliManifest };
+const sessionCache = new Map<string, Promise<SessionEntry>>();
 let ortEnvConfigured = false;
 
-function parseLabels(value: unknown, aksaraId: AksaraId): LabelEntry[] {
-  if (!Array.isArray(value) || value.length !== MANIFESTS[aksaraId].num_classes) {
+function parseLabels(value: unknown, aksaraId: string): LabelEntry[] {
+  const manifest = MANIFESTS[aksaraId] ?? MANIFESTS['bali'];
+  if (!Array.isArray(value) || value.length !== manifest.num_classes) {
     throw new Error('Jumlah label model latihan tidak sesuai.');
   }
   const sources = new Set<string>();
@@ -51,9 +49,9 @@ async function fetchAsset(path: string): Promise<Response> {
   return response;
 }
 
-async function loadModel(aksaraId: AksaraId): Promise<{ buffer: ArrayBuffer; modelId: string }> {
+async function loadModel(aksaraId: string): Promise<{ buffer: ArrayBuffer; modelId: string }> {
   const buffer = await (await fetchAsset(`/models/${aksaraId}/model.onnx`)).arrayBuffer();
-  const manifest = MANIFESTS[aksaraId];
+  const manifest = MANIFESTS[aksaraId] ?? MANIFESTS['bali'];
   if (buffer.byteLength !== manifest.model_bytes) throw new Error('Ukuran model latihan tidak sesuai.');
   const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', buffer));
   const modelId = Array.from(digest, (byte) => byte.toString(16).padStart(2, '0')).join('');
@@ -61,7 +59,7 @@ async function loadModel(aksaraId: AksaraId): Promise<{ buffer: ArrayBuffer; mod
   return { buffer, modelId };
 }
 
-async function createSession(aksaraId: AksaraId): Promise<SessionEntry> {
+async function createSession(aksaraId: string): Promise<SessionEntry> {
   // Keep the browser-only WASM runtime out of SSR and the initial page bundle.
   const ort = await import('onnxruntime-web/wasm');
   if (!ortEnvConfigured) {
@@ -89,15 +87,16 @@ async function createSession(aksaraId: AksaraId): Promise<SessionEntry> {
 }
 
 // Return the same promise to concurrent callers, including while the model is loading.
-export function getSession(aksaraId: AksaraId): Promise<SessionEntry> {
-  const cached = sessionCache.get(aksaraId);
+export function getSession(aksaraId: AksaraId = 'bali'): Promise<SessionEntry> {
+  const scriptKey = 'bali';
+  const cached = sessionCache.get(scriptKey);
   if (cached) return cached;
-  const promise = createSession(aksaraId).catch((error: unknown) => {
+  const promise = createSession(scriptKey).catch((error: unknown) => {
     // A failed old load must not evict a newer load started after releaseAllSessions.
-    if (sessionCache.get(aksaraId) === promise) sessionCache.delete(aksaraId);
+    if (sessionCache.get(scriptKey) === promise) sessionCache.delete(scriptKey);
     throw error;
   });
-  sessionCache.set(aksaraId, promise);
+  sessionCache.set(scriptKey, promise);
   return promise;
 }
 

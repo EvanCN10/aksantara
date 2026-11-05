@@ -85,9 +85,9 @@ function ShareIcon({ className = 'w-4 h-4' }: { className?: string }) {
 function HasilLatihanContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const rawAksara = searchParams.get('aksara')?.toLowerCase() || 'lontara';
-  const aksaraKey = rawAksara in KATALOG_DATA ? rawAksara : 'lontara';
-  const dataAksara: AksaraDetail = getAksaraData(aksaraKey) || KATALOG_DATA['lontara'];
+  const rawAksara = searchParams.get('aksara')?.toLowerCase() || 'bali';
+  const aksaraKey = rawAksara in KATALOG_DATA ? rawAksara : 'bali';
+  const dataAksara: AksaraDetail = getAksaraData(aksaraKey) || KATALOG_DATA['bali'];
 
   const [copied, setCopied] = useState(false);
 
@@ -279,11 +279,7 @@ function HasilLatihanContent() {
                       ✦ Kekuatan Utama Goresanmu:
                     </span>
                     <p className="text-white/70">
-                      {aksaraKey === 'lontara'
-                        ? 'Ketegasan sudut belah ketupat sulapa eppa sangat konsisten di setiap glif konsonan.'
-                        : aksaraKey === 'sunda'
-                        ? 'Struktur modular tiang tegak lurus konsonan ngalagena tampak kokoh dan seimbang.'
-                        : 'Aliran kurvalinier rontal berkesinambungan halus tanpa patahan goresan.'}
+                      {'Aliran kurvalinier naskah rontal berkesinambungan halus dan proporsional.'}
                     </p>
                   </div>
 

@@ -1,4 +1,4 @@
-// Sound Effects Engine - Aksantara Phygital Platform
+// Sound Effects Engine - Aksantara Web Platform
 // Professional acoustic & gamelan sound design using Web Audio API
 
 let sharedAudioCtx: AudioContext | null = null;
@@ -82,7 +82,7 @@ export function playSuccessGamelan(): void {
 
 /**
  * Organic Teak Wood / Bamboo Tap
- * Used for: Canvas drawing stroke, subtle UI clicks, RFID tile detection
+ * Used for: Canvas drawing stroke, subtle UI clicks, interactive actions
  */
 export function playWoodTap(): void {
   const ctx = getAudioContext();

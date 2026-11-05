@@ -40,10 +40,10 @@ function FlameIcon({ className = 'w-4 h-4' }: { className?: string }) {
   );
 }
 
-type FilterAksara = 'semua' | 'lontara' | 'sunda' | 'bali';
+type FilterAksara = 'semua' | 'bali';
 
 export default function PilihCeritaPage() {
-  const [selectedCharId, setSelectedCharId] = useState<string>('sawerigading');
+  const [selectedCharId, setSelectedCharId] = useState<string>('calon-arang-arya');
   const [activeFilter, setActiveFilter] = useState<FilterAksara>('semua');
 
   // Handle character selection: also syncs story filter if character is region-specific
@@ -204,9 +204,7 @@ export default function PilihCeritaPage() {
             {(
               [
                 { id: 'semua', label: 'Semua Kisah' },
-                { id: 'lontara', label: 'Lontara (Sulawesi)' },
-                { id: 'sunda', label: 'Sunda (Pasundan)' },
-                { id: 'bali', label: 'Bali (Rontal)' },
+                { id: 'bali', label: 'Aksara Bali (Rontal)' },
               ] as const
             ).map((tab) => {
               const isActive = activeFilter === tab.id;

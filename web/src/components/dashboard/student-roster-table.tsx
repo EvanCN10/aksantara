@@ -42,7 +42,7 @@ export const StudentRosterTable: React.FC<StudentRosterTableProps> = ({
             Daftar Capaian Siswa Lintas 4 Pilar Aksantara
           </h2>
           <p className="text-xs text-white/60 mt-0.5">
-            Memantau perkembangan individual, akurasi kanvas, sesi konsol fisik, dan kurasi manuskrip.
+            Memantau perkembangan individual, akurasi kanvas, progres cerita rontal, dan kurasi manuskrip.
           </p>
         </div>
 
@@ -104,10 +104,10 @@ export const StudentRosterTable: React.FC<StudentRosterTableProps> = ({
           <thead>
             <tr className="border-b border-white/10 text-[11px] font-semibold text-white/50 uppercase tracking-wider bg-white/[0.02]">
               <th className="py-3 px-4">Profil Siswa</th>
-              <th className="py-3 px-4">Pilar 1: AI Canvas</th>
-              <th className="py-3 px-4">Pilar 3: Hardware</th>
-              <th className="py-3 px-4">Pilar 3: Epos Cerita</th>
-              <th className="py-3 px-4">Pilar 4: Preservasi</th>
+              <th className="py-3 px-4">Pilar 1: Kanvas AI</th>
+              <th className="py-3 px-4">Glif Dikuasai</th>
+              <th className="py-3 px-4">Pilar 2: Epos Cerita</th>
+              <th className="py-3 px-4">Pilar 3: Preservasi</th>
               <th className="py-3 px-4">Status</th>
               <th className="py-3 px-4 text-right">Rapor & Aksi</th>
             </tr>
@@ -181,12 +181,11 @@ export const StudentRosterTable: React.FC<StudentRosterTableProps> = ({
                     </div>
                   </td>
 
-                  {/* Hardware */}
+                  {/* Glif Dikuasai */}
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-1.5 font-medium text-white/90">
-                      <Sliders className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                      <span className="font-mono">{siswa.sesiHardware}</span>
-                      <span className="text-[10px] text-white/40">Sesi</span>
+                      <span className="font-mono text-amber-400 font-bold">{siswa.glifDikuasai}</span>
+                      <span className="text-[10px] text-white/40">/ 30 Glif</span>
                     </div>
                   </td>
 

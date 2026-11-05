@@ -94,13 +94,12 @@ interface KatalogAksaraPageProps {
 }
 
 export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
-  const { aksara } = use(params);
-  const rawKey = aksara.toLowerCase();
-  const aksaraKey = rawKey === 'sunda' || rawKey === 'bali' ? rawKey : 'lontara';
+  use(params);
+  const aksaraKey: 'bali' = 'bali';
   return <KatalogAksara key={aksaraKey} aksaraKey={aksaraKey} />;
 }
 
-function KatalogAksara({ aksaraKey }: { aksaraKey: 'lontara' | 'sunda' | 'bali' }) {
+function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
   const router = useRouter();
   const dataAksara = KATALOG_DATA[aksaraKey];
   const supportedGlifList = getModelTrainingCatalog(aksaraKey);
@@ -201,7 +200,7 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'lontara' | 'sunda' | 'bali' 
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/70 hover:text-white transition-all text-xs font-medium cursor-pointer"
             >
               <ArrowLeftIcon className="w-3.5 h-3.5" />
-              <span>Ganti Aksara</span>
+              <span>Menu Utama</span>
             </Link>
 
             <div className="h-4 w-px bg-white/15 hidden sm:block" />

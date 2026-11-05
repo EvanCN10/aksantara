@@ -59,7 +59,7 @@ export const GuruHero: React.FC<GuruHeroProps> = ({
 }) => {
   const countSiswaAktif = useCountUp(profile.siswaAktif, 900);
   const countAkurasi = useCountUp(profile.rataRataAkurasi, 1100, 1);
-  const countHardware = useCountUp(profile.totalSesiHardware, 1000);
+  const countGlifDikuasai = useCountUp(profile.totalGlifDikuasai, 1000);
   const countPreservasi = useCountUp(profile.totalPreservasi, 950);
 
   return (
@@ -157,16 +157,16 @@ export const GuruHero: React.FC<GuruHeroProps> = ({
         {/* KPI 3 */}
         <div className="bg-[#0c1a2c]/70 backdrop-blur-md rounded-xl p-5 border border-white/10 hover:border-[#ffd261]/40 transition-all duration-300 hover:scale-[1.02] group animate-cascade-fade-up [animation-delay:160ms]">
           <div className="flex items-center justify-between">
-            <span className="text-xs uppercase tracking-wider text-white/60 font-medium">Sesi Hardware IoT</span>
-            <span className="p-2 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20"><Zap className="w-5 h-5 text-purple-400" /></span>
+            <span className="text-xs uppercase tracking-wider text-white/60 font-medium">Glif Model Terlatih</span>
+            <span className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20"><PenTool className="w-5 h-5 text-amber-400" /></span>
           </div>
           <div className="mt-3">
             <div className="text-2xl md:text-3xl font-bold text-white font-mono">
-              {countHardware} <span className="text-base text-white/50 font-normal font-sans">Sesi</span>
+              {countGlifDikuasai} <span className="text-base text-white/50 font-normal font-sans">Glif</span>
             </div>
-            <p className="text-xs text-purple-300 mt-1 flex items-center gap-1.5">
-              <Sliders className="w-3.5 h-3.5 text-purple-400" />
-              <span>14.2 Jam Sesi Tactile Pad</span>
+            <p className="text-xs text-amber-300 mt-1 flex items-center gap-1.5">
+              <span>●</span>
+              <span>30 Kelas Aksara Bali (FP32 ONNX)</span>
             </p>
           </div>
         </div>

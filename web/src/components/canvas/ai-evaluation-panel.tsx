@@ -93,7 +93,7 @@ export function AiEvaluationPanel({
   onResetEvaluation,
   onPlayPronunciation,
 }: AiEvaluationPanelProps) {
-  const isSupported = getClassifierTarget(aksara.id as 'lontara' | 'sunda' | 'bali', glif.slug) !== null;
+  const isSupported = getClassifierTarget(aksara.id as 'bali', glif.slug) !== null;
   const canEvaluate = isSupported && strokeCount > 0 && !isEvaluating;
   return (
     <OrnateFrame className="w-full bg-[#0c1a2c]/85 backdrop-blur-xl border border-[#D4A373]/30 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
@@ -242,7 +242,7 @@ export function AiEvaluationPanel({
                         Benar! Bentuk sesuai target.
                       </>
                     ) : isSupported ? (
-                      evaluationResult.predictedSymbol !== getClassifierTarget(aksara.id as 'lontara' | 'sunda' | 'bali', glif.slug)
+                      evaluationResult.predictedSymbol !== getClassifierTarget(aksara.id as 'bali', glif.slug)
                         ? 'Belum sesuai target'
                         : 'Perkuat bentuk tulisan'
                     ) : (
@@ -266,7 +266,7 @@ export function AiEvaluationPanel({
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {evaluationResult.top3.map((item, idx) => {
-                      const displayName = getPredictionDisplayName(aksara.id as 'lontara' | 'sunda' | 'bali', item.sourceLabel);
+                      const displayName = getPredictionDisplayName(aksara.id as 'bali', item.sourceLabel);
                       return (
                         <span
                           key={idx}
