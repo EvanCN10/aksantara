@@ -1,7 +1,7 @@
 # Rencana Migrasi Aksantara: JOINTS UGM → Bali DigiFest 2026
 
-Konteks dan aturan klaim: [MAIN_CONTEXT_AKSANTARA_DIGIFEST.md](MAIN_CONTEXT_AKSANTARA_DIGIFEST.md)
-Basis audit: commit `52dc81d` (`feat: merge web into main`), repo `EvanCN10/aksantara`.
+Konteks dan aturan klaim: [CONTEXT.md](CONTEXT.md)
+Basis audit: tag `joints-2026-final` (commit `17dbbb0`) (`feat: merge web into main`), repo `EvanCN10/aksantara`.
 
 > Jadwal DigiFest belum diumumkan di panduan, jadi rencana ini memakai **urutan prioritas**, bukan tanggal. Isi tanggal setelah jadwal resmi keluar.
 
@@ -24,8 +24,8 @@ Basis audit: commit `52dc81d` (`feat: merge web into main`), repo `EvanCN10/aksa
 
 ### P0.1 Baseline & versi
 ```bash
-git tag -a pre-digifest-baseline 52dc81d -m "Kode sebelum pengembangan DigiFest"
-git push origin pre-digifest-baseline
+git tag -a joints-2026-final 52dc81d -m "Kode sebelum pengembangan DigiFest"
+git push origin joints-2026-final
 git checkout -b digifest
 ```
 Tujuan: bukti pemisah bagian *pre-existing* vs *dikembangkan untuk lomba* (dicek saat Technical Verification).
@@ -45,10 +45,10 @@ Tujuan: bukti pemisah bagian *pre-existing* vs *dikembangkan untuk lomba* (dicek
 | `web/src/data/aksara/trinitas.ts` | `TODO` status progres | Isi dari progres nyata atau hapus indikator status |
 
 ### P0.4 Persempit scope ke Bali
-- [ ] Landing, navbar, `/trinitas`, `/tentang`: ubah copy jadi "Aksantara — Aksara Bali". Hapus klaim "Trinitas", "Phygital", "zero-latency", "tanpa WiFi".
-- [ ] `/latihan/web/[aksara]`: hanya `bali` yang aktif; `lontara`/`sunda` → tampilan "Eksperimen (belum dirilis)" atau redirect.
-- [ ] Sembunyikan route `/hardware/*` (tautan navbar, kartu di `/mulai`). Kode tetap di repo.
-- [ ] Story Mode: aktifkan hanya cerita Bali (*Calon Arang & Prabu Airlangga*).
+- [x] Landing, navbar, `/aksara-bali`, `/tentang`: ubah copy jadi "Aksantara — Aksara Bali". Hapus klaim "Trinitas", "Phygital", "zero-latency", "tanpa WiFi". (Selesai pada `digifest-cleanup`)
+- [x] `/latihan/web/[aksara]`: hanya `bali` yang aktif. (Selesai pada `digifest-cleanup`)
+- [x] Hapus modul `/hardware/*` dan `iot/` sepenuhnya sesuai keputusan user D2. (Selesai pada `digifest-cleanup`)
+- [x] Story Mode: aktifkan hanya cerita Bali (*Misteri Mantra Calon Arang*). (Selesai pada `digifest-cleanup`)
 - [ ] Pastikan semua slug Bali di katalog punya target di `shared/aksara-classifier.json`. Slug tanpa model → tandai "belum didukung" (jangan dilatih pura-pura).
 
 ### P0.5 Deploy AI yang stabil
@@ -142,7 +142,7 @@ Tujuan: bukti pemisah bagian *pre-existing* vs *dikembangkan untuk lomba* (dicek
 ## Demo Account        (tanpa password di repo publik)
 ## Known Limitations   (30 kelas, tanpa sandangan, evaluasi canvas, lisensi dataset, dll.)
 ## Third-party Resources / Credits
-## Pre-existing Components   (JOINTS UGM; tag pre-digifest-baseline)
+## Pre-existing Components   (JOINTS UGM; tag joints-2026-final)
 ## Team Members
 ```
 
@@ -194,7 +194,7 @@ Juri dapat meminta (Panduan hal. 9). Siapkan jawaban:
 - [ ] Jalankan dengan input baru → latih dengan beberapa tulisan acak sebelum hari H.
 - [ ] Jika API/AI gagal? → error 503 terlihat; Tutor fallback `rule_based`; narator fallback `deterministic_lore`.
 - [ ] Data apa yang dikirim ke model & privasi → sesuai opsi deploy.
-- [ ] Bagian lama vs baru → tag baseline, `git diff pre-digifest-baseline..v2.0-final --stat`.
+- [ ] Bagian lama vs baru → tag baseline, `git diff joints-2026-final..v2.0-final --stat`.
 
 ## 9. Risiko & Mitigasi
 
