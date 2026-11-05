@@ -29,7 +29,7 @@ class TestModels(unittest.TestCase):
             ("mobile-scratch", 30, False),
             ("hybrid", 30, False),
             ("resnet18-scratch", 30, False),
-            ("resnet18-scratch", 174, False),
+            ("resnet18-scratch", 30, False),
         ]
         for name, num_classes, pretrained in test_architectures:
             with self.subTest(name=name, num_classes=num_classes):

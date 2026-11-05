@@ -19,11 +19,9 @@ from PIL import Image, ImageOps
 from ai.preprocess import canonical_gray, preprocess_image
 
 ROOTS = {
-    "lontara": ("lontara/aksara-lontara-fix",),
-    "sunda": ("sunda/dataset_gabung_fix",),
     "bali": ("bali/AKSARA SWALALITA ALL", "bali/AKSARA WYAJANA ALL"),
 }
-BASELINE = {"lontara": (114, 11483), "sunda": (30, 1800), "bali": (30, 1691)}
+BASELINE = {"bali": (30, 1691)}
 PARTITIONS = ("train", "selection", "calibration", "test")
 DEFAULT_RATIOS = dict(zip(PARTITIONS, (0.7, 0.1, 0.05, 0.15)))
 NEAR_DISTANCE = 4

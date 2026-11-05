@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-SCRIPTS = ('sunda', 'lontara', 'bali')
+SCRIPTS = ('bali',)
 MODELS = ('mobile', 'cnn', 'efficient', 'hybrid', 'mobile-scratch', 'resnet18', 'resnet18-scratch')
 
 
