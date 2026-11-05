@@ -170,6 +170,45 @@ class SpecialistServerTests(unittest.TestCase):
         self.assertEqual(res_unsupported.status, "perlu_review")
         self.assertFalse(res_unsupported.targetSupported)
         self.assertAlmostEqual(res_unsupported.score, 99.0)
+    def test_vowel_variation_base_suppression_and_diacritic_diagnostic(self):
+        model = self.application.state.registry.get("lontara")
+        bi_idx = model.target_index("kelas-3")
+        ba_idx = model.target_index("ba")
+        self.assertIsNotNone(bi_idx)
+        self.assertIsNotNone(ba_idx)
+
+        # Test diagnostic when student draws base consonant Ba for Bi target
+        raw_probs_ba = np.zeros(114, dtype=np.float64)
+        raw_probs_ba[ba_idx] = 0.9500
+        raw_probs_ba[bi_idx] = 0.0400
+
+        res_missing_diacritic = prediction_response(
+            model=model,
+            request=PredictRequest(**payload(self.data_url, "lontara", "kelas-3")),
+            probabilities=np.zeros(114, dtype=np.float64),
+            start=perf_counter(),
+            raw_probabilities=raw_probs_ba,
+            base_consonant="Ba",
+        )
+        self.assertEqual(res_missing_diacritic.status, "perlu_review")
+        self.assertIn("Bentuk konsonan dasar Ba sudah terbaca dengan baik", res_missing_diacritic.ringkasan)
+        self.assertIn("tanda diakritik vokal untuk Bi belum terdeteksi", res_missing_diacritic.ringkasan)
+
+        # Test success when Bi passes after suppression
+        probs_bi = np.zeros(114, dtype=np.float64)
+        probs_bi[bi_idx] = 0.9200
+        res_success = prediction_response(
+            model=model,
+            request=PredictRequest(**payload(self.data_url, "lontara", "kelas-3")),
+            probabilities=probs_bi,
+            start=perf_counter(),
+            raw_probabilities=probs_bi,
+            base_consonant="Ba",
+        )
+        self.assertEqual(res_success.status, "benar")
+        self.assertEqual(res_success.predictedSymbol, "Bi")
+        self.assertAlmostEqual(res_success.score, 92.0)
+        self.assertIn("Tulisan Bi terdeteksi dengan keyakinan", res_success.ringkasan)
     def test_strokes_are_ignored_and_unsupported_target_still_classifies(self):
         request = payload(self.data_url, slug="not-a-source-label")
         first = self.client.post("/predict", json={**request, "strokes": [[{"x": 1}], [{"x": 2}]]})

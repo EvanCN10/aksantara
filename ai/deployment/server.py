@@ -17,7 +17,15 @@ from fastapi.responses import JSONResponse
 from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel, ConfigDict, Field
 
-from ai.deployment.runtime import INPUT_SIZE, ModelRegistry, ModelUnavailable, Script, Specialist, load_shared_config
+from ai.deployment.runtime import (
+    INPUT_SIZE,
+    ModelRegistry,
+    ModelUnavailable,
+    Script,
+    Specialist,
+    get_base_consonant_source_label,
+    load_shared_config,
+)
 
 CLASSIFICATION_ACCEPTANCE_THRESHOLD: float = float(load_shared_config()["acceptanceThreshold"])
 from ai.preprocess import preprocess_image
@@ -105,12 +113,21 @@ def classification_summary(
     supported: bool,
     status: Literal["benar", "perlu_review"],
     top_is_target: bool,
+    target_name: str = "",
+    diacritic_missing: bool = False,
+    base_name: str = "",
 ) -> str:
     prob = f"{confidence * 100:.1f}".replace(".", ",")
     if not supported:
         return "Karakter ini belum didukung evaluasi AI."
     if status == "benar":
         return f"Tulisan {display_name} terdeteksi dengan keyakinan {prob}%."
+    if diacritic_missing and base_name:
+        return (
+            f"Bentuk konsonan dasar {base_name} sudah terbaca dengan baik, "
+            f"namun tanda diakritik vokal untuk {target_name} belum terdeteksi. "
+            "Tambahkan tanda titik/imbuhan vokal yang sesuai!"
+        )
     # perlu_review + supported
     if not top_is_target:
         return (
@@ -119,12 +136,13 @@ def classification_summary(
         )
     return f"Kemiripan dengan {display_name} masih {prob}%, belum cukup yakin. Perkuat bentuknya."
 
-
 def prediction_response(
     model: Specialist,
     request: PredictRequest,
     probabilities: np.ndarray,
     start: float,
+    raw_probabilities: np.ndarray | None = None,
+    base_consonant: str | None = None,
 ) -> PredictResponse:
     ranked = np.argsort(-probabilities, kind="stable")[:3]
     top_index = int(ranked[0])
@@ -138,15 +156,33 @@ def prediction_response(
     status: Literal["benar", "perlu_review"] = "benar" if is_benar else "perlu_review"
     score = 100.0 * target_prob if supported else 100.0 * confidence
 
+    raw_probs = probabilities if raw_probabilities is None else raw_probabilities
+    raw_top_index = int(np.argmax(raw_probs))
+    raw_top_label = model.labels[raw_top_index].source_label
+    raw_top_confidence = float(raw_probs[raw_top_index])
+
+    diacritic_missing = (
+        not is_benar
+        and base_consonant is not None
+        and raw_top_label == base_consonant
+        and raw_top_confidence >= 0.5
+    )
+
     display_name = model.display_names.get(top_label, "Kelas belum dipetakan")
+    target_source_label = model.targets.get(request.karakterSlug, "")
+    target_name = model.display_names.get(target_source_label, "")
+    base_name = model.display_names.get(base_consonant, "") if base_consonant else ""
+
     summary = classification_summary(
         display_name=display_name,
         confidence=confidence,
         supported=supported,
         status=status,
         top_is_target=(top_index == target_index),
+        target_name=target_name,
+        diacritic_missing=diacritic_missing,
+        base_name=base_name,
     )
-
     top3 = [
         ClassProbability(
             labelId=model.labels[int(index)].id,
@@ -200,13 +236,30 @@ def create_app(model_root: Path | None = None) -> FastAPI:
         try:
             tensor = canvas_tensor(payload.image)
             model = registry.get(payload.aksaraId)
-            probabilities = model.probabilities(tensor)
-            return prediction_response(model, payload, probabilities, start)
+            target_source_label = model.targets.get(payload.karakterSlug)
+            base_consonant = (
+                get_base_consonant_source_label(payload.aksaraId, target_source_label)
+                if target_source_label
+                else None
+            )
+            base_index: int | None = None
+            if base_consonant is not None:
+                source_to_class = {label.source_label: label.class_id for label in model.labels}
+                base_index = source_to_class.get(base_consonant)
+
+            raw_probabilities, probabilities = model.evaluate_probabilities(tensor, mask_index=base_index)
+            return prediction_response(
+                model=model,
+                request=payload,
+                probabilities=probabilities,
+                start=start,
+                raw_probabilities=raw_probabilities,
+                base_consonant=base_consonant,
+            )
         except InvalidImage as error:
             return JSONResponse(status_code=400, content={"error": str(error)})
         except ModelUnavailable as error:
             return JSONResponse(status_code=503, content={"error": str(error)})
-
     return application
 
 

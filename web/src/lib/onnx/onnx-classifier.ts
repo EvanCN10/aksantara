@@ -27,7 +27,7 @@ export interface GlyphInferenceOutput {
   latencyMs: number;
   ringkasan: string;
   kriteria: [];
-  modelSource: 'onnx_backend';
+  modelSource: 'onnx_backend' | 'onnx_web';
   targetSupported: boolean;
   probabilitiesCalibrated: false;
   mappingVerified: false;
@@ -47,6 +47,36 @@ export function getPredictionDisplayName(aksaraId: GlyphInferenceInput['aksaraId
   if (!scriptConfig) return 'Kelas belum dipetakan';
   const displayNames = scriptConfig.displayNames as Record<string, string>;
   return displayNames[sourceLabel] ?? 'Kelas belum dipetakan';
+}
+export const LONTARA_SYLLABLE_BASE: Record<string, string> = {
+  Be: 'Ba', Bi: 'Ba', Bo: 'Ba', Bu: 'Ba',
+  Ce: 'Ca', Ci: 'Ca', Co: 'Ca', Cu: 'Ca',
+  De: 'Da', Di: 'Da', Do: 'Da', Du: 'Da',
+  E: 'A', I: 'A', O: 'A', U: 'A',
+  Ge: 'Ga', Gi: 'Ga', Go: 'Ga', Gu: 'Ga',
+  He: 'Ha', Hi: 'Ha', Ho: 'Ha', Hu: 'Ha',
+  Je: 'Ja', Ji: 'Ja', Jo: 'Ja', Ju: 'Ja',
+  Ke: 'Ka', Ke_: 'Ka', Ki: 'Ka', Ko: 'Ka', Ku: 'Ka',
+  Le: 'La', Li: 'La', Lo: 'La', Lu: 'La',
+  Me: 'Ma', Mi: 'Ma', Mo: 'Ma', Mu: 'Ma',
+  Mpe: 'Mpa', Mpi: 'Mpa', Mpo: 'Mpa', Mpu: 'Mpa',
+  Ne: 'Na', Ni: 'Na', No: 'Na', Nu: 'Na',
+  Nce: 'Nca', Nci: 'Nca', Nco: 'Nca', Ncu: 'Nca',
+  Nge: 'Nga', Ngi: 'Nga', Ngo: 'Nga', Ngu: 'Nga',
+  Nke: 'Nka', Nki: 'Nka', Nko: 'Nka', Nku: 'Nka',
+  Nre: 'Nra', Nri: 'Nra', Nro: 'Nra', Nru: 'Nra',
+  Nye: 'Nya', Nyi: 'Nya', Nyo: 'Nya', Nyu: 'Nya',
+  Pe: 'Pa', Pi: 'Pa', Po: 'Pa', Pu: 'Pa',
+  Re: 'Ra', Ri: 'Ra', Ro: 'Ra', Ru: 'Ra',
+  Se: 'Sa', Si: 'Sa', So: 'Sa', Su: 'Sa',
+  Te: 'Ta', Ti: 'Ta', To: 'Ta', Tu: 'Ta',
+  We: 'Wa', Wi: 'Wa', Wo: 'Wa', Wu: 'Wa',
+  Ye: 'Ya', Yi: 'Ya', Yo: 'Ya',
+};
+
+export function getBaseConsonantSourceLabel(aksaraId: string, targetSourceLabel: string): string | null {
+  if (aksaraId !== 'lontara') return null;
+  return LONTARA_SYLLABLE_BASE[targetSourceLabel] ?? null;
 }
 
 export const PNG_DATA_URL_PREFIX = 'data:image/png;base64,';
@@ -100,7 +130,7 @@ export function isGlyphInferenceOutput(value: unknown): value is GlyphInferenceO
     !isBoundedNumber(value.latencyMs, 0, Number.MAX_SAFE_INTEGER) ||
     !isNonemptyString(value.ringkasan, 4096) ||
     !Array.isArray(value.kriteria) || value.kriteria.length !== 0 ||
-    value.modelSource !== 'onnx_backend' ||
+    (value.modelSource !== 'onnx_backend' && value.modelSource !== 'onnx_web') ||
     typeof value.targetSupported !== 'boolean' ||
     value.probabilitiesCalibrated !== false ||
     value.mappingVerified !== false ||
@@ -123,7 +153,12 @@ export function classifierErrorMessage(value: unknown, fallback: string): string
   return isRecord(value) && isNonemptyString(value.error, 4096) ? value.error : fallback;
 }
 
-export async function evaluateGlyph(input: GlyphInferenceInput): Promise<GlyphInferenceOutput> {
+export async function evaluateGlyph(input: GlyphInferenceInput, imageData?: ImageData): Promise<GlyphInferenceOutput> {
+  if (typeof window !== 'undefined' && imageData) {
+    // Keep the WASM runtime outside SSR and the initial page bundle.
+    const { classifyInBrowser } = await import('./browser-classifier');
+    return classifyInBrowser(input.aksaraId, input.karakterSlug, imageData);
+  }
   if (!isGlyphRequest(input) || !isPngDataUrl(input.image)) {
     throw new Error('Snapshot PNG kanvas dan parameter aksara yang valid wajib tersedia.');
   }

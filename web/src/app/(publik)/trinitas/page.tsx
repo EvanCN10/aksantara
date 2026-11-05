@@ -303,7 +303,7 @@ const DATA_AKSARA: Record<AksaraKey, AksaraData> = {
       },
       {
         simbol: 'ᬔ',
-        label: 'Kha (Mahaprana)',
+        label: 'Kha',
         ipa: '[kʰa]',
         artikulasi: 'Kanthya aspirat',
         catatan: 'Glif bernapas panjang dengan ornamen lingkar di puncak kurva.',
@@ -317,7 +317,7 @@ const DATA_AKSARA: Record<AksaraKey, AksaraData> = {
       },
       {
         simbol: 'ᬖ',
-        label: 'Gha (Mahaprana)',
+        label: 'Gha',
         ipa: '[ɡʱa]',
         artikulasi: 'Aspirat bersuara',
         catatan: 'Karakter langka dalam naskah Sansekerta dan Kawi kuno.',

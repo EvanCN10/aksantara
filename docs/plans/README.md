@@ -1,6 +1,6 @@
 # Dokumentasi Rencana & Arsitektur Aksantara
 
-Folder ini mengonsolidasikan seluruh dokumen perencanaan, arsitektur, dan peta jalan riset klasifikasi Trinitas Aksara Nusantara (JOINTS UGM 2026):
+Folder ini mengarsipkan rencana riset klasifikasi Trinitas Aksara Nusantara (JOINTS UGM 2026). Isi rencana, asumsi, nama tensor dan langkah yang belum dikerjakan pada saat penulisan adalah konteks historis, bukan kontrak runtime saat ini. Kontrak aktif: [AI_MODEL_HANDOFF.md](../AI_MODEL_HANDOFF.md); setup lintas modul: [INTEGRATION_HANDOFF.md](../INTEGRATION_HANDOFF.md). Studio kini memakai ONNX Runtime Web dengan input `input`; jangan menyalin kontrak input `image` dari rencana harness lama.
 
 | Berkas Dokumen | Judul & Cakupan | Status / Deliverable |
 |---|---|---|
@@ -10,4 +10,4 @@ Folder ini mengonsolidasikan seluruh dokumen perencanaan, arsitektur, dan peta j
 | [`04_iot_web_game_integration_plan.md`](04_iot_web_game_integration_plan.md) | **Integrasi IoT ke Game Web:** Sinkronisasi main, kontrak serial, lifecycle USB lintas route, deck empat kartu Sunda, firmware 1 MHz/gain rata-rata dan uji dua reader. | Rencana siap; implementasi dan uji USB web belum dilakukan |
 
 ---
-*Status eksekusi mutakhir dan artefak checkpoint selalu dicatat di [`PROGRESS_HANDOFF.md](../../PROGRESS_HANDOFF.md).*
+Status model aktif dan bukti integrasi dicatat di [AI_MODEL_HANDOFF.md](../AI_MODEL_HANDOFF.md), artefak `ai/deployment/models/`, dan log historis [usage.md](../usage.md). Status deliverable di tabel ini tidak membuktikan gate release, kalibrasi, benchmark browser atau pengesahan paleografi.

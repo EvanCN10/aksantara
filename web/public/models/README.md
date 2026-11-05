@@ -1,63 +1,32 @@
-# Panduan Penempatan Model AI (NusaAksara ONNX)
+# Model latihan NusaAksara di browser
 
-Folder ini disiapkan khusus untuk file model Machine Learning / Deep Learning yang akan di-serve langsung di sisi client (browser) menggunakan **ONNX Runtime Web**, ataupun referensi model serverless.
+Studio `/latihan/web/{lontara,sunda,bali}/{karakter}` memakai ONNX Runtime Web 1.22.0 (WASM, satu thread). Model dimuat saat evaluasi pertama, satu session per aksara per tab; tidak memerlukan FastAPI untuk studio.
 
----
+## Menyiapkan aset
 
-## 1. Lokasi File Model
+Dari `web/`:
 
-Letakkan file model yang telah di-export ke format ONNX di folder ini:
-```text
-web/public/models/nusaaksara_trinitas.onnx
+```sh
+npm install
+npm run provision:onnx
+npm run dev
 ```
 
-*(Opsional: Jika menggunakan per-aksara)*:
-- `web/public/models/lontara_classifier.onnx`
-- `web/public/models/sunda_classifier.onnx`
-- `web/public/models/bali_classifier.onnx`
+Provisioning menyalin model dan labels dari `ai/deployment/models/{script}/` ke `public/models/{script}/`, serta runtime versi yang sama dari `ai/artifacts/runtime/` ke `public/wasm/`. Model ONNX dan WASM biner diabaikan Git. Jalankan provisioning juga sebelum build/deploy; checkout kode saja tidak menyediakan biner tersebut. Asset sumber harus tersedia di lingkungan build.
 
----
+## Kontrak
 
-## 2. Spesifikasi Input & Output Model
+- Input `input`: float32 `[1, 3, 128, 128]`, grayscale direplikasi ke RGB dan dinormalisasi ImageNet.
+- Preprocessing `canvas-gray-v1`: alpha di atas putih, koreksi polaritas, bounding box Otsu seluruh komponen, padding 1.4×, bilinear; masukan jaringan tetap grayscale, bukan citra biner.
+- Output `logits`: `[1, jumlah_kelas]`; stable softmax di browser.
+- Label persis dan urutan `class_id` berasal dari `labels.json`; hash model diperiksa terhadap manifest deployment.
+- Status sesuai target membutuhkan top-1 sama dengan target dan probabilitas target minimal 85%. Probabilitas kelas bukan penilaian kualitas paleografi.
+- Evaluasi variasi vokal Lontara (suku kata) menerapkan Contextual Base-Consonant Prior Suppression: logit konsonan dasar induk dimasking ke $-\infty$ agar probabilitas tidak diserap bentuk dasar. Bila konsonan dasar terdeteksi tanpa tanda vokal, diagnostik cerdas memandu siswa menambahkan imbuhan diakritik yang sesuai.
+- Single-tap dot pada kanvas dikalibrasi dengan radius minimal $\approx 12$–$14$ px agar tanda diakritik titik vokal (*titi' riaseq*, *ulu*, dsb.) bertahan padat pada tensor $128 \times 128$.
+- Katalog latihan memakai seluruh kelas model dengan Unicode/font, bukan daftar diakritik pengajaran umum. Mapping terpusat di `shared/aksara-classifier.json` dan adaptor `model-catalog.ts`.
 
-### A. Input Tensor
-- **Nama Input Layer**: `input` atau `pixel_values`
-- **Dimensi Standar**:
-  - **Opsi Grayscale (Rekomendasi NusaAksara ACL 2025)**: `[1, 1, 64, 64]` (B x C x H x W)
-  - **Opsi RGB (ResNet-18 / MobileNetV3)**: `[1, 3, 224, 224]` (B x C x H x W)
-- **Data Type**: `Float32`
-- **Normalisasi**: Nilai piksel dalam rentang `[0.0, 1.0]`, di mana `1.0` mewakili tinta goresan (*stroke*) dan `0.0` mewakili latar belakang kanvas. Helper normalisasi otomatis telah tersedia di `web/src/lib/onnx/onnx-classifier.ts` (`preprocessCanvasForOnnx`).
+## Proxy pengembangan yang tetap tersedia
 
-### B. Output Tensor
-- **Nama Output Layer**: `logits` atau `probabilities`
-- **Dimensi**: `[1, NUM_CLASSES]`
-- **Aktivasi**: Logits atau Softmax (rentang nilai 0.0 - 1.0 per kelas).
+`evaluateGlyph(input)` tanpa ImageData tetap memakai `/api/ai/classify` dan FastAPI sesuai konfigurasi server yang sudah ada. Cerita mini canvas masih memakai jalur ini. Studio selalu meneruskan ImageData; kegagalan pemuatan browser ditampilkan sebagai error, bukan dialihkan diam-diam ke backend. Tidak ada fallback otomatis karena koneksi lambat.
 
----
-
-## 3. Pemetaan Label Kelas (`labels.json`)
-
-Simpan daftar nama label kelas di:
-```text
-web/public/models/labels.json
-```
-
-Contoh format:
-```json
-[
-  "ka", "ga", "nga", "pa", "ba", "ma", "ta", "da", "na",
-  "ca", "ja", "nya", "ya", "ra", "la", "wa", "sa", "ha"
-]
-```
-
----
-
-## 4. Opsi Alternatif: Microservice / API Eksternal
-
-Jika Anda memilih menjalankan model via FastAPI / PyTorch di server terpisah daripada ONNX browser:
-1. Jalankan server API Anda (misal di `http://localhost:8000`).
-2. Masukkan URL endpoint di `web/.env.local`:
-   ```env
-   NEXT_PUBLIC_AI_CLASSIFIER_URL=http://localhost:8000
-   ```
-3. Endpoint `/api/ai/classify` pada Next.js akan otomatis meneruskan snapshot citra canvas ke server Anda.
+Runtime dan model disajikan dari origin aplikasi; tidak memakai CDN atau header COOP/COEP. Model yang sudah dimuat dalam session tab aktif dapat dipakai tanpa jaringan. Cold start offline, reload offline dan cache permanen tidak dijamin; migrasi ini tidak memasang service worker.

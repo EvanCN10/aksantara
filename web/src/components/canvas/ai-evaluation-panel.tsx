@@ -102,14 +102,21 @@ export function AiEvaluationPanel({
             1. TOP ROW: CATEGORY, XP & TARGET GLIF CARD
             ================================================================ */}
         <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3">
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#ffd261] px-2.5 py-0.5 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30">
               {glif.kategori === 'konsonan'
-                ? 'Konsonan Inti'
+                ? 'Konsonan Dasar'
                 : glif.kategori === 'vokal'
-                ? 'Vokal Swara'
-                : 'Diakritik'}
+                ? 'Vokal Mandiri'
+                : glif.kategori === 'variasi-vokal' || (glif.kategori as string) === 'suku-kata'
+                ? 'Variasi Vokal'
+                : 'Tanda Diakritik'}
             </span>
+            {(glif.kategori === 'variasi-vokal' || (glif.kategori as string) === 'suku-kata') && glif.vokal && (
+              <span className="text-[10px] font-bold tracking-wide text-amber-200 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/25 font-mono">
+                Imbuhan -{glif.vokal === 'pepet' ? 'ê' : glif.vokal}
+              </span>
+            )}
             <span className="text-[10px] font-medium text-white/50">• {aksara.nama}</span>
           </div>
 
@@ -120,7 +127,7 @@ export function AiEvaluationPanel({
         </div>
 
         {/* Target Glyph Reference Display */}
-        <div className="rounded-2xl border border-[#D4A373]/25 bg-gradient-to-b from-[#141721]/90 to-[#0A0C12]/95 p-4 text-center relative flex flex-col items-center justify-center">
+        <div className="rounded-2xl border border-[#D4A373]/25 bg-gradient-to-b from-[#141721]/90 to-[#0A0C12]/95 p-4 sm:p-5 text-center relative flex flex-col items-center justify-between min-h-[210px] sm:min-h-[220px]">
           <div
             className="pointer-events-none absolute inset-0 rounded-2xl"
             style={{
@@ -128,15 +135,16 @@ export function AiEvaluationPanel({
             }}
             aria-hidden="true"
           />
-          <div className="relative z-10 flex flex-col items-center">
-            <span
-              className="text-6xl sm:text-7xl text-[#ffd261] font-normal leading-none drop-shadow-[0_4px_24px_rgba(255,210,97,0.45)] select-none transition-transform hover:scale-105 duration-200"
-              style={{ fontFamily: 'var(--font-philosopher)' }}
-            >
-              {glif.simbol}
-            </span>
+          <div className="relative z-10 flex flex-col items-center justify-between w-full h-full">
+            <div className="min-h-[95px] sm:min-h-[110px] flex items-center justify-center -translate-y-3 pt-2">
+              <span
+                className="text-5xl sm:text-6xl text-[#ffd261] font-normal leading-normal drop-shadow-[0_4px_24px_rgba(255,210,97,0.45)] select-none transition-transform hover:scale-105 duration-200"
+              >
+                {glif.simbol}
+              </span>
+            </div>
 
-            <div className="mt-2.5 flex items-center gap-2">
+            <div className="mt-auto pt-5 flex items-center gap-2">
               <span className="text-xl font-bold text-white tracking-wide" style={{ fontFamily: 'var(--font-philosopher)' }}>
                 {glif.label}
               </span>
@@ -234,9 +242,9 @@ export function AiEvaluationPanel({
                         Benar! Bentuk sesuai target.
                       </>
                     ) : isSupported ? (
-                      evaluationResult.score >= 50
-                        ? 'Model mengenali bentuk lain — kemungkinan kurang tepat'
-                        : 'Kemiripan terlalu rendah, coba lagi'
+                      evaluationResult.predictedSymbol !== getClassifierTarget(aksara.id as 'lontara' | 'sunda' | 'bali', glif.slug)
+                        ? 'Belum sesuai target'
+                        : 'Perkuat bentuk tulisan'
                     ) : (
                       'Karakter ini belum didukung evaluasi AI'
                     )}
@@ -343,7 +351,7 @@ export function AiEvaluationPanel({
               ) : (
                 <p className="text-xs text-white/60 leading-relaxed">
                   {strokeCount === 0
-                    ? 'Goreskan karakter pada kanvas di samping, lalu tekan tombol periksa untuk menganalisis akurasi geometri goresanmu.'
+                    ? 'Goreskan karakter pada kanvas di samping, lalu tekan tombol periksa untuk mengenali bentuk tulisanmu.'
                     : `Tercatat ${strokeCount} goresan. Kanvas siap dievaluasi oleh sistem pengenal AI.`}
                 </p>
               )}
@@ -389,22 +397,3 @@ export function AiEvaluationPanel({
   );
 }
 
-// ============================================================================
-// TODO: BACKEND / ONNX INTEGRATION
-//
-// Endpoint target:
-// POST /api/evaluasi-goresan
-// Body Payload:
-// {
-//   aksaraId: string;       // e.g. "lontara" | "sunda" | "bali"
-//   karakterSlug: string;   // e.g. "ka"
-//   imageBase64: string;    // Data URL PNG dari canvas.toDataURL()
-//   strokes: { x: number; y: number; pressure?: number }[][];
-// }
-//
-// Model On-Device (ONNX Runtime Web):
-// import * as ort from 'onnxruntime-web';
-// const session = await ort.InferenceSession.create('/models/aksara-lontara.onnx');
-// const inputTensor = preprocessCanvas(canvas);
-// const results = await session.run({ input: inputTensor });
-// ============================================================================

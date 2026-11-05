@@ -40,7 +40,7 @@ flowchart TD
 
     subgraph Processing_Layer ["Processing & AI Engine"]
         A -->|PointerEvent API| C["Image Preprocessing\n(All-component crop, grayscale 128, normalisasi ImageNet)"]
-        C --> D["Classifier karakter per aksara\n(ONNX, kandidat harus dilatih dan diverifikasi)"]
+        C --> D["Classifier specialist per aksara (Lontara INT8, Sunda/Bali FP32)\nONNX Runtime Web 1.22.0 / WASM lokal"]
         B -->|Web Serial API Direct USB\nZero-latency, No WiFi| E["Hardware Event Dispatcher\n(UID Tag -> Aksara/Diakritik)"]
     end
 
@@ -65,7 +65,7 @@ Repositori ini diatur dengan arsitektur modular yang memisahkan ranah aplikasi, 
 | Direktori | Ranah & Peruntukan | Rujukan Utama |
 |---|---|---|
 | `web/` | Aplikasi Web Edukasi (Next.js 16 App Router, React 19, Tailwind CSS v4) | [`web/package.json`](web/package.json) |
-| `ai/deployment/` | Runtime serving model ONNX specialist lokal (FastAPI, ONNX Runtime CPU) | [`docs/AI_MODEL_HANDOFF.md`](docs/AI_MODEL_HANDOFF.md) |
+| `ai/deployment/` | Sumber model/label/manifest browser; backend FastAPI CPU untuk jalur proxy cerita | [`docs/AI_MODEL_HANDOFF.md`](docs/AI_MODEL_HANDOFF.md) |
 | `ai/` & `ai/notebooks/` | Eksperimen pelatihan model, visualisasi EDA, dan notebook modular | [`ai/notebooks/`](ai/notebooks/) |
 | `shared/` | Kontrak kanonis bersama: pemetaan slug target kurikulum ke label model | [`shared/aksara-classifier.json`](shared/aksara-classifier.json) |
 | `supabase/` | DDL basis data PostgreSQL, proteksi role, dan migrasi inkremental | [`supabase/schema.sql`](supabase/schema.sql) |
@@ -77,23 +77,21 @@ Repositori ini diatur dengan arsitektur modular yang memisahkan ranah aplikasi, 
 
 ## 🚀 Quickstart Runtime (Tanpa Training Ulang)
 
-Untuk menjalankan seluruh platform secara lokal:
-
-### 1. Jalankan Backend Classifier AI (Terminal 1)
+### 1. Jalankan studio web — tanpa FastAPI
 ```bash
-# Dari root repositori
+# Dari root repositori; aset ai/deployment/models dan ai/artifacts/runtime harus tersedia
+npm --prefix web ci
+npm --prefix web run provision:onnx
+npm --prefix web run dev
+```
+Buka `http://localhost:3000` pada Chromium (Chrome/Edge), masuk atau pilih Tamu Siswa, lalu buka `/latihan/web/lontara`, `/latihan/web/sunda`, atau `/latihan/web/bali`. Model dimuat pada evaluasi pertama, bukan saat membuka katalog.
+
+### 2. Tambahkan backend hanya untuk cerita mini canvas / jalur proxy
+```bash
 python -m pip install -r ai/deployment/requirements.txt
 python -m uvicorn ai.deployment.server:app --host 127.0.0.1 --port 8000
 ```
-*Verifikasi kesiapan model: buka `http://127.0.0.1:8000/health` (mengembalikan HTTP 200 saat ketiga specialist siap).*
-
-### 2. Jalankan Aplikasi Web (Terminal 2)
-```bash
-cd web
-npm ci
-npm run dev
-```
-*Buka `http://localhost:3000` pada peramban Chromium (Chrome, Edge).*
+`GET http://127.0.0.1:8000/health` mengembalikan 200 saat ketiga specialist siap. `AI_CLASSIFIER_URL` adalah konfigurasi server-only. Studio tetap memakai WASM; backend ini bukan fallback otomatis saat model browser gagal dimuat. Untuk build/deploy baru, ulangi provisioning sebelum `npm --prefix web run build`; biner ignored tidak disediakan oleh checkout Git saja.
 
 Konfigurasi lokal OMP berada di `.omp/mcp.json` (di-ignore Git):
 
@@ -145,23 +143,19 @@ Notebook memakai maksimum 50 epoch, early stopping patience 7 berdasarkan select
 
 Artefak generated berada di ignored `ai/runs/`, `ai/artifacts/`, `ai/notebooks/`. `report` mencatat pending/blocked/observed runs, bukan membuat metrics yang belum ada. Frozen labels berjumlah 114/30/30, termasuk `Ke`/`Ke_` dan `ae`/`e`; semuanya belum merupakan mapping Unicode terverifikasi.
 
-Tiga kandidat spesialis FP32 tersedia di `ai/deployment/models/<script>/model.onnx`, dengan urutan `labels.json`, kontrak preprocessing dan SHA-256 di `manifest.json`, serta hasil run di `evaluation.json`. Input adalah float32 NCHW `[N, 3, 128, 128]`, grayscale canonical yang dinormalisasi ImageNet. Bobot dipakai untuk eksperimen privat; izin publikasi, kalibrasi, mapping Unicode, kualitas tulisan manusia dan benchmark browser belum disahkan. Combined/INT8 tetap di artefak eksperimen ignored.
+Tiga spesialis aktif tersedia di `ai/deployment/models/<script>/model.onnx` (Lontara: INT8 11,36 MB; Sunda dan Bali: FP32 16,17 MB), dengan urutan `labels.json`, kontrak preprocessing dan SHA-256 di `manifest.json`, serta hasil run di `evaluation.json`. Input adalah float32 NCHW `[N, 3, 128, 128]`, grayscale canonical yang dinormalisasi ImageNet. Bobot dipakai untuk eksperimen privat; izin publikasi, kalibrasi, mapping Unicode, kualitas tulisan manusia dan benchmark browser belum disahkan. Combined/INT8 eksperimen lain tetap di artefak ignored.
 
-Backend privat menjalankan ketiga spesialis melalui ONNX Runtime CPU dengan session yang di-cache dan kontrak model diverifikasi saat startup:
+Studio latihan kini menjalankan ketiga spesialis langsung di browser melalui ONNX Runtime Web 1.22.0, WASM satu thread. Siapkan aset lokal sebelum menjalankan atau membangun web:
 
 ```bash
-# Dari root repository, environment Python terpisah dari training.
-python -m pip install -r ai/deployment/requirements.txt
-python -m uvicorn ai.deployment.server:app --host 127.0.0.1 --port 8000
-
-# Terminal kedua:
 npm --prefix web ci
+npm --prefix web run provision:onnx
 npm --prefix web run dev
 ```
 
-`GET http://127.0.0.1:8000/health` melaporkan kesiapan model. Web meneruskan PNG melalui `POST /api/ai/classify` ke `POST /predict`; `AI_CLASSIFIER_URL` adalah konfigurasi **server-only**, default `http://127.0.0.1:8000`. Inference mengabaikan urutan goresan dan memakai preprocessing canonical di backend. UI menampilkan Top-3 label sumber/probabilitas, status perlu review dan target yang belum didukung; tidak ada fallback skor acak atau pemberian XP/penguasaan dari probabilitas eksperimen. Kanvas kosong atau citra invalid ditolak; service offline menghasilkan error 503 yang terlihat.
+Model dimuat ketika evaluasi pertama, di-cache per aksara selama tab aktif, dan tidak memakai FastAPI pada studio. Katalog mencakup seluruh 114/30/30 kelas model, termasuk suku kata gabungan yang dilatih; diakritik mandiri yang tidak dilatih tidak ditawarkan. Prediksi target ≥85% dan top-1 sesuai ditampilkan sebagai benar; prediksi berbeda menyebut bacaan dan target. Tidak ada pemberian XP/penguasaan dari probabilitas kelas.
 
-Jika web di-host terpisah, backend Python juga harus dijalankan di host yang dapat dijangkau web dan `AI_CLASSIFIER_URL` diatur sesuai alamatnya. Integrasi lokal ini bukan izin publikasi model atau bukti latensi browser/WASM memenuhi anggaran.
+Cerita mini canvas dan pemanggil `evaluateGlyph` tanpa ImageData tetap memakai proxy `POST /api/ai/classify` → FastAPI `POST /predict`. Untuk jalur itu saja, pasang `ai/deployment/requirements.txt` dan jalankan `python -m uvicorn ai.deployment.server:app --host 127.0.0.1 --port 8000`; `AI_CLASSIFIER_URL` adalah konfigurasi server-only. Tidak ada fallback otomatis ketika model browser gagal dimuat. Lihat [panduan aset browser](web/public/models/README.md). Smoke browser bukan izin publikasi, benchmark p95, atau bukti kualitas paleografi.
 
 Studi Colab empat classifier (tiga specialist + satu gabungan 174 kelas) memakai **satu ZIP runtime terpisah** dari dataset. Dari root repo jalankan `python ai/colab_notebook.py`, lalu upload `ai/notebooks/aksantara-colab-runtime.zip` ke folder Google Drive `Colab Notebooks/dataset-joints-1/` bersama `canvas_classifier.zip` yang teramati di Drive. Buka notebook Drive Aksantara yang sudah digunakan: notebook memuat pengantar Markdown, lima cell kode konfigurasi/bootstrap/dataset/preflight/launch, dan satu cell Progress yang bisa dijalankan ulang. Pastikan GPU dan otorisasi Drive berhasil. ZIP runtime dipin SHA256 oleh cell konfigurasi; jangan jalankan cell dari build yang berbeda dengan ZIP yang diupload. Jika mount gagal, selesaikan dialog izin Drive lalu ulangi cell setup; jika modul `ai.*` dari bundle berbeda sudah diimport, restart runtime dan ulangi dari cell pertama.
 

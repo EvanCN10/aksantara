@@ -21,6 +21,7 @@ export interface DrawingCanvasRef {
   clear: () => void;
   undo: () => void;
   getCanvasBase64: () => string | null;
+  getImageData: () => ImageData | null;
   getStrokes: () => Point[][];
   isEmpty: () => boolean;
 }
@@ -45,7 +46,7 @@ const BRUSH_WIDTHS: Record<BrushSize, number> = {
 
 const MAX_SNAPSHOT_SIDE = 1024;
 
-function captureClassifierImage(canvas: HTMLCanvasElement): string | null {
+function captureClassifierImage(canvas: HTMLCanvasElement): HTMLCanvasElement | null {
   const scale = Math.min(1, MAX_SNAPSHOT_SIDE / Math.max(canvas.width, canvas.height));
   const snapshot = document.createElement('canvas');
   snapshot.width = Math.max(1, Math.round(canvas.width * scale));
@@ -60,7 +61,7 @@ function captureClassifierImage(canvas: HTMLCanvasElement): string | null {
   ctx.globalCompositeOperation = 'destination-over';
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, snapshot.width, snapshot.height);
-  return snapshot.toDataURL('image/png');
+  return snapshot;
 }
 
 export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
@@ -118,9 +119,9 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
           if (stroke.length === 1) {
             // Single tap dot
             const pt = stroke[0];
-            const radius = (baseLineWidth * (pt.pressure || 0.6)) / 2;
+            const radius = Math.max((baseLineWidth * (pt.pressure || 1.0)) * 0.75, baseLineWidth * 0.85);
             ctx.beginPath();
-            ctx.arc(pt.x, pt.y, Math.max(radius, 2), 0, Math.PI * 2);
+            ctx.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
             ctx.fillStyle = '#ffd261';
             ctx.fill();
             return;
@@ -220,7 +221,8 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
         ctx.lineCap = 'round';
         ctx.fillStyle = '#ffd261';
         ctx.beginPath();
-        ctx.arc(pt.x, pt.y, (baseLineWidth * (pt.pressure || 0.8)) / 2, 0, Math.PI * 2);
+        const dotRadius = Math.max((baseLineWidth * (pt.pressure || 1.0)) * 0.75, baseLineWidth * 0.85);
+        ctx.arc(pt.x, pt.y, dotRadius, 0, Math.PI * 2);
         ctx.fill();
       }
     };
@@ -316,7 +318,13 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
       getCanvasBase64: () => {
         const canvas = canvasRef.current;
         if (!canvas) return null;
-        return captureClassifierImage(canvas);
+        return captureClassifierImage(canvas)?.toDataURL('image/png') ?? null;
+      },
+      getImageData: () => {
+        const canvas = canvasRef.current;
+        if (!canvas) return null;
+        const snapshot = captureClassifierImage(canvas);
+        return snapshot?.getContext('2d')?.getImageData(0, 0, snapshot.width, snapshot.height) ?? null;
       },
       getStrokes: () => strokes,
       isEmpty: () => strokes.length === 0,
