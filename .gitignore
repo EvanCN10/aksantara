@@ -11,6 +11,7 @@ yarn-error.log*
 pnpm-debug.log*
 .npm/
 *.tsbuildinfo
+next-env.d.ts
 
 # --- Environment & Secrets ---
 .env
@@ -41,7 +42,6 @@ eggs/
 /ai/lib/
 /ai/lib64/
 parts/
-qc/
 sdist/
 var/
 wheels/
@@ -52,27 +52,18 @@ wheels/
 .coverage
 htmlcov/
 *.ipynb_checkpoints/
-docs/usage.md
+
 # --- Large AI Model Weights & Datasets (>50MB) ---
-# Store models on HuggingFace / Supabase Storage instead of Git
 *.pth
 *.pt
 *.bin
 *.onnx
-# Selected FP32 deployment candidates; each file is below 50 MiB.
-!/ai/deployment/models/sunda/model.onnx
-!/ai/deployment/models/lontara/model.onnx
-!/ai/deployment/models/bali/model.onnx
+# Canonical FP32 deployment candidate
+!/web/public/models/bali/model.onnx
 *.h5
 *.tflite
 *.safetensors
 datasets/
-
-# --- Hardware & IoT (ESP32 / PlatformIO / Arduino) ---
-.pio/
-.vscode/.browse.c_cpp.db*
-*.hex
-*.elf
 
 # --- Operating System & Editor Junk ---
 .DS_Store
@@ -99,25 +90,10 @@ Thumbs.db
 /ai/runs/
 /ai/artifacts/
 /ai/notebooks/*
-!/ai/notebooks/0*.ipynb
-
-# Colab MCP session tokens and transient command mailbox
-/ai/harness/colab_bridge_state.json
-/ai/harness/colab_command.json
-/ai/harness/colab_command_result.json
-
-
-# --- Figma Local Tooling & Automation Bridge ---
-figma-bridge/
-figma-export/
-*.figma.js
+!/ai/notebooks/bali_classifier.ipynb
 
 # --- Temporary, Scratch & Local Logs ---
 scratch/
 temp/
 tmp/
 *.log
-
-# --- Local Proposals & Video Scripts ---
-context/proposal/
-context/script-video/
