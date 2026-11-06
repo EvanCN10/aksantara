@@ -36,22 +36,11 @@ interface AiEvaluationPanelProps {
   evaluationError?: string | null;
   onEvaluate: () => void;
   onResetEvaluation: () => void;
-  onPlayPronunciation?: () => void;
-}
-
-function VolumeIcon({ className = 'w-4 h-4' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-    </svg>
-  );
 }
 
 function SparklesIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" />
     </svg>
   );
@@ -59,7 +48,7 @@ function SparklesIcon({ className = 'w-4 h-4' }: { className?: string }) {
 
 function CheckIcon({ className = 'w-3.5 h-3.5' }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M20 6 9 17l-5-5" />
     </svg>
   );
@@ -75,6 +64,7 @@ function StarIcon({ className = 'w-3.5 h-3.5', filled = false }: { className?: s
       strokeWidth={filled ? '0' : '2'}
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
     </svg>
@@ -91,43 +81,34 @@ export function AiEvaluationPanel({
   evaluationError,
   onEvaluate,
   onResetEvaluation,
-  onPlayPronunciation,
 }: AiEvaluationPanelProps) {
   const isSupported = getClassifierTarget(aksara.id as 'bali', glif.slug) !== null;
   const canEvaluate = isSupported && strokeCount > 0 && !isEvaluating;
-  return (
-    <OrnateFrame className="w-full bg-[#0c1a2c]/85 backdrop-blur-xl border border-[#D4A373]/30 shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
-      <div className="p-5 sm:p-6 flex flex-col gap-5">
-        {/* ================================================================
-            1. TOP ROW: CATEGORY, XP & TARGET GLIF CARD
-            ================================================================ */}
-        <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#ffd261] px-2.5 py-0.5 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30">
-              {glif.kategori === 'konsonan'
-                ? 'Konsonan Dasar'
-                : glif.kategori === 'vokal'
-                ? 'Vokal Mandiri'
-                : glif.kategori === 'variasi-vokal' || (glif.kategori as string) === 'suku-kata'
-                ? 'Variasi Vokal'
-                : 'Tanda Diakritik'}
-            </span>
-            {(glif.kategori === 'variasi-vokal' || (glif.kategori as string) === 'suku-kata') && glif.vokal && (
-              <span className="text-[10px] font-bold tracking-wide text-amber-200 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/25 font-mono">
-                Imbuhan -{glif.vokal === 'pepet' ? 'ê' : glif.vokal}
-              </span>
-            )}
-            <span className="text-[10px] font-medium text-white/50">• {aksara.nama}</span>
-          </div>
 
-          <div className="flex items-center gap-1 text-xs font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 rounded-full">
-            <SparklesIcon className="w-3 h-3 text-[#ffd261]" />
-            <span>+{glif.xp} XP</span>
-          </div>
+  return (
+    <OrnateFrame
+      className="w-full lg:max-h-[calc(100dvh-6rem)] flex flex-col rounded-2xl overflow-hidden bg-[#0c1a2c]/85 backdrop-blur-xl border border-[#D4A373]/30 shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
+      innerClassName="flex flex-col flex-1 min-h-0 p-4 sm:p-5"
+    >
+      {/* 1. PINNED TOP ROW: CATEGORY & XP */}
+      <div className="shrink-0 flex items-center justify-between gap-2 border-b border-white/10 pb-3">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#ffd261] px-2.5 py-0.5 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30">
+            {glif.subkategori === 'swalalita' ? 'Aksara Swalalita' : 'Wianjana Dasar'}
+          </span>
+          <span className="text-[11px] font-medium text-white/70">• {aksara.nama}</span>
         </div>
 
-        {/* Target Glyph Reference Display */}
-        <div className="rounded-2xl border border-[#D4A373]/25 bg-gradient-to-b from-[#141721]/90 to-[#0A0C12]/95 p-4 sm:p-5 text-center relative flex flex-col items-center justify-between min-h-[210px] sm:min-h-[220px]">
+        <div className="flex items-center gap-1 text-xs font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 rounded-full shrink-0">
+          <SparklesIcon className="w-3 h-3 text-[#ffd261]" />
+          <span>+{glif.xp} XP</span>
+        </div>
+      </div>
+
+      {/* 2. SCROLLABLE BODY */}
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain py-3 space-y-3 pr-1">
+        {/* Compact Target Glyph Reference Display */}
+        <div className="rounded-2xl border border-[#D4A373]/25 bg-gradient-to-b from-[#141721]/90 to-[#0A0C12]/95 p-3.5 sm:p-4 text-center relative flex flex-col items-center justify-between min-h-[130px] xl:min-h-[150px]">
           <div
             className="pointer-events-none absolute inset-0 rounded-2xl"
             style={{
@@ -135,42 +116,28 @@ export function AiEvaluationPanel({
             }}
             aria-hidden="true"
           />
-          <div className="relative z-10 flex flex-col items-center justify-between w-full h-full">
-            <div className="min-h-[95px] sm:min-h-[110px] flex items-center justify-center -translate-y-3 pt-2">
-              <span
-                className="text-5xl sm:text-6xl text-[#ffd261] font-normal leading-normal drop-shadow-[0_4px_24px_rgba(255,210,97,0.45)] select-none transition-transform hover:scale-105 duration-200"
-              >
+          <div className="relative z-10 flex flex-col items-center justify-between w-full flex-1">
+            <div className="flex-1 flex items-center justify-center py-1">
+              <span className="text-5xl xl:text-6xl text-[#ffd261] font-normal leading-none drop-shadow-[0_4px_24px_rgba(255,210,97,0.45)] select-none">
                 {glif.simbol}
               </span>
             </div>
 
-            <div className="mt-auto pt-5 flex items-center gap-2">
-              <span className="text-xl font-bold text-white tracking-wide" style={{ fontFamily: 'var(--font-philosopher)' }}>
+            <div className="pt-2 flex items-center gap-2">
+              <span className="text-lg font-bold text-white tracking-wide" style={{ fontFamily: 'var(--font-philosopher)' }}>
                 {glif.label}
               </span>
               <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#D4A373]/15 text-[#D4A373] border border-[#D4A373]/25">
                 {glif.ipa}
               </span>
-
-              {/* Pronunciation Sound Button */}
-              {onPlayPronunciation && (
-                <button
-                  type="button"
-                  onClick={onPlayPronunciation}
-                  title={`Dengarkan pelafalan ${glif.label}`}
-                  className="p-1.5 rounded-full bg-white/5 hover:bg-[#ffd261]/20 active:scale-90 text-[#ffd261] border border-white/10 hover:border-[#ffd261]/40 transition-all cursor-pointer"
-                >
-                  <VolumeIcon className="w-3.5 h-3.5" />
-                </button>
-              )}
             </div>
 
-            <p className="text-[11px] text-white/60 mt-1">{glif.artikulasi}</p>
+            <p className="text-[11px] text-white/75 mt-1">{glif.artikulasi}</p>
           </div>
         </div>
 
         {/* Linguistic Notes */}
-        <p className="text-xs text-white/70 leading-relaxed bg-white/[0.02] p-3 rounded-xl border border-white/10">
+        <p className="text-xs text-white/75 leading-relaxed bg-white/[0.03] p-3 rounded-xl border border-white/10">
           <strong className="text-[#ffd261] block mb-0.5">Catatan Paleografi:</strong>
           {glif.catatan}
         </p>
@@ -178,7 +145,7 @@ export function AiEvaluationPanel({
         {/* Difficulty & Strokes Tracker */}
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/10">
-            <span className="text-[10px] text-white/50 block mb-0.5">Tingkat Kesulitan:</span>
+            <span className="text-[10px] text-white/70 block mb-0.5">Tingkat Kesulitan:</span>
             <div className="flex items-center gap-1 text-[#ffd261]">
               <StarIcon filled={glif.kesulitan >= 1} />
               <StarIcon filled={glif.kesulitan >= 2} />
@@ -186,53 +153,53 @@ export function AiEvaluationPanel({
             </div>
           </div>
           <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/10">
-            <span className="text-[10px] text-white/50 block mb-0.5">Goresan Terdeteksi:</span>
+            <span className="text-[10px] text-white/70 block mb-0.5">Goresan Terdeteksi:</span>
             <span className="font-mono text-[#ffd261] font-bold text-sm">
-              {strokeCount} {strokeCount === 1 ? 'stroke' : 'strokes'}
+              {strokeCount} goresan
             </span>
           </div>
         </div>
 
-        {/* ================================================================
-            2. AI EVALUATION SECTION
-        ================================================================ */}
-        <div className="border-t border-white/10 pt-4 flex flex-col gap-3">
+        {/* AI EVALUATION STATUS & RESULT */}
+        <div className="border-t border-white/10 pt-3 flex flex-col gap-2.5" aria-live="polite">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#ffd261]">
               <SparklesIcon className="w-3.5 h-3.5 text-[#ffd261]" />
-              <span>Evaluasi AI Real-time</span>
+              <span>Evaluasi AI ONNX Web</span>
             </div>
             {evaluationResult && (
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-300">
-                Analisis Berhasil
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+                Analisis Selesai
               </span>
             )}
           </div>
 
           {evaluationError && (
-            <div className="p-3 rounded-xl bg-red-500/15 border border-red-500/30 text-xs text-red-200">
+            <div role="alert" className="p-3 rounded-xl bg-red-500/15 border border-red-500/30 text-xs text-red-200">
               {evaluationError}
             </div>
           )}
 
-          {/* STATE A: EVALUATION RESULT VIEW */}
           {evaluationResult ? (
-            <div className="space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-400">
-              {/* Score Gauge Card */}
-              <div className="rounded-xl border border-[#ffd261]/30 bg-gradient-to-r from-[#ffd261]/15 via-white/[0.03] to-transparent p-4 flex items-center justify-between shadow-[0_0_20px_rgba(255,210,97,0.15)]">
+            <div className="space-y-2.5 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="rounded-xl border border-[#ffd261]/30 bg-gradient-to-r from-[#ffd261]/15 via-white/[0.03] to-transparent p-3.5 flex items-center justify-between gap-3 shadow-[0_0_20px_rgba(255,210,97,0.15)]">
                 <div>
-                  <span className="text-[10px] font-medium text-white/60 block">
+                  <span className="text-[10px] font-medium text-white/75 block">
                     {isSupported ? 'Probabilitas Target' : 'Probabilitas Prediksi'}
                   </span>
-                  <div className="text-3xl font-extrabold text-[#ffd261] font-mono animate-score-pop">
-                    {evaluationResult.score.toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
+                  <div className="text-2xl sm:text-3xl font-extrabold text-[#ffd261] font-mono">
+                    {evaluationResult.score.toLocaleString('id-ID', {
+                      minimumFractionDigits: 1,
+                      maximumFractionDigits: 1,
+                    })}
+                    %
                   </div>
                   <span
                     className={`text-xs font-semibold flex items-center gap-1 mt-0.5 ${
                       evaluationResult.status === 'benar'
-                        ? 'text-emerald-400'
+                        ? 'text-emerald-300'
                         : evaluationResult.score >= 50
-                        ? 'text-red-400'
+                        ? 'text-rose-300'
                         : 'text-amber-300'
                     }`}
                   >
@@ -251,18 +218,18 @@ export function AiEvaluationPanel({
                   </span>
                 </div>
 
-                <div className="text-right max-w-[150px]">
-                  <p className="text-[11px] text-white/70 leading-tight">
+                <div className="text-right max-w-[155px]">
+                  <p className="text-[11px] text-white/80 leading-snug">
                     {evaluationResult.ringkasan}
                   </p>
                 </div>
               </div>
 
-              {/* Top-3 predictions if available */}
+              {/* Top-3 predictions */}
               {'top3' in evaluationResult && Array.isArray(evaluationResult.top3) && evaluationResult.top3.length > 0 && (
                 <div className="p-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-xs space-y-1.5">
-                  <div className="text-[10px] text-white/50 font-semibold uppercase tracking-wider">
-                    Prediksi Model Specialist:
+                  <div className="text-[10px] text-white/70 font-semibold uppercase tracking-wider">
+                    3 Prediksi Teratas Model:
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {evaluationResult.top3.map((item, idx) => {
@@ -270,9 +237,14 @@ export function AiEvaluationPanel({
                       return (
                         <span
                           key={idx}
-                          className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/80 font-mono text-[11px]"
+                          className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/85 font-mono text-[11px]"
                         >
-                          {displayName} ({item.sourceLabel}): {(item.probability * 100).toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
+                          {displayName}:{' '}
+                          {(item.probability * 100).toLocaleString('id-ID', {
+                            minimumFractionDigits: 1,
+                            maximumFractionDigits: 1,
+                          })}
+                          %
                         </span>
                       );
                     })}
@@ -280,120 +252,93 @@ export function AiEvaluationPanel({
                 </div>
               )}
 
-              {/* Criteria Breakdown */}
-              {evaluationResult.kriteria && evaluationResult.kriteria.length > 0 && (
-                <div className="space-y-1.5">
-                  {evaluationResult.kriteria.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="p-2.5 rounded-lg bg-white/[0.03] border border-white/10 text-xs flex items-start gap-2"
-                    >
-                      <span
-                        className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 text-[10px] ${
-                          item.lulus ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'
-                        }`}
-                      >
-                        {item.lulus ? '✓' : '•'}
-                      </span>
-                      <div className="flex-1">
-                        <div className="font-semibold text-white/90">{item.label}</div>
-                        <p className="text-[11px] text-white/60 mt-0.5">{item.catatan}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Action Buttons: Next Character or Retry */}
-              <div className="flex flex-col gap-2 pt-2">
-                {nextGlif ? (
-                  <Link
-                    href={`/latihan/web/${aksara.id}/${nextGlif.slug}`}
-                    className="w-full"
-                  >
-                    <ShinyButton
-                      label={`Lanjut ke Karakter ${nextGlif.label} (${nextGlif.simbol}) →`}
-                      className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01] transition-all"
-                    />
-                  </Link>
-                ) : (
-                  <Link href="/latihan/web/hasil" className="w-full">
-                    <ShinyButton
-                      label="Selesaikan Seluruh Sesi Latihan →"
-                      className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01] transition-all"
-                    />
-                  </Link>
-                )}
-
-                <button
-                  type="button"
-                  onClick={onResetEvaluation}
-                  className="w-full py-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-white/80 hover:text-white text-xs font-medium transition-all cursor-pointer"
-                >
-                  Ulangi Goresan (Coba Lagi)
-                </button>
-              </div>
+              <p className="text-[11px] text-white/65 leading-snug">
+                Umpan balik bersifat bantuan belajar berbasis probabilitas bentuk ONNX, bukan penilaian resmi kualitas kaligrafi.
+              </p>
+            </div>
+          ) : !isSupported ? (
+            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-white/75 space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/10 text-white/80 inline-block">
+                Belum Didukung Evaluasi AI
+              </span>
+              <p className="text-[11px] text-white/70 leading-relaxed pt-1">
+                Karakter ini dapat digambar di kanvas, namun evaluasi klasifikasi otomatis belum didukung model saat ini.
+              </p>
             </div>
           ) : (
-            /* STATE B: IDLE / READY TO EVALUATE VIEW */
-            <div className="space-y-3">
-              {!isSupported ? (
-                <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-white/70 space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/10 text-white/70">
-                      Belum Didukung Evaluasi AI
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-white/60 leading-relaxed pt-1">
-                    Karakter ini dapat digambar dan dipelajari di kanvas, namun evaluasi klasifikasi otomatis belum didukung model saat ini.
-                  </p>
-                </div>
-              ) : (
-                <p className="text-xs text-white/60 leading-relaxed">
-                  {strokeCount === 0
-                    ? 'Goreskan karakter pada kanvas di samping, lalu tekan tombol periksa untuk mengenali bentuk tulisanmu.'
-                    : `Tercatat ${strokeCount} goresan. Kanvas siap dievaluasi oleh sistem pengenal AI.`}
-                </p>
-              )}
-
-              {/* Primary Evaluate Trigger */}
-              <ShinyButton
-                label={
-                  !isSupported
-                    ? 'Belum Didukung Evaluasi AI'
-                    : isEvaluating
-                    ? 'Memindai Goresan AI...'
-                    : strokeCount === 0
-                    ? 'Buat Goresan Terlebih Dahulu'
-                    : 'Periksa AI (Evaluasi)'
-                }
-                onClick={onEvaluate}
-                className={`w-full py-3 text-sm font-semibold transition-all ${
-                  canEvaluate
-                    ? 'cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01]'
-                    : 'opacity-40 cursor-not-allowed pointer-events-none'
-                }`}
-              />
-              {/* Navigation to catalog or summary */}
-              <div className="pt-2 flex items-center justify-between text-xs text-white/50 border-t border-white/10">
-                <Link
-                  href={`/latihan/web/${aksara.id}`}
-                  className="hover:text-[#ffd261] transition-colors"
-                >
-                  ← Daftar Glif {aksara.nama}
-                </Link>
-                <Link
-                  href="/latihan/web/hasil"
-                  className="hover:text-[#ffd261] transition-colors"
-                >
-                  Selesaikan Sesi
-                </Link>
-              </div>
-            </div>
+            <p className="text-xs text-white/75 leading-relaxed">
+              {strokeCount === 0
+                ? 'Goreskan karakter pada kanvas di samping, lalu tekan tombol periksa untuk mengklasifikasi bentuk tulisanmu.'
+                : `Tercatat ${strokeCount} goresan. Kanvas siap dievaluasi oleh model ONNX di browser.`}
+            </p>
           )}
         </div>
+      </div>
+
+      {/* 3. PINNED BOTTOM ACTION BAR */}
+      <div className="shrink-0 pt-3 border-t border-white/10 flex flex-col gap-2">
+        {evaluationResult ? (
+          <>
+            {nextGlif ? (
+              <ShinyButton
+                href={`/latihan/web/${aksara.id}/${nextGlif.slug}`}
+                label={`Lanjut ke ${nextGlif.label} (${nextGlif.simbol}) →`}
+                className="w-full py-2.5 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01] transition-all"
+              />
+            ) : (
+              <ShinyButton
+                href="/latihan/web/hasil"
+                label="Lihat Ringkasan Sesi Latihan →"
+                className="w-full py-2.5 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01] transition-all"
+              />
+            )}
+
+            <button
+              type="button"
+              onClick={onResetEvaluation}
+              className="w-full min-h-11 py-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-white/85 hover:text-white text-xs font-medium transition-all cursor-pointer"
+            >
+              Ulangi Goresan (Coba Lagi)
+            </button>
+          </>
+        ) : (
+          <>
+            <ShinyButton
+              disabled={!canEvaluate}
+              label={
+                !isSupported
+                  ? 'Belum Didukung Evaluasi AI'
+                  : isEvaluating
+                  ? 'Memindai Goresan AI...'
+                  : strokeCount === 0
+                  ? 'Buat Goresan Terlebih Dahulu'
+                  : 'Periksa AI (Evaluasi)'
+              }
+              onClick={onEvaluate}
+              className={`w-full py-2.5 text-sm font-semibold transition-all ${
+                canEvaluate
+                  ? 'cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01]'
+                  : 'opacity-45 cursor-not-allowed'
+              }`}
+            />
+
+            <div className="flex items-center justify-between text-xs text-white/70">
+              <Link
+                href={`/latihan/web/${aksara.id}`}
+                className="inline-flex items-center min-h-11 px-1 hover:text-[#ffd261] transition-colors"
+              >
+                ← Daftar Glif {aksara.nama}
+              </Link>
+              <Link
+                href="/latihan/web/hasil"
+                className="inline-flex items-center min-h-11 px-1 hover:text-[#ffd261] transition-colors"
+              >
+                Ringkasan Sesi →
+              </Link>
+            </div>
+          </>
+        )}
       </div>
     </OrnateFrame>
   );
 }
-

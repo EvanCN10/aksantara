@@ -55,17 +55,17 @@ export const DAFTAR_EPOS: CeritaEpos[] = [
     karakterId: 'calon-arang-arya',
     tagline: 'Kekuatan Mantra Spiritual Rontal Dewata',
     warnaTema: '#f97316',
-    totalBintang: 3,
+    totalBintang: 0,
     maxBintang: 9,
     babList: [
       {
         n: 1,
         judul: 'Rontal Rahasia di Desa Girah',
         sinopsis:
-          'Menyelinap masuk ke kediaman sang janda sakti dan menyalin lembaran daun rontal dengan aksara wianjana pertama.',
+          'Menyelinap masuk ke kediaman sang janda sakti dan menyalin lembaran daun rontal dengan aksara wianjana dasar.',
         xp: 150,
-        bintang: 3,
-        status: 'selesai',
+        bintang: 0,
+        status: 'terbuka',
         fokusGlif: [
           { simbol: 'ᬓ', label: 'Ka' },
           { simbol: 'ᬕ', label: 'Ga' },
@@ -77,10 +77,10 @@ export const DAFTAR_EPOS: CeritaEpos[] = [
         n: 2,
         judul: 'Tarian Api Barong & Rangda',
         sinopsis:
-          'Pertarungan dua kekuatan abadi. Rapalkan aksara pangangge suara untuk melindungi penduduk desa dari kobaran api.',
+          'Pertarungan dua kekuatan abadi. Rapalkan aksara wianjana lanjutan (Ta, Da, Pa) untuk melindungi penduduk desa dari kobaran api.',
         xp: 250,
         bintang: 0,
-        status: 'terbuka',
+        status: 'terkunci',
         fokusGlif: [
           { simbol: 'ᬢ', label: 'Ta' },
           { simbol: 'ᬤ', label: 'Da' },
@@ -95,7 +95,7 @@ export const DAFTAR_EPOS: CeritaEpos[] = [
           'Kedamaian kembali bersemi di Pulau Dewata. Ukirkan mantra penutup Kakawin di atas lempengan tembaga sakral.',
         xp: 350,
         bintang: 0,
-        status: 'terbuka',
+        status: 'terkunci',
         fokusGlif: [
           { simbol: 'ᬩ', label: 'Ba' },
           { simbol: 'ᬫ', label: 'Ma' },

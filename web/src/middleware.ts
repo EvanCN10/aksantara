@@ -81,6 +81,6 @@ export const config = {
      * - models/ (public AI models)
      * - public files ending with .png, .jpg, .svg, .mp4, etc.
      */
-    '/((?!_next/static|_next/image|favicon.ico|images|videos|fonts|audio|models|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm)).*)',
+    '/((?!_next/static|_next/image|favicon.ico|images|videos|fonts|audio|models|wasm|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|wasm|mjs|onnx|json)).*)',
   ],
 };

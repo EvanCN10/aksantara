@@ -1,27 +1,21 @@
 'use client';
 
-import { use, useState, useMemo } from 'react';
+import { use, useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { ShinyButton } from '@/components/ui/shiny-button';
 
 import {
   KATALOG_DATA,
-  type KategoriGlif,
   type StatusKuasai,
-  type VokalSuara,
 } from '@/data/aksara/trinitas';
 import { getModelTrainingCatalog } from '@/data/aksara/model-catalog';
-
-// ============================================================================
-// ICONS (INLINE SVG)
-// ============================================================================
+import { getGlyphPracticeRecords } from '@/lib/supabase/progress-service';
 
 function ArrowLeftIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
       <path strokeLinecap="round" strokeLinejoin="round" d="M19 12H5m7 7-7-7 7-7" />
     </svg>
   );
@@ -29,7 +23,7 @@ function ArrowLeftIcon({ className = 'w-4 h-4' }: { className?: string }) {
 
 function SparklesIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" />
     </svg>
   );
@@ -45,6 +39,7 @@ function StarIcon({ className = 'w-3.5 h-3.5', filled = false }: { className?: s
       strokeWidth={filled ? '0' : '2'}
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
     </svg>
@@ -53,7 +48,7 @@ function StarIcon({ className = 'w-3.5 h-3.5', filled = false }: { className?: s
 
 function CheckCircleIcon({ className = 'w-3.5 h-3.5' }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M20 6 9 17l-5-5" />
     </svg>
   );
@@ -61,33 +56,20 @@ function CheckCircleIcon({ className = 'w-3.5 h-3.5' }: { className?: string }) 
 
 function CompassIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <circle cx="12" cy="12" r="10" />
       <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
     </svg>
   );
 }
 
-const CATEGORY_TABS = [
+type FilterSubkategori = 'semua' | 'wianjana' | 'swalalita';
+
+const CATEGORY_TABS: readonly { id: FilterSubkategori; label: string }[] = [
   { id: 'semua', label: 'Semua' },
-  { id: 'konsonan', label: 'Konsonan Dasar' },
-  { id: 'variasi-vokal', label: 'Variasi Vokal', hint: 'i, u, e, o' },
-  { id: 'vokal', label: 'Vokal Mandiri' },
-  { id: 'diakritik', label: 'Tanda Diakritik' },
-] as const;
-
-const VOWEL_SUB_FILTERS = [
-  { id: 'semua', label: 'Semua Vokal' },
-  { id: 'i', label: 'Variasi -i' },
-  { id: 'u', label: 'Variasi -u' },
-  { id: 'e', label: 'Variasi -e' },
-  { id: 'o', label: 'Variasi -o' },
-  { id: 'pepet', label: 'Variasi -ê' },
-] as const;
-
-// ============================================================================
-// MAIN PAGE COMPONENT
-// ============================================================================
+  { id: 'wianjana', label: 'Wianjana' },
+  { id: 'swalalita', label: 'Swalalita' },
+];
 
 interface KatalogAksaraPageProps {
   params: Promise<{ aksara: string }>;
@@ -100,63 +82,43 @@ export default function KatalogAksaraPage({ params }: KatalogAksaraPageProps) {
 }
 
 function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
-  const router = useRouter();
   const dataAksara = KATALOG_DATA[aksaraKey];
   const supportedGlifList = getModelTrainingCatalog(aksaraKey);
 
-  // State: selected Glif, active filter tab, & active vowel sub-filter
-  const [activeFilter, setActiveFilter] = useState<'semua' | KategoriGlif>('semua');
-  const [activeVowelFilter, setActiveVowelFilter] = useState<'semua' | VokalSuara>('semua');
+  const [activeFilter, setActiveFilter] = useState<FilterSubkategori>('semua');
   const [selectedSlug, setSelectedSlug] = useState(supportedGlifList[0].slug);
+  const [userProgress, setUserProgress] = useState<Record<string, StatusKuasai>>({});
 
-  const handleCategoryChange = (tabId: 'semua' | KategoriGlif) => {
-    setActiveFilter(tabId);
-    setActiveVowelFilter('semua');
-  };
-  // TODO: ganti 'belum' / 'statusBawaan' dengan data dari API GET /api/progress/[userId]/[aksara]
-  // Contoh hook nanti: const { data: userProgress } = useUserProgress(aksaraKey);
-  const userProgress = useMemo<Record<string, StatusKuasai>>(() => {
+  useEffect(() => {
+    const records = getGlyphPracticeRecords(aksaraKey);
     const map: Record<string, StatusKuasai> = {};
-    supportedGlifList.forEach((g) => {
-      map[g.slug] = g.statusBawaan || 'belum';
-    });
-    return map;
-  }, [supportedGlifList]);
+    for (const glif of supportedGlifList) {
+      const glifRecords = records.filter((r) => r.glifSlug === glif.slug);
+      if (glifRecords.some((r) => r.status === 'sempurna' || r.status === 'bagus')) {
+        map[glif.slug] = 'dikuasai';
+      } else if (glifRecords.length > 0) {
+        map[glif.slug] = 'latihan';
+      } else {
+        map[glif.slug] = 'belum';
+      }
+    }
+    setUserProgress(map);
+  }, [aksaraKey, supportedGlifList]);
 
-  // TODO: sort berdasarkan rekomendasi SRS (Spaced Repetition System) jika user memilih mode adaptif
   const filteredGlifList = useMemo(() => {
-    return supportedGlifList.filter((g) => {
-      if (activeFilter !== 'semua') {
-        const matchesCategory =
-          activeFilter === 'variasi-vokal' || (activeFilter as string) === 'suku-kata'
-            ? g.kategori === 'variasi-vokal' || (g.kategori as string) === 'suku-kata'
-            : g.kategori === activeFilter;
-        if (!matchesCategory) return false;
-      }
-      if (activeFilter === 'variasi-vokal' && activeVowelFilter !== 'semua') {
-        if (g.vokal !== activeVowelFilter) return false;
-      }
-      return true;
-    });
-  }, [supportedGlifList, activeFilter, activeVowelFilter]);
+    if (activeFilter === 'semua') return supportedGlifList;
+    return supportedGlifList.filter((g) => g.subkategori === activeFilter);
+  }, [supportedGlifList, activeFilter]);
 
-  // A category change cannot retain a selection hidden from the current grid.
   const selectedGlif = useMemo(() => {
     return filteredGlifList.find((g) => g.slug === selectedSlug) ?? filteredGlifList[0];
   }, [filteredGlifList, selectedSlug]);
 
-  // Progress metrics
-  // TODO: ganti dengan data real-time dari API GET /api/progress/[userId]/[aksara]
   const totalGlif = supportedGlifList.length;
   const dikuasaiCount = useMemo(() => {
     return Object.values(userProgress).filter((st) => st === 'dikuasai').length;
   }, [userProgress]);
   const progressPercent = Math.round((dikuasaiCount / Math.max(totalGlif, 1)) * 100);
-
-  const handleMulaiLatih = () => {
-    if (!selectedGlif) return;
-    router.push(`/latihan/web/${aksaraKey}/${selectedGlif.slug}`);
-  };
 
   const getDifficultyLabel = (lvl: 1 | 2 | 3) => {
     if (lvl === 1) return 'Mudah (Dasar)';
@@ -165,12 +127,12 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
   };
 
   return (
-    <main className="relative min-h-screen text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col">
+    <main className="relative min-h-dvh text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col">
       {/* Visual Thematic Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#060d16]" aria-hidden="true">
         <Image
           src="/images/ui/backgrounds/bg-studio-kanvas.webp"
-          alt="Studio Sanggar Aksara"
+          alt=""
           fill
           priority={true}
           quality={90}
@@ -188,16 +150,13 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
         <div className="absolute inset-0 bg-[radial-gradient(#ffd261_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.025]" />
       </div>
 
-      {/* ====================================================================
-          1. STICKY HEADER WITH BREADCRUMB & GOLD PROGRESS BAR
-          ==================================================================== */}
+      {/* 1. STICKY HEADER WITH BREADCRUMB & GOLD PROGRESS BAR */}
       <header className="sticky top-0 z-30 w-full backdrop-blur-xl bg-[#0c1a2c]/85 border-b border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.35)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          {/* Left: Back Link & Title */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <Link
               href="/mulai"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/70 hover:text-white transition-all text-xs font-medium cursor-pointer"
+              className="inline-flex items-center gap-1.5 min-h-11 px-3.5 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/80 hover:text-white transition-all text-xs font-medium cursor-pointer"
             >
               <ArrowLeftIcon className="w-3.5 h-3.5" />
               <span>Menu Utama</span>
@@ -221,21 +180,26 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
             </div>
           </div>
 
-          {/* Right: Gold Progress Bar (API Backend Ready) */}
+          {/* Right: Real Progress Bar */}
           <div className="flex items-center gap-3 w-full sm:w-auto sm:min-w-[320px] md:min-w-[360px] lg:min-w-[420px] shrink-0">
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-3 text-[11px] mb-1 whitespace-nowrap">
-                <span className="text-white/60 font-medium shrink-0">Progres Kuasai:</span>
+                <span className="text-white/75 font-medium shrink-0">Progres Kuasai:</span>
                 <span className="text-[#ffd261] font-bold font-mono shrink-0">
                   {dikuasaiCount} / {totalGlif} Glif ({progressPercent}%)
                 </span>
               </div>
               <div
+                role="progressbar"
+                aria-label="Progres penguasaan glif Aksara Bali"
+                aria-valuenow={dikuasaiCount}
+                aria-valuemin={0}
+                aria-valuemax={totalGlif}
                 className="w-full h-2 rounded-full bg-black/40 border border-white/10 overflow-hidden p-0.5"
                 title={`${dikuasaiCount} dari ${totalGlif} glif telah dikuasai`}
               >
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#cf5600] via-[#ffd261] to-[#ffd261] transition-all duration-700 shadow-[0_0_12px_rgba(255,210,97,0.5)] animate-progress-shimmer"
+                  className="h-full rounded-full bg-gradient-to-r from-[#cf5600] via-[#ffd261] to-[#ffd261] transition-all duration-700 shadow-[0_0_12px_rgba(255,210,97,0.5)]"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -243,75 +207,58 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
 
             <div className="hidden lg:flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md bg-[#ffd261]/10 border border-[#ffd261]/25 text-[#ffd261] font-medium whitespace-nowrap shrink-0">
               <SparklesIcon className="w-3 h-3 text-[#ffd261]" />
-              <span>Kanvas AI Ready</span>
+              <span>ONNX Web Siap</span>
             </div>
           </div>
         </div>
       </header>
 
-      {/* ====================================================================
-          2. MAIN CONTENT (SPLIT-PANEL: GRID KIRI, STICKY DETAIL KANAN)
-          ==================================================================== */}
-      <div className="relative z-10 flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 lg:py-8">
+      {/* 2. MAIN CONTENT (SPLIT-PANEL: GRID KIRI, STICKY DETAIL KANAN <= 100dvh) */}
+      <div className="relative z-10 flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-5 lg:py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-          
-          {/* ================================================================
-              PANEL KIRI (COL 7): FILTER TABS & CATALOG GRID GLIF
-              ================================================================ */}
-          <section className="lg:col-span-7 xl:col-span-8 flex flex-col gap-5">
-            {/* Filter Tabs Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-1 border-b border-white/10">
+          {/* PANEL KIRI (COL 7 / 8): FILTER TABS & CATALOG GRID GLIF */}
+          <section className="lg:col-span-7 xl:col-span-8 flex flex-col gap-5" aria-label="Daftar glif Aksara Bali">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 border-b border-white/10">
               <div className="flex items-center gap-2">
-                <span className="text-xs uppercase tracking-wider font-semibold text-[#ffd261]">
+                <h2 className="text-xs uppercase tracking-wider font-semibold text-[#ffd261]">
                   Katalog Glif
-                </span>
-                <span className="text-xs text-white/50">
+                </h2>
+                <span className="text-xs text-white/70">
                   ({filteredGlifList.length} Karakter)
                 </span>
               </div>
 
               {/* Filter Pills */}
-              <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-md">
+              <div
+                role="group"
+                aria-label="Filter kelompok aksara"
+                className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-md"
+              >
                 {CATEGORY_TABS.map((tab) => {
                   const isActive = activeFilter === tab.id;
                   const count =
                     tab.id === 'semua'
                       ? supportedGlifList.length
-                      : tab.id === 'variasi-vokal'
-                      ? supportedGlifList.filter(
-                          (g) => g.kategori === 'variasi-vokal' || (g.kategori as string) === 'suku-kata'
-                        ).length
-                      : supportedGlifList.filter((g) => g.kategori === tab.id).length;
-                  if (tab.id !== 'semua' && count === 0) return null;
+                      : supportedGlifList.filter((g) => g.subkategori === tab.id).length;
 
                   return (
                     <button
                       key={tab.id}
                       type="button"
-                      onClick={() => handleCategoryChange(tab.id)}
-                      className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                      aria-pressed={isActive}
+                      onClick={() => setActiveFilter(tab.id)}
+                      className={`min-h-11 px-3.5 py-2 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
                         isActive
                           ? 'bg-[#ffd261]/20 border border-[#ffd261] text-[#ffd261] shadow-[0_0_12px_rgba(255,210,97,0.25)] font-semibold'
-                          : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent'
+                          : 'text-white/75 hover:text-white hover:bg-white/5 border border-transparent'
                       }`}
                     >
                       <span>{tab.label}</span>
-                      {'hint' in tab && tab.hint && (
-                        <span
-                          className={`text-[10px] font-mono px-1 rounded ${
-                            isActive
-                              ? 'bg-[#ffd261]/30 text-[#ffd261]'
-                              : 'bg-white/10 text-white/50'
-                          }`}
-                        >
-                          ({tab.hint})
-                        </span>
-                      )}
                       <span
-                        className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                        className={`text-[10px] px-1.5 py-0.5 rounded-full ${
                           isActive
                             ? 'bg-[#ffd261] text-[#0c1a2c] font-bold'
-                            : 'bg-white/10 text-white/60'
+                            : 'bg-white/10 text-white/75'
                         }`}
                       >
                         {count}
@@ -322,57 +269,7 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
               </div>
             </div>
 
-            {/* Sub-Filter Imbuhan Vokal (Hanya tampil pada Variasi Vokal) */}
-            {activeFilter === 'variasi-vokal' && (
-              <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-xl bg-[#ffd261]/[0.04] border border-[#ffd261]/20 backdrop-blur-sm animate-in fade-in slide-in-from-top-1 duration-200">
-                <span className="text-[11px] font-medium text-white/70 pl-1 shrink-0 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#ffd261]" />
-                  Filter Bunyi Imbuhan:
-                </span>
-                <div className="flex flex-wrap items-center gap-1">
-                  {VOWEL_SUB_FILTERS.map((sub) => {
-                    const isSubActive = activeVowelFilter === sub.id;
-                    const subCount =
-                      sub.id === 'semua'
-                        ? supportedGlifList.filter(
-                            (g) => g.kategori === 'variasi-vokal' || (g.kategori as string) === 'suku-kata'
-                          ).length
-                        : supportedGlifList.filter(
-                            (g) =>
-                              (g.kategori === 'variasi-vokal' || (g.kategori as string) === 'suku-kata') &&
-                              g.vokal === sub.id
-                          ).length;
-                    if (sub.id !== 'semua' && subCount === 0) return null;
-
-                    return (
-                      <button
-                        key={sub.id}
-                        type="button"
-                        onClick={() => setActiveVowelFilter(sub.id)}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${
-                          isSubActive
-                            ? 'bg-[#ffd261] text-[#0c1a2c] font-semibold shadow-[0_0_10px_rgba(255,210,97,0.3)]'
-                            : 'bg-white/[0.04] text-white/70 hover:text-white hover:bg-white/10 border border-white/5'
-                        }`}
-                      >
-                        <span>{sub.label}</span>
-                        <span
-                          className={`text-[9px] px-1.5 py-0.2 rounded-full ${
-                            isSubActive
-                              ? 'bg-black/20 text-[#0c1a2c] font-bold'
-                              : 'bg-white/10 text-white/50'
-                          }`}
-                        >
-                          {subCount}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Glif Cards Grid (4 cols desktop, 3 tablet, 2 mobile) */}
+            {/* Glif Cards Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {filteredGlifList.map((glif, idx) => {
                 const isSelected = selectedGlif?.slug === glif.slug;
@@ -382,27 +279,32 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
                   <button
                     key={glif.slug}
                     type="button"
+                    aria-pressed={isSelected}
+                    aria-label={`${glif.label} (${glif.simbol}), ${
+                      status === 'dikuasai'
+                        ? 'dikuasai'
+                        : status === 'latihan'
+                        ? 'sedang dilatih'
+                        : 'belum dilatih'
+                    }`}
                     onClick={() => setSelectedSlug(glif.slug)}
-                    style={{ animationDelay: `${Math.min(idx * 28, 450)}ms` }}
+                    style={{ animationDelay: `${Math.min(idx * 24, 360)}ms` }}
                     className={`group relative p-3 sm:p-3.5 rounded-2xl text-left border transition-all duration-200 cursor-pointer flex flex-col justify-between min-h-[150px] sm:min-h-[158px] animate-in fade-in slide-in-from-bottom-2 fill-mode-both ${
                       isSelected
                         ? 'bg-gradient-to-b from-[#ffd261]/15 via-white/[0.04] to-transparent border-[#ffd261] shadow-[0_0_24px_rgba(255,210,97,0.28)] scale-[1.02] ring-1 ring-[#ffd261]'
                         : 'bg-white/[0.03] border-white/10 hover:border-[#ffd261]/40 hover:bg-white/[0.06] hover:scale-[1.01]'
                     }`}
                   >
-                    {/* Top Row: Difficulty Stars & Mastery Badge */}
                     <div className="flex items-center justify-between w-full">
-                      {/* Difficulty stars */}
                       <div className="flex items-center gap-0.5 text-[#ffd261]">
                         <StarIcon filled={glif.kesulitan >= 1} />
                         <StarIcon filled={glif.kesulitan >= 2} />
                         <StarIcon filled={glif.kesulitan >= 3} />
                       </div>
 
-                      {/* Status indicator badge */}
                       {status === 'dikuasai' ? (
                         <span
-                          className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/15 border border-emerald-500/35 px-1.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(52,211,153,0.2)]"
+                          className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-500/15 border border-emerald-500/35 px-1.5 py-0.5 rounded-full"
                           title="Glif telah dikuasai"
                         >
                           <CheckCircleIcon className="w-2.5 h-2.5" />
@@ -410,27 +312,25 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
                         </span>
                       ) : status === 'latihan' ? (
                         <span
-                          className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/15 border border-amber-500/35 px-1.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.25)]"
+                          className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-500/15 border border-amber-500/35 px-1.5 py-0.5 rounded-full"
                           title="Dalam proses latihan"
                         >
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                           <span>Latih</span>
                         </span>
                       ) : (
-                        <span className="text-[9px] font-medium text-white/30 uppercase tracking-wider">
+                        <span className="text-[10px] font-mono text-white/60 uppercase tracking-wider">
                           +{glif.xp}XP
                         </span>
                       )}
                     </div>
 
-                    {/* Middle: Native Unicode Character (Large Display) */}
                     <div className="h-16 sm:h-18 flex items-center justify-center -translate-y-1 my-0.5">
                       <span className="text-3xl sm:text-4xl text-[#ffd261] font-normal leading-tight block select-none drop-shadow-[0_2px_10px_rgba(255,210,97,0.3)] transition-transform duration-200 group-hover:scale-110">
                         {glif.simbol}
                       </span>
                     </div>
 
-                    {/* Bottom: Label, IPA, Articulation */}
                     <div className="w-full text-center mt-auto pt-1">
                       <div className="flex items-center justify-center gap-1.5">
                         <span
@@ -439,11 +339,11 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
                         >
                           {glif.label}
                         </span>
-                        <span className="text-[10px] font-mono text-[#D4A373] bg-white/5 px-1 py-0.2 rounded border border-white/10">
+                        <span className="text-[10px] font-mono text-[#D4A373] bg-white/5 px-1 py-0.5 rounded border border-white/10">
                           {glif.ipa}
                         </span>
                       </div>
-                      <p className="text-[10px] text-white/50 truncate mt-0.5">
+                      <p className="text-[11px] text-white/65 truncate mt-0.5">
                         {glif.artikulasi}
                       </p>
                     </div>
@@ -453,56 +353,49 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
             </div>
 
             {/* Cultural Footnote Card */}
-            <div className="mt-2 p-4 rounded-xl border border-white/10 bg-white/[0.02] flex items-start gap-3">
+            <div className="mt-1 p-4 rounded-xl border border-white/10 bg-white/[0.03] flex items-start gap-3">
               <div className="p-2 rounded-lg bg-[#ffd261]/10 text-[#ffd261] shrink-0 mt-0.5">
                 <CompassIcon className="w-4 h-4" />
               </div>
-              <div className="text-xs text-white/70 leading-relaxed">
+              <div className="text-xs text-white/75 leading-relaxed">
                 <span className="font-semibold text-[#ffd261] block mb-0.5">
-                  Karakter Visual Paleografi:
+                  Katalog 30 Kelas Model ONNX:
                 </span>
-                {supportedGlifList.length} karakter model tersedia untuk latihan bentuk akhir, tanpa penilaian urutan tarikan pena.
+                Mencakup 18 Aksara Wianjana dasar (<em>Ha–Nya</em>) dan 12 Aksara Swalalita untuk latihan pengenalan bentuk visual aksara di browser tanpa penilaian urutan tarikan pena.
               </div>
             </div>
           </section>
 
-          {/* ================================================================
-              PANEL KANAN (COL 5): STICKY DETAIL HERO PANEL DENGAN ORNATE FRAME
-              ================================================================ */}
-          <aside className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-20">
-            <OrnateFrame className="w-full bg-[#0c1a2c]/80 backdrop-blur-xl border border-[#D4A373]/30 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-              <div className="p-5 sm:p-6 flex flex-col gap-5">
-                
-                {/* Top Row: Category Tag & XP Badge */}
-                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#ffd261] px-2.5 py-0.5 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30">
-                      {selectedGlif.kategori === 'konsonan'
-                        ? 'Konsonan Dasar'
-                        : selectedGlif.kategori === 'vokal'
-                        ? 'Vokal Mandiri'
-                        : selectedGlif.kategori === 'variasi-vokal' || (selectedGlif.kategori as string) === 'suku-kata'
-                        ? 'Variasi Vokal'
-                        : 'Tanda Diakritik'}
-                    </span>
-                    {(selectedGlif.kategori === 'variasi-vokal' || (selectedGlif.kategori as string) === 'suku-kata') && selectedGlif.vokal && (
-                      <span className="text-[10px] font-bold tracking-wide text-amber-200 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/25 font-mono">
-                        Imbuhan -{selectedGlif.vokal === 'pepet' ? 'ê' : selectedGlif.vokal}
-                      </span>
-                    )}
-                    <span className="text-[10px] font-medium text-white/60">
-                      • {dataAksara.nama}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-1 text-xs font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-full">
-                    <SparklesIcon className="w-3 h-3 text-[#ffd261]" />
-                    <span>+{selectedGlif.xp} XP</span>
-                  </div>
+          {/* PANEL KANAN (COL 5 / 4): STICKY DETAIL HERO PANEL (BOUNDED <= 100dvh) */}
+          <aside
+            aria-label="Detail karakter terpilih"
+            className="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-20"
+          >
+            <OrnateFrame
+              className="w-full lg:max-h-[calc(100dvh-6rem)] flex flex-col rounded-2xl overflow-hidden bg-[#0c1a2c]/85 backdrop-blur-xl border border-[#D4A373]/30 shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+              innerClassName="flex flex-col flex-1 min-h-0 p-4 sm:p-5"
+            >
+              {/* Pinned Top Row */}
+              <div className="shrink-0 flex items-center justify-between gap-2 border-b border-white/10 pb-3">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#ffd261] px-2.5 py-0.5 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/30">
+                    {selectedGlif.subkategori === 'swalalita' ? 'Aksara Swalalita' : 'Wianjana Dasar'}
+                  </span>
+                  <span className="text-[11px] font-medium text-white/70">
+                    • {dataAksara.nama}
+                  </span>
                 </div>
 
-                {/* Hero Glif Display (Big Amber Glyph With Glow) */}
-                <div className="relative rounded-2xl border border-[#D4A373]/25 bg-gradient-to-b from-[#141721]/90 to-[#0A0C12]/95 p-6 sm:p-7 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] flex flex-col items-center justify-between min-h-[260px] sm:min-h-[280px]">
+                <div className="flex items-center gap-1 text-xs font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-full shrink-0">
+                  <SparklesIcon className="w-3 h-3 text-[#ffd261]" />
+                  <span>+{selectedGlif.xp} XP</span>
+                </div>
+              </div>
+
+              {/* Scrollable Middle Region */}
+              <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain py-3 space-y-3 pr-1">
+                {/* Compact Hero Glif Display */}
+                <div className="relative rounded-2xl border border-[#D4A373]/25 bg-gradient-to-b from-[#141721]/90 to-[#0A0C12]/95 p-4 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] flex flex-col items-center justify-between min-h-[135px] xl:min-h-[160px]">
                   <div
                     className="pointer-events-none absolute inset-0 rounded-2xl"
                     style={{
@@ -511,15 +404,15 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
                     }}
                     aria-hidden="true"
                   />
-                  <div className="relative z-10 flex flex-col items-center justify-between w-full h-full min-h-[210px]">
-                    <div className="flex-1 flex items-center justify-center -translate-y-2.5 pt-2">
-                      <span className="text-5xl sm:text-6xl text-[#ffd261] font-normal leading-none drop-shadow-[0_4px_32px_rgba(255,210,97,0.5)] select-none transition-transform hover:scale-105 duration-300">
+                  <div className="relative z-10 flex flex-col items-center justify-between w-full flex-1">
+                    <div className="flex-1 flex items-center justify-center py-1">
+                      <span className="text-5xl xl:text-6xl text-[#ffd261] font-normal leading-none drop-shadow-[0_4px_28px_rgba(255,210,97,0.5)] select-none">
                         {selectedGlif.simbol}
                       </span>
                     </div>
-                    <div className="mt-auto pt-4 flex items-center gap-2">
+                    <div className="pt-2 flex items-center gap-2">
                       <span
-                        className="text-2xl font-bold text-white tracking-wide"
+                        className="text-xl font-bold text-white tracking-wide"
                         style={{ fontFamily: 'var(--font-philosopher)' }}
                       >
                         {selectedGlif.label}
@@ -532,12 +425,12 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
                 </div>
 
                 {/* Linguistic & Cultural Notes */}
-                <div className="space-y-3 text-xs leading-relaxed">
+                <div className="space-y-2.5 text-xs leading-relaxed">
                   <div>
                     <span className="text-[10px] font-semibold text-[#D4A373] uppercase tracking-wider block mb-0.5">
                       Artikulasi Fonetik:
                     </span>
-                    <p className="text-white/85 font-medium">
+                    <p className="text-white/90 font-medium">
                       {selectedGlif.artikulasi}
                     </p>
                   </div>
@@ -546,7 +439,7 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
                     <span className="text-[10px] font-semibold text-[#D4A373] uppercase tracking-wider block mb-0.5">
                       Catatan Paleografi &amp; Filosofi:
                     </span>
-                    <p className="text-white/70 leading-relaxed">
+                    <p className="text-white/75 leading-relaxed">
                       {selectedGlif.catatan}
                     </p>
                   </div>
@@ -554,36 +447,38 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
                   {/* Difficulty & Mastery State */}
                   <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10">
                     <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/10">
-                      <span className="text-[10px] text-white/50 block mb-1">
+                      <span className="text-[10px] text-white/70 block mb-1">
                         Tingkat Kesulitan:
                       </span>
-                      <div className="flex items-center gap-1 text-[#ffd261]">
-                        <StarIcon filled={selectedGlif.kesulitan >= 1} />
-                        <StarIcon filled={selectedGlif.kesulitan >= 2} />
-                        <StarIcon filled={selectedGlif.kesulitan >= 3} />
-                        <span className="text-[11px] text-white/80 ml-1 font-medium">
+                      <div className="flex items-center gap-1 text-[#ffd261] flex-wrap">
+                        <div className="flex items-center gap-0.5">
+                          <StarIcon filled={selectedGlif.kesulitan >= 1} />
+                          <StarIcon filled={selectedGlif.kesulitan >= 2} />
+                          <StarIcon filled={selectedGlif.kesulitan >= 3} />
+                        </div>
+                        <span className="text-[11px] text-white/85 font-medium">
                           {getDifficultyLabel(selectedGlif.kesulitan)}
                         </span>
                       </div>
                     </div>
 
                     <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/10">
-                      <span className="text-[10px] text-white/50 block mb-1">
+                      <span className="text-[10px] text-white/70 block mb-1">
                         Status Saat Ini:
                       </span>
                       <div className="flex items-center gap-1.5 font-medium text-[11px]">
                         {userProgress[selectedGlif.slug] === 'dikuasai' ? (
-                          <span className="text-emerald-400 flex items-center gap-1 font-bold">
+                          <span className="text-emerald-300 flex items-center gap-1 font-bold">
                             <CheckCircleIcon className="w-3.5 h-3.5" />
                             Dikuasai
                           </span>
                         ) : userProgress[selectedGlif.slug] === 'latihan' ? (
                           <span className="text-amber-300 flex items-center gap-1 font-bold">
-                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                            <span className="w-2 h-2 rounded-full bg-amber-400" />
                             Sedang Latihan
                           </span>
                         ) : (
-                          <span className="text-white/60">
+                          <span className="text-white/75">
                             Belum Dilatih
                           </span>
                         )}
@@ -591,19 +486,18 @@ function KatalogAksara({ aksaraKey }: { aksaraKey: 'bali' }) {
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Primary Action Button: Mulai Latih Karakter */}
-                <div className="pt-2">
-                  <ShinyButton
-                    label={`Latih Karakter ${selectedGlif.label} →`}
-                    onClick={handleMulaiLatih}
-                    className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01] transition-all"
-                  />
-                </div>
+              {/* Pinned Primary Action Button */}
+              <div className="shrink-0 pt-3 border-t border-white/10">
+                <ShinyButton
+                  href={`/latihan/web/${aksaraKey}/${selectedGlif.slug}`}
+                  label={`Latih Karakter ${selectedGlif.label} →`}
+                  className="w-full py-2.5 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01] transition-all"
+                />
               </div>
             </OrnateFrame>
           </aside>
-
         </div>
       </div>
     </main>

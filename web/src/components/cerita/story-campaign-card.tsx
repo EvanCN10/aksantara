@@ -231,23 +231,19 @@ export function StoryCampaignCard({ epos, companion, eagerBanner = false }: Stor
                     {isFinished ? (
                       <Link
                         href={`/cerita/${epos.slug}/bab/${bab.n}`}
-                        className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 text-xs font-semibold transition-all cursor-pointer"
+                        className="w-full min-h-11 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 text-xs font-semibold transition-all cursor-pointer"
                       >
                         <CheckIcon className="w-3.5 h-3.5" />
                         <span>Selesai • Baca Ulang</span>
                       </Link>
                     ) : isOpen ? (
-                      <Link
+                      <ShinyButton
                         href={`/cerita/${epos.slug}/bab/${bab.n}`}
-                        className="w-full block"
-                      >
-                        <ShinyButton
-                          label={`Mulai Bab ${bab.n} (+${bab.xp} XP) →`}
-                          className="w-full py-2.5 text-xs font-bold cursor-pointer shadow-[0_0_16px_rgba(255,210,97,0.3)] hover:scale-[1.01] transition-all"
-                        />
-                      </Link>
+                        label={`Mulai Bab ${bab.n} (+${bab.xp} XP) →`}
+                        className="w-full py-2.5 text-xs font-bold cursor-pointer shadow-[0_0_16px_rgba(255,210,97,0.3)] hover:scale-[1.01] transition-all"
+                      />
                     ) : (
-                      <div className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white/[0.03] border border-white/10 text-white/40 text-xs font-medium cursor-not-allowed">
+                      <div className="w-full min-h-11 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-white/[0.03] border border-white/10 text-white/60 text-xs font-medium cursor-not-allowed">
                         <LockIcon className="w-3.5 h-3.5" />
                         <span>Terkunci (Selesaikan Bab {bab.n - 1})</span>
                       </div>

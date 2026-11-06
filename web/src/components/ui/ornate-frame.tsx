@@ -28,19 +28,20 @@ function CornerOrnament({ className = '', gradId }: { className?: string; gradId
 interface OrnateFrameProps {
   children: ReactNode;
   className?: string;
+  innerClassName?: string;
   style?: CSSProperties;
 }
 
-export function OrnateFrame({ children, className = '', style }: OrnateFrameProps) {
+export function OrnateFrame({ children, className = '', innerClassName = '', style }: OrnateFrameProps) {
   const rawId = useId();
-  const gradId = `goldGrad-${rawId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+  const baseGradId = `goldGrad-${rawId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
   return (
     <div className={`relative ${className}`} style={style}>
-      <CornerOrnament className="top-0 left-0" gradId={gradId} />
-      <CornerOrnament className="top-0 right-0 [transform:scaleX(-1)]" gradId={gradId} />
-      <CornerOrnament className="bottom-0 left-0 [transform:scaleY(-1)]" gradId={gradId} />
-      <CornerOrnament className="bottom-0 right-0 [transform:scale(-1)]" gradId={gradId} />
+      <CornerOrnament className="top-0 left-0" gradId={`${baseGradId}-tl`} />
+      <CornerOrnament className="top-0 right-0 [transform:scaleX(-1)]" gradId={`${baseGradId}-tr`} />
+      <CornerOrnament className="bottom-0 left-0 [transform:scaleY(-1)]" gradId={`${baseGradId}-bl`} />
+      <CornerOrnament className="bottom-0 right-0 [transform:scale(-1)]" gradId={`${baseGradId}-br`} />
       <span
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 rounded-2xl"
@@ -49,7 +50,7 @@ export function OrnateFrame({ children, className = '', style }: OrnateFrameProp
           boxShadow: 'inset 0 0 0 1px rgba(255,210,97,0.12), 0 0 20px rgba(212,163,115,0.08)',
         }}
       />
-      <div className="relative z-10">{children}</div>
+      <div className={`relative z-10 ${innerClassName}`}>{children}</div>
     </div>
   );
 }

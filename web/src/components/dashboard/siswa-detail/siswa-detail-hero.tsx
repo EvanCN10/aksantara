@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Printer, AlertTriangle, Target, Sliders, BookOpen, Star, Scroll } from 'lucide-react';
+import { Printer, AlertTriangle, Target, BookOpen, Star, Scroll } from 'lucide-react';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
 import { SiswaDetailData } from '@/data/guru/guru-data';
 
@@ -22,56 +22,63 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
   return (
     <div className="space-y-6">
       {/* Navigation Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-xs text-white/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
+        <nav aria-label="Breadcrumb siswa" className="flex items-center gap-2 text-xs text-white/75">
           <Link
             href="/guru/dashboard"
-            className="hover:text-[#ffd261] transition flex items-center gap-1"
+            className="min-h-11 inline-flex items-center gap-1 hover:text-[#ffd261] transition focus-visible:outline-2 focus-visible:outline-[#ffd261] rounded-lg px-1"
           >
-            <span>←</span>
+            <span aria-hidden="true">←</span>
             <span>Dashboard Guru</span>
           </Link>
-          <span className="text-white/30">/</span>
-          <span>Roster Siswa</span>
-          <span className="text-white/30">/</span>
-          <span className="text-[#ffd261] font-semibold">{siswa.nama}</span>
-        </div>
+          <span className="text-white/40" aria-hidden="true">/</span>
+          <span>Roster Contoh</span>
+          <span className="text-white/40" aria-hidden="true">/</span>
+          <span className="text-[#ffd261] font-semibold" aria-current="page">{siswa.nama}</span>
+        </nav>
 
         {/* Action Buttons: Prev, Next, Print */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
           {prevId ? (
             <Link
               href={`/guru/siswa/${prevId}`}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white/80 bg-white/5 hover:bg-white/10 border border-white/10 transition flex items-center gap-1"
+              className="min-h-11 px-3.5 py-2 rounded-xl text-xs font-semibold text-white/85 bg-white/5 hover:bg-white/10 border border-white/15 transition inline-flex items-center gap-1 focus-visible:outline-2 focus-visible:outline-[#ffd261]"
             >
-              <span>‹</span>
-              <span>Sebelumnya</span>
+              <span aria-hidden="true">‹</span>
+              <span>Siswa Sebelumnya</span>
             </Link>
           ) : (
-            <span className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white/30 bg-white/[0.02] border border-white/5 cursor-not-allowed">
-              ‹ Sebelumnya
+            <span
+              aria-disabled="true"
+              className="min-h-11 px-3.5 py-2 rounded-xl text-xs font-semibold text-white/40 bg-white/[0.02] border border-white/10 inline-flex items-center cursor-not-allowed"
+            >
+              ‹ Siswa Sebelumnya
             </span>
           )}
 
           {nextId ? (
             <Link
               href={`/guru/siswa/${nextId}`}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white/80 bg-white/5 hover:bg-white/10 border border-white/10 transition flex items-center gap-1"
+              className="min-h-11 px-3.5 py-2 rounded-xl text-xs font-semibold text-white/85 bg-white/5 hover:bg-white/10 border border-white/15 transition inline-flex items-center gap-1 focus-visible:outline-2 focus-visible:outline-[#ffd261]"
             >
-              <span>Berikutnya</span>
-              <span>›</span>
+              <span>Siswa Berikutnya</span>
+              <span aria-hidden="true">›</span>
             </Link>
           ) : (
-            <span className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white/30 bg-white/[0.02] border border-white/5 cursor-not-allowed">
-              Berikutnya ›
+            <span
+              aria-disabled="true"
+              className="min-h-11 px-3.5 py-2 rounded-xl text-xs font-semibold text-white/40 bg-white/[0.02] border border-white/10 inline-flex items-center cursor-not-allowed"
+            >
+              Siswa Berikutnya ›
             </span>
           )}
 
           <button
+            type="button"
             onClick={onCetakRapor}
-            className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[#ffd261] bg-[#ffd261]/10 hover:bg-[#ffd261]/20 border border-[#ffd261]/30 transition flex items-center gap-1.5 hover:scale-105 active:scale-95"
+            className="min-h-11 px-4 py-2 rounded-xl text-xs font-semibold text-[#ffd261] bg-[#ffd261]/10 hover:bg-[#ffd261]/20 border border-[#ffd261]/35 transition inline-flex items-center gap-1.5 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#ffd261]"
           >
-            <Printer className="w-3.5 h-3.5" />
+            <Printer className="w-4 h-4" aria-hidden="true" />
             <span>Cetak Rapor</span>
           </button>
         </div>
@@ -89,15 +96,18 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
                 <span className="px-3 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-[#ffd261]/15 text-[#ffd261] border border-[#ffd261]/30">
                   {siswa.gelarBudaya}
                 </span>
-                <span className="text-xs text-white/50">NISN: {siswa.nisn}</span>
-                <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border ${
+                <span className="text-xs text-white/75">NISN Contoh: {siswa.nisn}</span>
+                <span className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-0.5 rounded-full border ${
                   siswa.statusAktivitas === 'Aktif Hari Ini'
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                    : 'bg-white/5 text-white/60 border-white/10'
+                    ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/25'
+                    : 'bg-white/5 text-white/75 border-white/15'
                 }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${
-                    siswa.statusAktivitas === 'Aktif Hari Ini' ? 'bg-emerald-400' : 'bg-white/40'
-                  }`} />
+                  <span
+                    aria-hidden="true"
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      siswa.statusAktivitas === 'Aktif Hari Ini' ? 'bg-emerald-400' : 'bg-white/50'
+                    }`}
+                  />
                   {siswa.statusAktivitas}
                 </span>
               </div>
@@ -107,14 +117,18 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
               </h1>
 
               {siswa.perluRemedi && siswa.glifKendala && (
-                <div className="mt-3 p-3 rounded-xl bg-red-950/30 border border-red-500/30 flex items-start gap-2.5">
-                  <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                <div className="mt-3 p-3.5 rounded-xl bg-red-950/35 border border-red-500/35 flex items-start gap-2.5">
+                  <AlertTriangle className="w-4 h-4 text-red-300 shrink-0 mt-0.5" aria-hidden="true" />
                   <div>
-                    <span className="text-xs font-bold text-red-300 uppercase tracking-wider">
-                      Status Bimbingan: Perlu Remedi Goresan
+                    <span className="text-xs font-bold text-red-200 uppercase tracking-wider">
+                      Status Bimbingan: Perlu Penguatan Bentuk Karakter
                     </span>
-                    <p className="text-xs text-white/80 mt-0.5">
-                      Kendala utama pada glif <span className="font-bold text-[#ffd261]">{siswa.glifKendala.glif}</span> ({siswa.glifKendala.aksara}): {siswa.glifKendala.catatan}
+                    <p className="text-xs text-white/85 mt-0.5">
+                      Kendala utama pada glif{' '}
+                      <span lang="ban" className="font-bold text-[#ffd261]">
+                        {siswa.glifKendala.glif}
+                      </span>{' '}
+                      ({siswa.glifKendala.aksara}): {siswa.glifKendala.catatan}
                     </p>
                   </div>
                 </div>
@@ -124,72 +138,72 @@ export const SiswaDetailHero: React.FC<SiswaDetailHeroProps> = ({
         </div>
       </OrnateFrame>
 
-      {/* 4 Pilar Performance Metrics */}
+      {/* 4 Summary Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Pilar 1 */}
-        <div className="bg-[#0c1a2c]/75 backdrop-blur-md rounded-xl p-5 border border-white/10">
-          <div className="flex items-center justify-between text-xs text-white/60 uppercase tracking-wider font-medium">
-            <span>Pilar 1: AI Writing</span>
-            <Target className="w-4 h-4 text-amber-400" />
+        <div className="bg-[#0c1a2c]/80 backdrop-blur-md rounded-xl p-5 border border-white/15">
+          <div className="flex items-center justify-between text-xs text-white/75 uppercase tracking-wider font-medium">
+            <span>Probabilitas Klasifikasi</span>
+            <Target className="w-4 h-4 text-amber-300" aria-hidden="true" />
           </div>
           <div className="mt-3">
             <div className={`text-2xl md:text-3xl font-bold font-mono ${
-              siswa.akurasiMenulis >= 90 ? 'text-emerald-400' : siswa.akurasiMenulis >= 80 ? 'text-[#ffd261]' : 'text-red-400'
+              siswa.akurasiMenulis >= 90 ? 'text-emerald-300' : siswa.akurasiMenulis >= 80 ? 'text-[#ffd261]' : 'text-red-300'
             }`}>
               {siswa.akurasiMenulis}%
             </div>
-            <p className="text-xs text-white/50 mt-1">
-              {siswa.akurasiMenulis >= 90 ? 'Kategori: Unggul & Presisi' : siswa.akurasiMenulis >= 80 ? 'Kategori: Kompeten' : 'Kategori: Memerlukan Penguatan'}
+            <p className="text-xs text-white/70 mt-1">
+              {siswa.akurasiMenulis >= 90 ? 'Rata-rata: Sangat Jelas' : siswa.akurasiMenulis >= 80 ? 'Rata-rata: Kompeten' : 'Rata-rata: Perlu Penguatan'}
             </p>
           </div>
         </div>
 
         {/* Glif Terlatih */}
-        <div className="bg-[#0c1a2c]/75 backdrop-blur-md rounded-xl p-5 border border-white/10">
-          <div className="flex items-center justify-between text-xs text-white/60 uppercase tracking-wider font-medium">
+        <div className="bg-[#0c1a2c]/80 backdrop-blur-md rounded-xl p-5 border border-white/15">
+          <div className="flex items-center justify-between text-xs text-white/75 uppercase tracking-wider font-medium">
             <span>Glif Dikuasai</span>
-            <Target className="w-4 h-4 text-amber-400" />
+            <Target className="w-4 h-4 text-amber-300" aria-hidden="true" />
           </div>
           <div className="mt-3">
             <div className="text-2xl md:text-3xl font-bold text-white font-mono">
-              {siswa.glifDikuasai} <span className="text-sm font-normal text-white/50">/ 30 Glif</span>
+              {siswa.glifDikuasai} <span className="text-sm font-normal text-white/70">/ 30 Glif</span>
             </div>
-            <p className="text-xs text-amber-300 mt-1">
+            <p className="text-xs text-amber-200 mt-1">
               Model EfficientNet-B0 ONNX
             </p>
           </div>
         </div>
 
         {/* Pilar 2: Epos Cerita */}
-        <div className="bg-[#0c1a2c]/75 backdrop-blur-md rounded-xl p-5 border border-white/10">
-          <div className="flex items-center justify-between text-xs text-white/60 uppercase tracking-wider font-medium">
-            <span>Pilar 2: Epos Cerita</span>
-            <BookOpen className="w-4 h-4 text-amber-400" />
+        <div className="bg-[#0c1a2c]/80 backdrop-blur-md rounded-xl p-5 border border-white/15">
+          <div className="flex items-center justify-between text-xs text-white/75 uppercase tracking-wider font-medium">
+            <span>Pilar 2: Epos Bali</span>
+            <BookOpen className="w-4 h-4 text-amber-300" aria-hidden="true" />
           </div>
           <div className="mt-3">
             <div className="text-2xl md:text-3xl font-bold text-white font-mono flex items-center gap-1.5">
-              <Star className="w-4 h-4 text-amber-400 fill-amber-400 inline" />
+              <Star className="w-4 h-4 text-amber-400 fill-amber-400 inline" aria-hidden="true" />
               <span>{siswa.eposBintang}/9</span>
-              <span className="text-sm font-normal text-white/50">Bab</span>
+              <span className="text-sm font-normal text-white/70">Bintang</span>
             </div>
-            <p className="text-xs text-amber-300 mt-1">
-              Epos Calon Arang Terjelajahi
+            <p className="text-xs text-amber-200 mt-1">
+              Calon Arang (3 Bab Cerita)
             </p>
           </div>
         </div>
 
         {/* Pilar 3: Preservasi */}
-        <div className="bg-[#0c1a2c]/75 backdrop-blur-md rounded-xl p-5 border border-white/10">
-          <div className="flex items-center justify-between text-xs text-white/60 uppercase tracking-wider font-medium">
+        <div className="bg-[#0c1a2c]/80 backdrop-blur-md rounded-xl p-5 border border-white/15">
+          <div className="flex items-center justify-between text-xs text-white/75 uppercase tracking-wider font-medium">
             <span>Pilar 3: Preservasi</span>
-            <Scroll className="w-4 h-4 text-emerald-400" />
+            <Scroll className="w-4 h-4 text-emerald-300" aria-hidden="true" />
           </div>
           <div className="mt-3">
             <div className="text-2xl md:text-3xl font-bold text-white font-mono">
-              {siswa.usulanPreservasi} <span className="text-sm font-normal text-white/50">Naskah</span>
+              {siswa.usulanPreservasi} <span className="text-sm font-normal text-white/70">Naskah</span>
             </div>
-            <p className="text-xs text-emerald-400 mt-1">
-              Kurasi Komunitas Aktif (+{siswa.usulanPreservasi * 75} XP)
+            <p className="text-xs text-emerald-300 mt-1">
+              Transliterasi Manual (+{siswa.usulanPreservasi * 75} XP)
             </p>
           </div>
         </div>

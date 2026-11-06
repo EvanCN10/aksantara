@@ -22,17 +22,20 @@ export function CharacterRoster({
       {/* Section Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-xs uppercase tracking-wider font-semibold text-[#ffd261]">
+          <h2
+            id="companion-roster-title"
+            className="text-xs uppercase tracking-wider font-semibold text-[#ffd261]"
+          >
             Karakter Pendamping Epos
-          </span>
-          <span className="text-xs text-white/50">
+          </h2>
+          <span className="text-xs text-white/70">
             (Pilih pemandu untuk berdialog)
           </span>
         </div>
       </div>
 
       {/* Roster Character Avatars Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
         {characters.map((char, idx) => {
           const isSelected = char.id === selectedCharacterId;
 
@@ -40,24 +43,26 @@ export function CharacterRoster({
             <button
               key={char.id}
               type="button"
+              aria-pressed={isSelected}
               onClick={() => onSelectCharacter(char.id)}
               style={{ '--stagger': idx } as React.CSSProperties}
               className={`stagger-item animate-emerge-scale sheen-sweep relative p-3 rounded-2xl border text-left transition-all duration-300 cursor-pointer flex items-center gap-3 ${
                 isSelected
                   ? 'bg-gradient-to-r from-white/[0.08] to-white/[0.02] border-[#ffd261] shadow-[0_0_20px_rgba(255,210,97,0.22)] ring-1 ring-[#ffd261] scale-[1.01]'
-                  : 'bg-white/[0.03] border-white/10 hover:border-white/25 hover:bg-white/[0.06] opacity-80 hover:opacity-100 hover:scale-[1.005]'
+                  : 'bg-white/[0.03] border-white/10 hover:border-white/25 hover:bg-white/[0.06] opacity-90 hover:opacity-100 hover:scale-[1.005]'
               }`}
             >
-              {/* Avatar Holder (Emoji or Custom Image) */}
+              {/* Avatar Holder */}
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-inner relative overflow-hidden border border-white/15"
                 style={{ backgroundColor: `${char.warnaAksen}20` }}
+                aria-hidden="true"
               >
                 {char.avatarUrl ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={char.avatarUrl}
-                    alt={char.nama}
+                    alt=""
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -80,7 +85,7 @@ export function CharacterRoster({
                 >
                   {char.nama}
                 </div>
-                <div className="text-[10px] text-white/50 truncate mt-0.5">
+                <div className="text-[11px] text-white/70 truncate mt-0.5">
                   {char.gelar}
                 </div>
               </div>

@@ -558,27 +558,19 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
         castleRef.current.style.transform = `translate3d(0, ${(1 - castleProgress) * 64}px, 0)`;
       }
 
-      // 3. Trigger animasi masuk kartu Section 2: baru muncul ketika elemen sudah 75% muncul di viewport user
+      // 3. Trigger animasi masuk kartu Section 2 begitu bagian atasnya masuk ke area pandang (18% bawah layar)
       if (section2Ref.current) {
         const rect = section2Ref.current.getBoundingClientRect();
         const vh = window.innerHeight;
-        const elemH = rect.height || 1;
 
-        // Porsi tinggi elemen Section 2 yang sudah berada di dalam viewport user
-        const visiblePx = Math.max(0, Math.min(elemH, vh - rect.top));
-        const visibleRatio = visiblePx / elemH;
-
-        // Baru muncul ketika elemennya sudah 75% (0.75) muncul di viewport user
-        if (visibleRatio >= 0.75 && !section2Ref.current.dataset.inView) {
+        if (rect.top <= vh * 0.85 && !section2Ref.current.dataset.inView) {
           section2Ref.current.dataset.inView = 'true';
-        } else if (visibleRatio < 0.2 && section2Ref.current.dataset.inView) {
-          delete section2Ref.current.dataset.inView;
         }
 
-        // 4. Redupkan background secara halus saat masuk Section 2, dan kembali terang normal saat kembali ke Section 1
+        // 4. Redupkan background secara halus saat mendekati Section 2
         if (dimOverlayRef.current) {
-          const dimProgress = Math.min(1, Math.max(0, (visibleRatio - 0.2) / 0.55));
-          const dimOpacity = dimProgress * 0.42;
+          const dimProgress = Math.min(1, Math.max(0, (vh - rect.top) / (vh * 0.65)));
+          const dimOpacity = dimProgress * 0.48;
           dimOverlayRef.current.style.opacity = String(dimOpacity);
         }
       }
@@ -607,7 +599,6 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
     <section
       ref={sectionRef}
       data-node-id="1:54"
-      aria-label="Hero Aksantara"
       className="@container relative w-full overflow-hidden bg-[#0c1a2c]"
       style={{
         minHeight: `calc(${DESIGN_H} / ${DESIGN_W} * 100cqw)`,
@@ -617,7 +608,8 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
     >
       {/* 0. White Overlay Fade Out (Cinematic entrance dari putih) */}
       <div
-        className="absolute inset-0 z-30 pointer-events-none bg-white will-change-opacity"
+        aria-hidden="true"
+        className="absolute inset-0 z-40 pointer-events-none bg-white will-change-opacity"
         style={{
           animation: isStarted
             ? 'heroWhiteFade 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards'
@@ -667,11 +659,11 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
       <h1
         data-node-id="1:52"
         data-name="AKSANTARA"
-        className="absolute select-none whitespace-nowrap font-bold tracking-normal leading-none will-change-transform"
+        aria-label="Aksantara"
+        className="absolute inset-x-0 text-center select-none whitespace-nowrap font-bold tracking-normal leading-none will-change-transform pointer-events-none"
         style={{
-          left: `${(358 / DESIGN_W) * 100}%`,
-          top: `${(212 / DESIGN_H) * 100}%`,
-          fontSize: 'calc(128 / 1440 * 100cqw)',
+          top: 'max(116px, calc(212 / 1440 * 100cqw))',
+          fontSize: 'clamp(36px, calc(128 / 1440 * 100cqw), 128px)',
           fontFamily: 'var(--font-philosopher), serif',
           filter:
             'drop-shadow(0 calc(6 / 1440 * 100cqw) calc(11.4 / 1440 * 100cqw) rgba(0, 0, 0, 0.75))',
@@ -684,6 +676,7 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
           return (
             <span
               key={index}
+              aria-hidden="true"
               className="inline-block will-change-transform bg-gradient-to-t from-[#ffd261] to-[#cf5600] bg-clip-text text-transparent"
               style={{
                 background: 'linear-gradient(to top, #ffd261, #cf5600)',
@@ -701,21 +694,21 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
         })}
       </h1>
 
-      {/* 2.1 Subtext Naratif & CTA Button (Struktur sesuai referensi Hero & SSOT v3.1) */}
+      {/* 2.1 Subtext Naratif & CTA Button */}
       <div
         data-name="Hero Narrative & CTA"
-        className="absolute z-20 flex flex-col items-center text-center will-change-transform pointer-events-auto select-none"
+        className="absolute z-30 flex flex-col items-center text-center will-change-transform pointer-events-none select-none"
         style={{
           left: '50%',
-          top: `${(365 / DESIGN_H) * 100}%`,
+          top: 'max(178px, calc(365 / 1440 * 100cqw))',
           transform: 'translate3d(-50%, calc(var(--exit) * -90px), 0)',
           opacity: 'calc(1 - var(--exit))',
-          width: 'min(90%, calc(680 / 1440 * 100cqw))',
+          width: 'min(92%, 680px)',
           maxWidth: '680px',
         }}
       >
         <p
-          className="text-white font-semibold tracking-wide text-balance drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]"
+          className="text-white font-semibold tracking-wide text-balance drop-shadow-[0_2px_6px_rgba(0,0,0,0.85)]"
           style={{
             fontSize: 'clamp(14px, calc(17 / 1440 * 100cqw), 18px)',
             lineHeight: 1.65,
@@ -725,13 +718,13 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
             opacity: isStarted ? undefined : 0,
           }}
         >
-          Lestarikan Aksara Bali lewat AI dan pembelajaran interaktif
+          Lestarikan Aksara Bali lewat AI dan pembelajaran interaktif.
           <br className="hidden sm:inline" />
           {' '}Revitalisasi warisan sastra naskah lontar Bali lewat presisi AI on-device.
         </p>
 
         <div
-          className="mt-[calc(22/1440*100cqw)] flex justify-center"
+          className="mt-4 sm:mt-[calc(22/1440*100cqw)] flex justify-center pointer-events-auto"
           style={{
             animation: isStarted
               ? 'enterHeroBtn 0.75s cubic-bezier(0.16, 1, 0.3, 1) 2.5s both'
@@ -742,7 +735,7 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
           <ShinyButton
             label="Mulai Petualangan Aksara"
             href="/mulai"
-            fillColor="rgba(13, 14, 18, 0.65)"
+            fillColor="rgba(13, 14, 18, 0.72)"
             labelColor="#F6F2E9"
             accentColor="#ffd261"
             accentSoftColor="#ffe8a3"
@@ -767,10 +760,9 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
       <div
         ref={section2Ref}
         data-name="Section 2 Pillars"
-        aria-label="Empat Pilar Revitalisasi Aksantara"
         className="relative z-30 w-full px-4 sm:px-6 lg:px-10 pointer-events-auto flex flex-col items-center select-none"
         style={{
-          paddingTop: `${(SECTION_2_TOP_PX / DESIGN_W) * 100}%`,
+          marginTop: `max(440px, calc(${SECTION_2_TOP_PX} / ${DESIGN_W} * 100cqw))`,
           paddingBottom: '64px',
           isolation: 'isolate',
         }}
@@ -803,7 +795,7 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
             className="mt-2.5 font-semibold text-shadow-lg text-xs sm:text-sm text-balance text-[#ffffff]/85 max-w-lg drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]"
             style={{ lineHeight: 1.6 }}
           >
-            Dari evaluasi cerdas AI hingga sentuhan kinestetik fisik, setiap pilar merawat warisan aksara secara utuh.
+            Dari evaluasi bentuk berbasis AI on-device hingga kurasi naskah lontar bersama pengampu, setiap pilar merawat warisan aksara Bali secara utuh.
           </p>
         </div>
 
@@ -813,9 +805,13 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
             <Link
               key={pillar.id}
               href={pillar.href}
-              className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd261] rounded-2xl"
+              onFocus={() => {
+                if (section2Ref.current) section2Ref.current.dataset.inView = 'true';
+              }}
+              className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ffd261] rounded-2xl"
             >
               <OrnateFrame
+                innerClassName="h-full flex flex-col"
                 className="pillar-card group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-[#ffd261]/50 cursor-pointer h-full flex flex-col"
                 style={{
                   background: 'rgba(20, 23, 33, 0.94)',
@@ -828,7 +824,7 @@ export function HeroSection({ isStarted = true }: { isStarted?: boolean }) {
                 <div className="relative h-28 sm:h-32 w-full overflow-hidden">
                   <Image
                     src={pillar.img}
-                    alt={pillar.nama}
+                    alt=""
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     className="object-cover group-hover:scale-110 transition-transform duration-500 ease-out"

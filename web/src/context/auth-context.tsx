@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { clearGuestProgress } from '@/lib/supabase/progress-service';
 
 export interface AuthUser {
   id: string;
@@ -21,6 +22,7 @@ interface AuthContextType {
   isGuest: boolean;
   isLoading: boolean;
   loginAsGuest: (role: 'siswa' | 'guru', nama?: string) => void;
+  updateDisplayName: (namaBaru: string) => void;
   logout: () => Promise<void>;
 }
 
@@ -28,21 +30,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const GUEST_COOKIE_NAME = 'aksantara_guest_session';
 
-// Helper baca cookie di browser
 function getCookie(name: string): string | null {
   if (typeof document === 'undefined') return null;
   const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
   return match ? decodeURIComponent(match[3]) : null;
 }
 
-// Helper set cookie di browser
 function setCookie(name: string, value: string, days = 7) {
   if (typeof document === 'undefined') return;
   const maxAge = days * 24 * 60 * 60;
   document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=Lax`;
 }
 
-// Helper hapus cookie
 function deleteCookie(name: string) {
   if (typeof document === 'undefined') return;
   document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax`;
@@ -53,11 +52,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Cek sesi saat inisialisasi aplikasi
   useEffect(() => {
     async function checkSession() {
       try {
-        // 1. Cek sesi Supabase jika kredensial tersedia
         const hasSupabaseConfig =
           Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
           Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -78,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 email: session.user.email,
                 role: userRole,
                 avatar: userRole === 'guru' ? 'Guru' : 'Siswa',
-                gelarBudaya: userRole === 'guru' ? 'Pamong Budaya Utama' : 'Cantrik Pemula',
+                gelarBudaya: userRole === 'guru' ? 'Pengampu Sastra Bali' : 'Penoreh Lontar Pemula',
                 isGuest: false,
               });
               setIsLoading(false);
@@ -89,7 +86,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         }
 
-        // 2. Cek sesi Tamu Demo di Cookie
         const guestCookie = getCookie(GUEST_COOKIE_NAME);
         if (guestCookie) {
           try {
@@ -113,20 +109,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkSession();
   }, []);
 
-  // Login sebagai Tamu Demo (Zero-Friction Offline/Stage Ready)
   const loginAsGuest = (selectedRole: 'siswa' | 'guru', customNama?: string) => {
     const isGuru = selectedRole === 'guru';
     const guestUser: AuthUser = {
       id: isGuru ? 'guru-demo-1' : 'siswa-demo-1',
       nama:
-        customNama ||
-        (isGuru ? 'Ki Ageng Dananjaya (Tamu)' : 'Raden Arya Nusantara (Tamu)'),
+        customNama?.trim() ||
+        (isGuru ? 'I Made Dananjaya, S.Pd. (Tamu)' : 'I Wayan Arya Pratama (Tamu)'),
       email: isGuru ? 'guru.demo@aksantara.id' : 'siswa.demo@aksantara.id',
       role: selectedRole,
       avatar: isGuru ? 'Guru' : 'Siswa',
-      gelarBudaya: isGuru
-        ? 'Pamong Budaya Utama'
-        : 'Juru Tulis Madya Parahyangan',
+      gelarBudaya: isGuru ? 'Pengampu Sastra Bali' : 'Penoreh Lontar Pemula',
       isGuest: true,
     };
 
@@ -134,8 +127,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(guestUser);
   };
 
-  // Logout terpadu: bersihkan Supabase + cookie guest
+  const updateDisplayName = (namaBaru: string) => {
+    const trimmed = namaBaru.trim();
+    if (!trimmed) return;
+    setUser((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, nama: trimmed };
+      if (updated.isGuest) {
+        setCookie(GUEST_COOKIE_NAME, JSON.stringify(updated), 7);
+      }
+      return updated;
+    });
+  };
+
   const logout = async () => {
+    const wasGuest = Boolean(user?.isGuest);
     setIsLoading(true);
     try {
       const hasSupabaseConfig =
@@ -151,6 +157,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
     } finally {
+      if (wasGuest) {
+        clearGuestProgress();
+      }
       deleteCookie(GUEST_COOKIE_NAME);
       setUser(null);
       setIsLoading(false);
@@ -172,6 +181,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isGuest,
         isLoading,
         loginAsGuest,
+        updateDisplayName,
         logout,
       }}
     >

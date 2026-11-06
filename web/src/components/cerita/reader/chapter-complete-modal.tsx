@@ -55,8 +55,15 @@ export function ChapterCompleteModal({
   assisted = false,
   onReplayChapter,
 }: ChapterCompleteModalProps) {
+  const earnedStars = assisted ? 2 : 3;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="chapter-complete-title"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300"
+    >
       <div className="w-full max-w-lg animate-emerge-scale" style={{ animationDuration: '0.4s' }}>
         <OrnateFrame className="w-full bg-[#0c1a2c]/95 border border-[#ffd261]/40 shadow-[0_0_50px_rgba(255,210,97,0.25)] sheen-sweep">
           <div className="p-6 sm:p-8 text-center flex flex-col items-center gap-5">
@@ -71,12 +78,13 @@ export function ChapterCompleteModal({
                 ✦ Episode Dituntaskan ✦
               </span>
               <h2
+                id="chapter-complete-title"
                 className="text-2xl sm:text-3xl font-bold text-white tracking-wide leading-tight"
                 style={{ fontFamily: 'var(--font-philosopher)' }}
               >
                 Bab {babNomor}: {judulBab}
               </h2>
-              <p className="text-xs text-white/60 mt-1 font-medium">{eposJudul}</p>
+              <p className="text-xs text-white/75 mt-1 font-medium">{eposJudul}</p>
               <div className="mt-2.5 flex items-center justify-center">
                 <span
                   className={`text-xs px-3 py-1 rounded-full border font-medium ${
@@ -89,16 +97,19 @@ export function ChapterCompleteModal({
                 </span>
               </div>
             </div>
-            {/* Stars Achievement with Staggered Slam Down */}
-            <div className="flex items-center justify-center gap-2 text-2xl text-[#ffd261]">
+            {/* Stars Achievement */}
+            <div
+              aria-label={`${earnedStars} dari 3 bintang`}
+              className="flex items-center justify-center gap-2 text-2xl text-[#ffd261]"
+            >
               <span className="animate-star-slam inline-block" style={{ animationDelay: '120ms' }}>
-                <StarIcon filled className="w-8 h-8 drop-shadow-[0_0_12px_rgba(255,210,97,0.8)]" />
+                <StarIcon filled={earnedStars >= 1} className="w-8 h-8 drop-shadow-[0_0_12px_rgba(255,210,97,0.8)]" />
               </span>
               <span className="animate-star-slam inline-block" style={{ animationDelay: '240ms' }}>
-                <StarIcon filled className="w-9 h-9 drop-shadow-[0_0_16px_rgba(255,210,97,0.9)]" />
+                <StarIcon filled={earnedStars >= 2} className="w-9 h-9 drop-shadow-[0_0_16px_rgba(255,210,97,0.9)]" />
               </span>
               <span className="animate-star-slam inline-block" style={{ animationDelay: '360ms' }}>
-                <StarIcon filled className="w-8 h-8 drop-shadow-[0_0_12px_rgba(255,210,97,0.8)]" />
+                <StarIcon filled={earnedStars >= 3} className="w-8 h-8 drop-shadow-[0_0_12px_rgba(255,210,97,0.8)]" />
               </span>
             </div>
 
@@ -107,34 +118,29 @@ export function ChapterCompleteModal({
               className="w-full p-4 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-between animate-emerge-up"
               style={{ animationDelay: '460ms' }}
             >
-              <span className="text-xs text-white/70 font-medium">Imbalan Penjelajah:</span>
+              <span className="text-xs text-white/80 font-medium">Imbalan Penjelajah:</span>
               <span className="text-lg font-bold font-mono text-[#ffd261] bg-[#ffd261]/10 px-3 py-1 rounded-full border border-[#ffd261]/30">
                 +{xpReward} XP
               </span>
             </div>
 
-            {/* Action Buttons with Beacon Pulse */}
+            {/* Action Buttons */}
             <div className="w-full space-y-2.5 pt-2 animate-emerge-up" style={{ animationDelay: '520ms' }}>
               {hasNextChapter ? (
                 <div className="w-full animate-beacon-pulse rounded-full">
-                  <Link
+                  <ShinyButton
                     href={`/cerita/${eposSlug}/bab/${babNomor + 1}`}
-                    className="w-full block"
-                  >
-                    <ShinyButton
-                      label={`Lanjut ke Bab ${babNomor + 1} →`}
-                      className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01]"
-                    />
-                  </Link>
+                    label={`Lanjut ke Bab ${babNomor + 1} →`}
+                    className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01]"
+                  />
                 </div>
               ) : (
                 <div className="w-full animate-beacon-pulse rounded-full">
-                  <Link href="/cerita" className="w-full block">
-                    <ShinyButton
-                      label="Kembali ke Pilihan Cerita →"
-                      className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01]"
-                    />
-                  </Link>
+                  <ShinyButton
+                    href="/cerita"
+                    label="Kembali ke Pilihan Cerita →"
+                    className="w-full py-3 text-sm font-semibold cursor-pointer shadow-[0_0_24px_rgba(255,210,97,0.35)] hover:scale-[1.01]"
+                  />
                 </div>
               )}
 
@@ -142,14 +148,14 @@ export function ChapterCompleteModal({
                 <button
                   type="button"
                   onClick={onReplayChapter}
-                  className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/75 hover:text-white border border-white/10 text-xs font-medium transition-all cursor-pointer"
+                  className="flex-1 min-h-11 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 text-xs font-medium transition-all cursor-pointer"
                 >
                   Baca Ulang Bab Ini ↺
                 </button>
 
                 <Link
                   href="/cerita"
-                  className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/75 hover:text-white border border-white/10 text-xs font-medium text-center transition-all cursor-pointer"
+                  className="flex-1 min-h-11 inline-flex items-center justify-center py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 text-xs font-medium text-center transition-all cursor-pointer"
                 >
                   Daftar Epos
                 </Link>

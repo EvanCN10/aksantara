@@ -1,15 +1,6 @@
 // ============================================================================
 // AKSANTARA SUPABASE PROGRESS & PERSISTENCE SERVICE
 // ============================================================================
-// Layanan ini mencatat progres pembelajaran siswa ke database Supabase PostgreSQL:
-// 1. `user_glyph_progress` & `practice_sessions` (Latihan Kanvas Digital)
-// 2. `story_progress` (Penyelesaian Bab Cerita Rakyat)
-
-//
-// Karakteristik Zero-Failure:
-// Jika koneksi Supabase belum aktif atau sedang offline di panggung demo,
-// seluruh progres tersimpan di localStorage browser tanpa melempar error.
-// ============================================================================
 
 import { createClient } from './client';
 
@@ -17,9 +8,16 @@ export interface GlyphProgressPayload {
   aksaraId: 'bali';
   glifSlug: string;
   simbol: string;
+  label?: string;
   score: number;
   status: 'sempurna' | 'bagus' | 'kurang';
   strokeCount: number;
+  ringkasan?: string;
+  latencyMs?: number;
+}
+
+export interface PracticeRecord extends GlyphProgressPayload {
+  timestamp: string;
 }
 
 export interface StoryProgressPayload {
@@ -29,24 +27,85 @@ export interface StoryProgressPayload {
   xpEarned: number;
 }
 
+export type StoryProgressMap = Record<
+  number,
+  {
+    bintang: number;
+    completedAt: string;
+    xpEarned: number;
+  }
+>;
+
+export function getGlyphPracticeRecords(aksaraId: 'bali' = 'bali'): PracticeRecord[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(`aksantara_practice_${aksaraId}`);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function getSessionPracticeRecords(aksaraId: 'bali' = 'bali'): PracticeRecord[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = sessionStorage.getItem(`aksantara_session_${aksaraId}`);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function getStoryProgressMap(eposSlug: string = 'calon-arang'): StoryProgressMap {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(`aksantara_story_${eposSlug}`);
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+export function clearGuestProgress(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.removeItem('aksantara_session_bali');
+    localStorage.removeItem('aksantara_practice_bali');
+    localStorage.removeItem('aksantara_story_calon-arang');
+    localStorage.removeItem('aksantara_pelestarian_guest');
+  } catch {
+    // Ignore storage access errors in restricted modes
+  }
+}
 
 /**
- * Mencatat hasil latihan goresan kanvas ke database Supabase & localStorage
+ * Mencatat hasil latihan goresan kanvas ke database Supabase, sessionStorage & localStorage
  */
 export async function saveGlyphPractice(
   userId: string,
   payload: GlyphProgressPayload
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // 1. Simpan ke LocalStorage sebagai cache lokal instan
+    const record: PracticeRecord = {
+      ...payload,
+      timestamp: new Date().toISOString(),
+    };
+
     if (typeof window !== 'undefined') {
       const localKey = `aksantara_practice_${payload.aksaraId}`;
-      const existing = JSON.parse(localStorage.getItem(localKey) || '[]');
-      existing.push({ ...payload, timestamp: new Date().toISOString() });
-      localStorage.setItem(localKey, JSON.stringify(existing.slice(-100)));
+      const existing = getGlyphPracticeRecords(payload.aksaraId);
+      existing.push(record);
+      localStorage.setItem(localKey, JSON.stringify(existing.slice(-200)));
+
+      const sessionKey = `aksantara_session_${payload.aksaraId}`;
+      const sessionExisting = getSessionPracticeRecords(payload.aksaraId);
+      sessionExisting.push(record);
+      sessionStorage.setItem(sessionKey, JSON.stringify(sessionExisting.slice(-100)));
     }
 
-    // 2. Kirim ke Supabase jika client aktif
     const supabase = createClient();
     if (supabase && userId && !userId.startsWith('guest_')) {
       const { error } = await supabase.from('user_glyph_progress').upsert(
@@ -55,10 +114,10 @@ export async function saveGlyphPractice(
           aksara_type: payload.aksaraId,
           glyph_character: payload.simbol,
           glyph_name: payload.glifSlug,
-          mastery_score: payload.score,
+          mastery_score: Math.round(payload.score),
           practice_count: 1,
-          last_accuracy: payload.score,
-          updated_at: new Date().toISOString(),
+          last_accuracy: Math.round(payload.score),
+          updated_at: record.timestamp,
         },
         { onConflict: 'user_id,aksara_type,glyph_character' }
       );
@@ -72,7 +131,7 @@ export async function saveGlyphPractice(
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : String(err);
     console.warn('[ProgressService] saveGlyphPractice fallback:', errorMsg);
-    return { success: true }; // Jangan gagalkan UI
+    return { success: true };
   }
 }
 
@@ -84,19 +143,17 @@ export async function saveStoryCompletion(
   payload: StoryProgressPayload
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // 1. Simpan ke LocalStorage
     if (typeof window !== 'undefined') {
       const localKey = `aksantara_story_${payload.eposSlug}`;
-      const existing = JSON.parse(localStorage.getItem(localKey) || '{}');
+      const existing = getStoryProgressMap(payload.eposSlug);
       existing[payload.babNomor] = {
         bintang: Math.max(existing[payload.babNomor]?.bintang || 0, payload.bintang),
         completedAt: new Date().toISOString(),
-        xpEarned: payload.xpEarned,
+        xpEarned: Math.max(existing[payload.babNomor]?.xpEarned || 0, payload.xpEarned),
       };
       localStorage.setItem(localKey, JSON.stringify(existing));
     }
 
-    // 2. Kirim ke Supabase
     const supabase = createClient();
     if (supabase && userId && !userId.startsWith('guest_')) {
       const { error } = await supabase.from('story_progress').upsert(
@@ -124,4 +181,3 @@ export async function saveStoryCompletion(
     return { success: true };
   }
 }
-

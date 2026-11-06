@@ -1,5 +1,6 @@
 // ============================================================================
-// DATA MOCK ANALITIK KELAS & ROSTER SISWA GURU (AKSARA BALI)
+// CONTOH DATA SIMULASI ANALITIK KELAS & ROSTER SISWA GURU (AKSARA BALI)
+// Ditampilkan dengan label eksplisit "Mode Simulasi Kelas — Contoh Data Pengampu"
 // ============================================================================
 
 export interface SiswaRosterItem {
@@ -8,9 +9,9 @@ export interface SiswaRosterItem {
   nama: string;
   avatar: string;
   gelarBudaya: string;
-  akurasiMenulis: number; // 0 - 100%
-  glifDikuasai: number; // jumlah glif terlatih
-  eposBintang: number; // bab selesai / 9
+  akurasiMenulis: number; // rata-rata probabilitas klasifikasi 0 - 100%
+  glifDikuasai: number; // jumlah glif terlatih dari 30 kelas model
+  eposBintang: number; // bintang cerita Calon Arang / 9
   usulanPreservasi: number; // jumlah transliterasi
   statusAktivitas: 'Aktif Hari Ini' | 'Kemarin' | '3 Hari Lalu';
   perluRemedi: boolean;
@@ -58,40 +59,40 @@ export interface AktivitasKelasItem {
 export const GURU_PROFILE: GuruClassProfile = {
   namaGuru: 'I Made Dananjaya',
   gelarAkademik: 'M.Hum.',
-  jabatan: 'Pamong Budaya Utama & Kurator Aksara Bali',
+  jabatan: 'Pengampu Muatan Lokal Bahasa & Aksara Bali',
   nip: '19820412 200801 1 003',
-  institusi: 'SMKN 1 Sukawati & Balai Pelestarian Kebudayaan Wilayah XV Bali',
-  namaKelas: 'Kelas X Pelestarian Aksara Bali Dwipa',
+  institusi: 'SMKN 1 Sukawati (Simulasi Kelas)',
+  namaKelas: 'Kelas X Aksara Bali Dwipa',
   tahunAjaran: 'Tahun Ajaran 2025/2026 - Semester Genap',
   totalSiswa: 34,
   siswaAktif: 32,
   rataRataAkurasi: 89.2,
-  totalGlifDikuasai: 248,
+  totalGlifDikuasai: 30,
   totalPreservasi: 48,
 };
 
 export const GLIF_KRITIS_DATA: GlifKritisItem[] = [
   {
     aksaraId: 'bali',
-    aksaraNama: 'Bali Dwipa',
+    aksaraNama: 'Aksara Bali',
     glif: 'ᬗ',
     namaGlif: 'Nga (ᬗ)',
     tingkatKesalahan: 35,
-    kendalaUmum: 'Tarikan kurva ekor bawah sering memotong grid dasar dan kehilangan keluwesan.',
+    kendalaUmum: 'Proporsi kurva ekor bawah sering terpotong sehingga tertukar dengan kelas wianjana lain.',
   },
   {
     aksaraId: 'bali',
-    aksaraNama: 'Bali Dwipa',
+    aksaraNama: 'Aksara Bali',
     glif: 'ᬰ',
     namaGlif: 'Sa Saga (ᬰ)',
     tingkatKesalahan: 31,
-    kendalaUmum: 'Lekukan mahkota atas tertukar dengan Sa Danti sehingga skor klasifikasi turun.',
+    kendalaUmum: 'Lekukan mahkota atas mirip Sa Danti sehingga probabilitas klasifikasi menurun.',
   },
   {
     aksaraId: 'bali',
-    aksaraNama: 'Bali Dwipa',
+    aksaraNama: 'Aksara Bali',
     glif: 'ᬡ',
-    namaGlif: 'Na Rumbah (ᬡ)',
+    namaGlif: 'Na Rambat (ᬡ)',
     tingkatKesalahan: 27,
     kendalaUmum: 'Proporsi busur ganda kiri terlalu sempit dibanding tiang vertikal kanan.',
   },
@@ -103,7 +104,7 @@ export const DAFTAR_SISWA_ROSTER: SiswaRosterItem[] = [
     nisn: '0081293811',
     nama: 'Wayan Arya Pratama',
     avatar: 'AP',
-    gelarBudaya: 'Juru Tulis Rontal Bali Dwipa',
+    gelarBudaya: 'Penoreh Rontal Bali Dwipa',
     akurasiMenulis: 94.5,
     glifDikuasai: 22,
     eposBintang: 9,
@@ -124,9 +125,9 @@ export const DAFTAR_SISWA_ROSTER: SiswaRosterItem[] = [
     statusAktivitas: 'Aktif Hari Ini',
     perluRemedi: true,
     glifKendala: {
-      aksara: 'Bali',
+      aksara: 'Aksara Bali',
       glif: 'ᬗ (Nga)',
-      catatan: 'Kurva lengkung ekor bawah menyimpang 38% dari template baku rontal.',
+      catatan: 'Probabilitas klasifikasi bentuk berada di bawah ambang 75% (sering terbaca sebagai Ba).',
     },
   },
   {
@@ -142,9 +143,9 @@ export const DAFTAR_SISWA_ROSTER: SiswaRosterItem[] = [
     statusAktivitas: 'Kemarin',
     perluRemedi: true,
     glifKendala: {
-      aksara: 'Bali',
+      aksara: 'Aksara Bali',
       glif: 'ᬰ (Sa Saga)',
-      catatan: 'Lekukan mahkota atas sering terpotong sebelum lengkung penuh.',
+      catatan: 'Lekukan mahkota atas belum tegas sehingga terklasifikasi sebagai Sa Danti.',
     },
   },
   {
@@ -194,9 +195,9 @@ export const AKTIVITAS_KELAS_TERBARU: AktivitasKelasItem[] = [
     siswaNama: 'Ni Luh Putu Savitri',
     avatar: 'PS',
     waktu: '5 menit lalu',
-    kegiatan: 'Preservasi Naskah Baru',
+    kegiatan: 'Preservasi Naskah Lontar',
     tipe: 'pelestarian',
-    detail: 'Mengajukan transliterasi lempir 4 Lontar Calon Arang British Library.',
+    detail: 'Mengajukan transliterasi manual lempir 4 Lontar Calon Arang British Library.',
   },
   {
     id: 'act-2',
@@ -205,7 +206,7 @@ export const AKTIVITAS_KELAS_TERBARU: AktivitasKelasItem[] = [
     waktu: '18 menit lalu',
     kegiatan: 'Sesi Latihan Kanvas AI',
     tipe: 'canvas',
-    detail: 'Menyelesaikan karakter Bali [Ka] dengan akurasi model 96%.',
+    detail: 'Berlatih karakter Bali [Ka] dengan probabilitas klasifikasi model 96%.',
   },
   {
     id: 'act-3',
@@ -219,7 +220,7 @@ export const AKTIVITAS_KELAS_TERBARU: AktivitasKelasItem[] = [
 ];
 
 // ============================================================================
-// DATA DETAIL DIAGNOSTIK SISWA (AKSARA BALI)
+// CONTOH DATA DETAIL DIAGNOSTIK SISWA (AKSARA BALI)
 // ============================================================================
 
 export interface RiwayatCanvasItem {
@@ -229,9 +230,9 @@ export interface RiwayatCanvasItem {
   glif: string;
   namaKarakter: string;
   skorAkurasi: number;
-  strokeOrderScore: number;
-  aspectRatioScore: number;
-  smoothnessScore: number;
+  prediksiTeratas: string;
+  kandidatKedua: string;
+  ambangKelulusan: string;
   tanggal: string;
   status: 'sempurna' | 'baik' | 'remedi';
   catatanAi: string;
@@ -253,6 +254,7 @@ export interface RiwayatPreservasiItem {
   judulNaskah: string;
   aksara: string;
   usulanTeks: string;
+  transliterasiLatin: string;
   status: 'terverifikasi' | 'menunggu';
   catatanFilolog: string;
   xpDidapat: number;
@@ -274,12 +276,12 @@ const DETAIL_FALLBACK_CANVAS: RiwayatCanvasItem[] = [
     glif: 'ᬓ',
     namaKarakter: 'Ka',
     skorAkurasi: 95,
-    strokeOrderScore: 96,
-    aspectRatioScore: 94,
-    smoothnessScore: 95,
+    prediksiTeratas: 'ka (95%)',
+    kandidatKedua: 'ta (3%)',
+    ambangKelulusan: 'Lulus (≥75%)',
     tanggal: 'Hari ini, 10:15',
     status: 'sempurna',
-    catatanAi: 'Goresan kurvalinier sangat proporsional dengan keluwesan naskah rontal.',
+    catatanAi: 'Bentuk siluet karakter Ka terbaca jelas oleh klasifikator EfficientNet-B0 tanpa penalti urutan goresan.',
   },
   {
     id: 'c-2',
@@ -288,12 +290,12 @@ const DETAIL_FALLBACK_CANVAS: RiwayatCanvasItem[] = [
     glif: 'ᬕ',
     namaKarakter: 'Ga',
     skorAkurasi: 88,
-    strokeOrderScore: 90,
-    aspectRatioScore: 86,
-    smoothnessScore: 88,
+    prediksiTeratas: 'ga (88%)',
+    kandidatKedua: 'pa (7%)',
+    ambangKelulusan: 'Lulus (≥75%)',
     tanggal: 'Kemarin, 14:20',
     status: 'baik',
-    catatanAi: 'Lekukan tubuh karakter sudah stabil, jaga kontinuitas tarikan busur.',
+    catatanAi: 'Proporsi kubah aksara Ga sudah dikenali model; jaga jarak antar kaki vertikal agar tidak menyatu.',
   },
   {
     id: 'c-3',
@@ -302,24 +304,12 @@ const DETAIL_FALLBACK_CANVAS: RiwayatCanvasItem[] = [
     glif: 'ᬗ',
     namaKarakter: 'Nga',
     skorAkurasi: 72,
-    strokeOrderScore: 70,
-    aspectRatioScore: 74,
-    smoothnessScore: 72,
+    prediksiTeratas: 'ba (51%)',
+    kandidatKedua: 'nga (42%)',
+    ambangKelulusan: 'Perlu Ulang (<75%)',
     tanggal: '2 hari lalu',
     status: 'remedi',
-    catatanAi: 'Kurva ekor bawah melebar melewati sumbu vertikal. Disarankan mengulang latihan.',
-  },
-];
-
-const DETAIL_FALLBACK_EPOS: RiwayatEposItem[] = [
-  {
-    id: 'e-1',
-    eposJudul: 'Misteri Mantra Calon Arang',
-    aksara: 'Aksara Bali',
-    babSelesai: 3,
-    totalBab: 3,
-    bintang: 9,
-    status: 'Tamat',
+    catatanAi: 'Lengkungan ekor bawah terlalu rapat sehingga model membaca kemiripan bentuk dengan aksara Ba.',
   },
 ];
 
@@ -330,21 +320,36 @@ const DETAIL_FALLBACK_PRESERVASI: RiwayatPreservasiItem[] = [
     judulNaskah: 'Lontar Calon Arang Lembar 1',
     aksara: 'Aksara Bali',
     usulanTeks: 'ᬑᬁ ᬅᬯᬶᬖ᭄ᬦᬫᬲ᭄ᬢᬸ ᬦᬫᬲᬶᬤ᭄ᬥᬫ᭄',
+    transliterasiLatin: 'Om Awighnam Astu Nama Siddham',
     status: 'terverifikasi',
-    catatanFilolog: 'Transliterasi akurat sesuai rontal aslinya. XP penuh diberikan.',
+    catatanFilolog: 'Transliterasi manual sesuai bacaan pembuka lempir rontal. XP kurasi diberikan.',
     xpDidapat: 120,
     tanggal: 'Hari ini, 09:30',
   },
 ];
 
-export function getSiswaDetailById(id: string): SiswaDetailData {
-  const base = DAFTAR_SISWA_ROSTER.find((s) => s.id === id) || DAFTAR_SISWA_ROSTER[0];
+export function getSiswaDetailById(id: string): SiswaDetailData | null {
+  const base = DAFTAR_SISWA_ROSTER.find((s) => s.id === id);
+  if (!base) return null;
+
+  const babSelesai = base.eposBintang >= 9 ? 3 : base.eposBintang >= 6 ? 2 : 1;
+
   return {
     ...base,
     catatanGuruTerdahulu:
-      'Siswa menunjukkan ketelitian tinggi dalam tarikan kurvalinier aksara Bali dan aktif dalam kurasi naskah rontal.',
+      'Siswa menunjukkan ketekunan berlatih bentuk karakter Wianjana Aksara Bali dan aktif pada simulasi transliterasi lontar.',
     riwayatCanvas: DETAIL_FALLBACK_CANVAS,
-    riwayatEpos: DETAIL_FALLBACK_EPOS,
+    riwayatEpos: [
+      {
+        id: 'e-1',
+        eposJudul: 'Calon Arang & Prabu Airlangga',
+        aksara: 'Aksara Bali',
+        babSelesai,
+        totalBab: 3,
+        bintang: base.eposBintang,
+        status: babSelesai === 3 ? 'Tamat' : 'Sedang Berjalan',
+      },
+    ],
     riwayatPreservasi: DETAIL_FALLBACK_PRESERVASI,
   };
 }

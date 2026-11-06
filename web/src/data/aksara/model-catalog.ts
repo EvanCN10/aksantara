@@ -9,6 +9,17 @@ type AksaraId = 'bali';
 const MODEL_LABELS = { bali: baliLabels };
 const MODEL_MANIFESTS = { bali: baliManifest };
 
+const WIANJANA_ORDER = [
+  'ha', 'na', 'ca', 'ra', 'ka',
+  'da', 'ta', 'sa', 'wa', 'la',
+  'ma', 'ga', 'ba', 'nga', 'pa',
+  'ja', 'ya', 'nya',
+] as const;
+
+const WIANJANA_RANK = new Map<string, number>(
+  WIANJANA_ORDER.map((slug, idx) => [slug, idx])
+);
+
 function indexGlyphs(aksaraId: AksaraId): Map<string, GlifData> {
   const glyphs = new Map<string, GlifData>();
   for (const glif of [...KATALOG_DATA[aksaraId].glifList, ...MODEL_GLIF_DATA[aksaraId]]) {
@@ -38,13 +49,22 @@ function buildCatalog(aksaraId: AksaraId): readonly GlifData[] {
   if (labels.length !== MODEL_MANIFESTS[aksaraId].num_classes || slugs.size !== labels.length) {
     throw new Error(`Incomplete model catalogue: ${aksaraId}`);
   }
-  return labels.map((label, index) => {
+  const validated = labels.map((label, index) => {
     const slug = slugs.get(label.source_label);
     const glif = slug === undefined ? undefined : glyphs.get(slug);
     if (label.class_id !== index || !glif) {
       throw new Error(`Missing model glyph: ${aksaraId}/${label.class_id} (${label.source_label})`);
     }
     return glif;
+  });
+
+  return [...validated].sort((a, b) => {
+    const rankA = WIANJANA_RANK.get(a.slug);
+    const rankB = WIANJANA_RANK.get(b.slug);
+    if (rankA !== undefined && rankB !== undefined) return rankA - rankB;
+    if (rankA !== undefined) return -1;
+    if (rankB !== undefined) return 1;
+    return a.label.localeCompare(b.label, 'id');
   });
 }
 

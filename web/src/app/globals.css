@@ -270,17 +270,22 @@
 .pillar-header,
 .pillar-card {
   opacity: 0;
-  pointer-events: none;
 }
 
 [data-in-view="true"] .pillar-header {
-  pointer-events: auto;
   animation: enterHeroSubtext 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 [data-in-view="true"] .pillar-card {
-  pointer-events: auto;
   animation: enterPillarCard 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pillar-header,
+  .pillar-card {
+    opacity: 1 !important;
+    animation: none !important;
+  }
 }
 
 

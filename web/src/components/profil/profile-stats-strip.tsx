@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Zap, BookOpen, PenTool, Flame, Star } from 'lucide-react';
+import { Zap, BookOpen, PenTool, CheckCircle2, Star } from 'lucide-react';
 import type { SiswaProfile } from '@/data/profil/profil-data';
 
 interface ProfileStatsStripProps {
@@ -14,29 +14,29 @@ export function ProfileStatsStrip({ profile }: ProfileStatsStripProps) {
       label: 'Total Pengalaman',
       value: `${profile.totalXp.toLocaleString('id-ID')} XP`,
       icon: Zap,
-      sub: 'Akumulasi Semua Mode',
+      sub: 'Dari Latihan & Story Mode Nyata',
       warna: '#ffd261',
     },
     {
       label: 'Bintang Cerita Epos',
-      value: `${profile.totalBintangCerita} / 27`,
+      value: `${profile.totalBintangCerita} / 9`,
       hasStar: true,
       icon: BookOpen,
-      sub: '3 Epos Sastra Selesai',
+      sub: `${profile.babCeritaSelesai} dari 3 Bab Calon Arang`,
       warna: '#38bdf8',
     },
     {
       label: 'Glif Dikuasai',
-      value: `${profile.totalGlifDikuasai} Glif`,
+      value: `${profile.totalGlifDikuasai} / 30`,
       icon: PenTool,
-      sub: 'Wianjana, Swalalita, Diakritik',
+      sub: '18 Wianjana & 12 Swalalita',
       warna: '#4ade80',
     },
     {
-      label: 'Streak Belajar',
-      value: `${profile.streakHari} Hari`,
-      icon: Flame,
-      sub: 'Konsistensi Harian',
+      label: 'Evaluasi Kanvas',
+      value: `${profile.totalEvaluasiKanvas}x`,
+      icon: CheckCircle2,
+      sub: 'Total Pemeriksaan ONNX Web',
       warna: '#f97316',
     },
   ];
@@ -48,15 +48,16 @@ export function ProfileStatsStrip({ profile }: ProfileStatsStripProps) {
         return (
           <div
             key={idx}
-            className="rounded-2xl bg-[#141e2e]/80 border border-white/10 p-4 sm:p-5 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-white/25 transition-all"
+            className="rounded-2xl bg-[#141e2e]/85 border border-white/10 p-4 sm:p-5 flex flex-col justify-between shadow-lg relative overflow-hidden group hover:border-white/25 transition-all"
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-white/50">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-white/70">
                 {item.label}
               </span>
               <IconComponent
                 className="w-5 h-5 transition-transform group-hover:scale-110"
                 style={{ color: item.warna }}
+                aria-hidden="true"
               />
             </div>
 
@@ -66,11 +67,11 @@ export function ProfileStatsStrip({ profile }: ProfileStatsStripProps) {
             >
               <span>{item.value}</span>
               {item.hasStar && (
-                <Star className="w-4 h-4 text-amber-400 fill-amber-400 inline" />
+                <Star className="w-4 h-4 text-amber-400 fill-amber-400 inline" aria-hidden="true" />
               )}
             </div>
 
-            <span className="text-[11px] font-mono text-white/40 mt-1 block truncate">
+            <span className="text-[11px] font-mono text-white/65 mt-1 block truncate">
               {item.sub}
             </span>
           </div>

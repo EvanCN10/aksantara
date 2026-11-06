@@ -61,20 +61,20 @@ const METRIK = [
 
 export default function TentangKamiPage() {
   return (
-    <main className="relative min-h-screen text-[#F6F2E9] overflow-x-hidden selection:bg-[#ffd261]/20 selection:text-[#ffd261]">
-      {/* Visual Thematic Background */}
+    <main className="relative min-h-dvh text-[#F6F2E9] overflow-x-hidden selection:bg-[#ffd261]/20 selection:text-[#ffd261]">
+      {/* Visual Thematic Background — Editorial Atmospheric Sky & Horizon */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#060d16]" aria-hidden="true">
         <Image
-          src="/images/ui/backgrounds/bg-katalog-cerita.webp"
-          alt="Latar Belakang Aksantara"
+          src="/images/ui/backgrounds/bg-tentang.webp"
+          alt=""
           fill
           priority={true}
           quality={90}
           sizes="100vw"
-          className="object-cover object-center filter brightness-[0.70] contrast-[1.05] saturate-[1.10] animate-bg-zoom-in"
+          className="object-cover object-center filter brightness-[0.55] contrast-[1.05] saturate-[1.05] animate-bg-zoom-in"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0c1a2c] via-[#0c1a2c]/40 to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(12,26,44,0.7)_100%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#060d16]/60 via-[#0c1a2c]/70 to-[#060d16]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(6,13,22,0.8)_100%)]" />
       </div>
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[640px]"
@@ -267,7 +267,7 @@ export default function TentangKamiPage() {
                     <h3 className="text-base font-bold text-white">{p.judul}</h3>
                     <p className="text-xs text-[#F6F2E9]/70 leading-relaxed font-light">{p.teks}</p>
                   </div>
-                  <span className="text-[10px] text-white/40 block mt-4 pt-3 border-t border-white/5 font-mono">
+                  <span className="text-[11px] text-[#D4A373] block mt-4 pt-3 border-t border-white/10 font-mono">
                     {p.kategori}
                   </span>
                 </div>
@@ -334,9 +334,9 @@ export default function TentangKamiPage() {
             />
             <Link
               href="/mulai"
-              className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#D4A373] hover:text-[#ffd261] transition-colors px-6 py-3 rounded-full border border-[#D4A373]/35 bg-[#0D0E12]/80 hover:bg-white/[0.06] shadow-md hover:scale-105 active:scale-95 duration-300"
+              className="inline-flex items-center justify-center min-h-11 gap-2 text-xs sm:text-sm font-semibold text-[#D4A373] hover:text-[#ffd261] transition-colors px-6 py-3 rounded-full border border-[#D4A373]/40 bg-[#0D0E12]/85 hover:bg-white/[0.08] shadow-md hover:scale-105 active:scale-95 duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ffd261]"
             >
-              <BookOpenIcon className="h-4 w-4" />
+              <BookOpenIcon aria-hidden="true" className="h-4 w-4" />
               Mulai Latihan Kanvas
             </Link>
           </div>

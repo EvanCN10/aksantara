@@ -399,19 +399,22 @@ export const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
         {/* The Native Interactive Canvas */}
         <canvas
           ref={canvasRef}
+          aria-label={`Kanvas gambar Aksara Bali untuk karakter ${targetLabel} (${targetSymbol})`}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerCancel}
           onPointerLeave={handlePointerUp}
-          className="relative z-10 w-full h-full cursor-crosshair touch-none"
+          className="relative z-10 block w-full h-full cursor-crosshair touch-none"
           style={{ touchAction: 'none' }}
-        />
+        >
+          Kanvas gambar interaktif untuk menulis aksara {targetLabel} ({targetSymbol}). Gunakan mouse, stylus, atau sentuhan layar.
+        </canvas>
 
         {/* Empty Canvas Friendly Hint */}
         {strokes.length === 0 && (
-          <div className="pointer-events-none absolute bottom-4 left-4 z-15 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 border border-white/10 text-white/45 text-xs backdrop-blur-sm">
-            <span className="w-2 h-2 rounded-full bg-[#ffd261] animate-ping" />
+          <div className="pointer-events-none absolute bottom-4 left-4 right-4 sm:right-auto z-15 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 border border-white/15 text-white/75 text-xs backdrop-blur-sm">
+            <span className="w-2 h-2 rounded-full bg-[#ffd261] animate-ping shrink-0" aria-hidden="true" />
             <span>Gunakan mouse, stylus, atau sentuhan layar untuk mulai menulis</span>
           </div>
         )}

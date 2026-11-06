@@ -58,9 +58,9 @@ export function SessionMetricCard({
         >
           {value}
         </div>
-        <div className="text-xs font-medium text-white/70 mt-0.5">{label}</div>
+        <div className="text-xs font-medium text-white/80 mt-0.5">{label}</div>
         {sublabel && (
-          <div className="text-[11px] text-white/45 mt-1 leading-snug">
+          <div className="text-[11px] text-white/65 mt-1 leading-snug">
             {sublabel}
           </div>
         )}

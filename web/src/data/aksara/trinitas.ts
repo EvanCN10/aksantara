@@ -16,6 +16,7 @@ export interface GlifData {
   kesulitan: 1 | 2 | 3;
   xp: number;
   kategori: KategoriGlif;
+  subkategori?: 'wianjana' | 'swalalita';
   vokal?: VokalSuara;
   statusBawaan?: StatusKuasai;
 }
@@ -49,13 +50,13 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         label: 'Ka',
         ipa: '[ka]',
         artikulasi: 'Wianjana kanthya',
-        catatan: 'Aksara wianjana pertama dengan lengkungan gelombang ganda harmonis.',
+        catatan: 'Aksara wianjana dengan lengkungan gelombang ganda harmonis.',
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
-        statusBawaan: 'dikuasai',
+        statusBawaan: 'belum',
       },
       {
         slug: 'kha',
@@ -67,7 +68,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
-
+        subkategori: 'swalalita',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -81,9 +82,9 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
-        statusBawaan: 'dikuasai',
+        statusBawaan: 'belum',
       },
       {
         slug: 'gha',
@@ -95,7 +96,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
-
+        subkategori: 'swalalita',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -109,9 +110,9 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
-        statusBawaan: 'latihan',
+        statusBawaan: 'belum',
       },
       {
         slug: 'ca',
@@ -123,7 +124,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -137,7 +138,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -151,7 +152,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -165,9 +166,9 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
-        statusBawaan: 'dikuasai',
+        statusBawaan: 'belum',
       },
       {
         slug: 'da',
@@ -179,7 +180,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -193,7 +194,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -207,7 +208,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -221,7 +222,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -235,7 +236,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -249,7 +250,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 2,
         xp: 75,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -263,7 +264,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -277,7 +278,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -291,7 +292,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -305,7 +306,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 3,
         xp: 100,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -319,7 +320,7 @@ export const KATALOG_DATA: Record<string, AksaraDetail> = {
         kesulitan: 1,
         xp: 50,
         kategori: 'konsonan',
-
+        subkategori: 'wianjana',
         vokal: 'a',
         statusBawaan: 'belum',
       },
@@ -440,7 +441,8 @@ function createModelGlyph(
 ): GlifData {
   return {
     slug: `kelas-${classId}`, simbol, label, ipa, kategori, catatan,
-    artikulasi: kategori === 'vokal' ? 'Swara mandiri' : 'Konsonan serapan',
+    subkategori: 'swalalita',
+    artikulasi: kategori === 'vokal' ? 'Swara mandiri' : 'Aksara swalalita (serapan Kawi/Sansekerta)',
     kesulitan: 2, xp: 75, statusBawaan: 'belum',
     ...(vokal ? { vokal } : {}),
   };

@@ -1,35 +1,57 @@
 'use client';
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useTransition, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, Clock, Search, GraduationCap, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { DAFTAR_MANUSKRIP } from '@/data/pelestarian/manuskrip-data';
 import { ManuscriptViewer } from '@/components/pelestarian/manuscript-viewer';
 import { reviewTransliteration } from '@/lib/actions/pelestarian-actions';
 import type { KurasiStatusItem, CurationStatus } from '@/types/pelestarian';
+import { useAuth } from '@/context/auth-context';
 
 interface CurationTableProps {
   items: KurasiStatusItem[];
   canReview: boolean;
   userRole?: string;
+  isGuestSession?: boolean;
 }
 
-export function CurationTable({ items, canReview }: CurationTableProps) {
+export function CurationTable({ items, canReview, isGuestSession = false }: CurationTableProps) {
   const router = useRouter();
+  const { logout } = useAuth();
+  const [guestItems, setGuestItems] = useState<KurasiStatusItem[]>([]);
   const [filter, setFilter] = useState<'semua' | CurationStatus>('semua');
   const [activeReviewId, setActiveReviewId] = useState<string | null>(null);
   const [catatanDrafts, setCatatanDrafts] = useState<Record<string, string>>({});
   const [reviewErrors, setReviewErrors] = useState<Record<string, string>>({});
   const [isPending, startTransition] = useTransition();
 
-  const filteredItems = items.filter((item) => {
+  useEffect(() => {
+    if (!isGuestSession) return;
+    try {
+      const raw = localStorage.getItem('aksantara_pelestarian_guest');
+      const parsed = raw ? JSON.parse(raw) : [];
+      if (Array.isArray(parsed)) setGuestItems(parsed);
+    } catch {
+      setGuestItems([]);
+    }
+  }, [isGuestSession]);
+
+  const allItems = isGuestSession ? guestItems : items;
+
+  const filteredItems = allItems.filter((item) => {
     if (filter === 'semua') return true;
     return item.status === filter;
   });
 
-  const totalCount = items.length;
-  const verifiedCount = items.filter((i) => i.status === 'terverifikasi').length;
-  const waitingCount = items.filter((i) => i.status === 'menunggu').length;
+  const totalCount = allItems.length;
+  const verifiedCount = allItems.filter((i) => i.status === 'terverifikasi').length;
+  const waitingCount = allItems.filter((i) => i.status === 'menunggu').length;
+
+  const handleSwitchToAccount = async () => {
+    await logout();
+    router.push('/auth?redirect=/pelestarian/status');
+  };
 
   const handleReviewSubmit = (submissionId: string, status: 'terverifikasi' | 'tinjauan') => {
     const catatan = (catatanDrafts[submissionId] || '').trim();
@@ -69,10 +91,25 @@ export function CurationTable({ items, canReview }: CurationTableProps) {
 
   return (
     <div className="w-full flex flex-col gap-6">
-      {/* 1. Preservation Metric Summary Cards (Data Nyata) */}
+      {isGuestSession && (
+        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-100 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <span className="leading-relaxed">
+            <strong className="text-[#ffd261]">Mode Simulasi Tamu:</strong> Menampilkan usulan transliterasi yang disimpan lokal pada perangkat ini. Masuk akun terdaftar untuk sinkronisasi basis data kurator.
+          </span>
+          <button
+            type="button"
+            onClick={handleSwitchToAccount}
+            className="min-h-11 px-4 py-2 rounded-xl bg-gradient-to-r from-[#ffd261] to-[#D4A373] text-[#0c1a2c] text-xs font-bold whitespace-nowrap shadow-md hover:opacity-95 transition-all cursor-pointer self-start sm:self-auto"
+          >
+            Masuk Akun Terdaftar →
+          </button>
+        </div>
+      )}
+
+      {/* 1. Preservation Metric Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div className="rounded-2xl bg-[#141e2e]/90 border border-white/10 p-4 sm:p-5 text-center animate-cascade-fade-up">
-          <span className="text-[10px] font-mono text-white/45 uppercase tracking-wider block mb-1">
+        <div className="rounded-2xl bg-[#141e2e]/90 border border-white/10 p-4 sm:p-5 text-center">
+          <span className="text-[10px] font-mono text-white/70 uppercase tracking-wider block mb-1">
             {canReview ? 'Total Antrean & Riwayat' : 'Total Usulan Anda'}
           </span>
           <span
@@ -81,13 +118,13 @@ export function CurationTable({ items, canReview }: CurationTableProps) {
           >
             {totalCount} Usulan
           </span>
-          <span className="text-[11px] text-white/50 mt-1 block">
-            Tercatat di Basis Data
+          <span className="text-[11px] text-white/70 mt-1 block">
+            {isGuestSession ? 'Tersimpan di Perangkat Ini' : 'Tercatat di Basis Data'}
           </span>
         </div>
 
-        <div className="rounded-2xl bg-[#141e2e]/90 border border-white/10 p-4 sm:p-5 text-center animate-cascade-fade-up [animation-delay:80ms]">
-          <span className="text-[10px] font-mono text-white/45 uppercase tracking-wider block mb-1">
+        <div className="rounded-2xl bg-[#141e2e]/90 border border-white/10 p-4 sm:p-5 text-center">
+          <span className="text-[10px] font-mono text-white/70 uppercase tracking-wider block mb-1">
             Telah Disetujui
           </span>
           <span
@@ -96,13 +133,13 @@ export function CurationTable({ items, canReview }: CurationTableProps) {
           >
             {verifiedCount} Usulan
           </span>
-          <span className="text-[11px] text-white/50 mt-1 block">
+          <span className="text-[11px] text-white/70 mt-1 block">
             Divalidasi Kurator / Guru
           </span>
         </div>
 
-        <div className="rounded-2xl bg-[#141e2e]/90 border border-white/10 p-4 sm:p-5 text-center animate-cascade-fade-up [animation-delay:160ms]">
-          <span className="text-[10px] font-mono text-white/45 uppercase tracking-wider block mb-1">
+        <div className="rounded-2xl bg-[#141e2e]/90 border border-white/10 p-4 sm:p-5 text-center">
+          <span className="text-[10px] font-mono text-white/70 uppercase tracking-wider block mb-1">
             Menunggu Tinjauan
           </span>
           <span
@@ -111,33 +148,39 @@ export function CurationTable({ items, canReview }: CurationTableProps) {
           >
             {waitingCount} Usulan
           </span>
-          <span className="text-[11px] text-white/50 mt-1 block">
+          <span className="text-[11px] text-white/70 mt-1 block">
             Dalam Antrean Verifikasi
           </span>
         </div>
       </div>
 
       {/* 2. Filter Status Switch */}
-      <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-black/40 border border-white/10 overflow-x-auto scrollbar-none self-start">
+      <div
+        role="group"
+        aria-label="Filter status usulan"
+        className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-2xl bg-black/40 border border-white/10 self-start"
+      >
         {[
-          { id: 'semua', label: `Semua (${items.length})` },
+          { id: 'semua', label: `Semua (${allItems.length})` },
           { id: 'terverifikasi', label: `Terverifikasi (${verifiedCount})`, icon: CheckCircle2 },
           { id: 'menunggu', label: `Menunggu (${waitingCount})`, icon: Clock },
-          { id: 'tinjauan', label: `Perlu Tinjauan (${items.filter((i) => i.status === 'tinjauan').length})`, icon: Search },
+          { id: 'tinjauan', label: `Perlu Tinjauan (${allItems.filter((i) => i.status === 'tinjauan').length})`, icon: Search },
         ].map((tab) => {
           const IconComponent = tab.icon;
+          const isActive = filter === tab.id;
           return (
             <button
               key={tab.id}
               type="button"
+              aria-pressed={isActive}
               onClick={() => setFilter(tab.id as typeof filter)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap inline-flex items-center gap-1.5 ${
-                filter === tab.id
+              className={`min-h-11 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap inline-flex items-center gap-1.5 ${
+                isActive
                   ? 'bg-[#ffd261] text-[#0c1a2c] font-bold shadow-[0_0_12px_rgba(255,210,97,0.35)]'
-                  : 'text-white/60 hover:text-white'
+                  : 'text-white/75 hover:text-white'
               }`}
             >
-              {IconComponent && <IconComponent className="w-3.5 h-3.5" />}
+              {IconComponent && <IconComponent className="w-3.5 h-3.5" aria-hidden="true" />}
               <span>{tab.label}</span>
             </button>
           );
@@ -146,7 +189,7 @@ export function CurationTable({ items, canReview }: CurationTableProps) {
 
       {/* 3. Curation Submission Cards Grid */}
       {filteredItems.length === 0 ? (
-        <div className="p-8 rounded-2xl bg-[#141e2e]/50 border border-white/10 text-center text-xs text-white/50">
+        <div className="p-8 rounded-2xl bg-[#141e2e]/50 border border-white/10 text-center text-xs text-white/75">
           Belum ada rekaman usulan transliterasi untuk kategori status ini.
         </div>
       ) : (

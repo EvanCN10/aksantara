@@ -90,7 +90,7 @@ export const SKENARIO_CALON_ARANG_BAB_1: SkenarioBab = {
         simbol: 'ᬓ',
         label: 'Ka',
         makna:
-          'Konsonan Wianjana pertama aksara Bali, melambangkan awal mula penciptaan dan perisai spiritual penangkal marabahaya batin.',
+          'Salah satu konsonan Wianjana utama aksara Bali (Ha-Na-Ca-Ra-Ka), melambangkan daya cipta dan perisai spiritual batin.',
       },
     },
     {
@@ -101,7 +101,7 @@ export const SKENARIO_CALON_ARANG_BAB_1: SkenarioBab = {
       pembicaraNama: 'Mpu Bharadah',
       teks:
         'Sebelum menyentuh naskah suci, buktikan pemahamanmu: Alat apakah yang secara tradisional digunakan oleh para undagi dan pujangga Bali untuk menulis aksara di atas daun lontar?',
-      pertanyaan: 'Alat tradisional apakah yang digunakan untuk menggoreskan aksara di atas daun lontar (*nyurat lontar*) di Bali?',
+      pertanyaan: 'Alat tradisional apakah yang digunakan untuk menggoreskan aksara di atas daun lontar (nyurat lontar) di Bali?',
       opsiJawaban: [
         {
           id: 'opt-1',

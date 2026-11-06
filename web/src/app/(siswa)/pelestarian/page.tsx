@@ -42,11 +42,11 @@ export default async function PelestarianPage() {
       </div>
 
       {/* 1. Top Navigation Bar */}
-      <header className="sticky top-0 z-30 w-full backdrop-blur-xl bg-[#0c1a2c]/85 border-b border-white/10 px-4 sm:px-6 py-3.5">
+      <header className="sticky top-0 z-30 w-full backdrop-blur-xl bg-[#0c1a2c]/85 border-b border-white/10 px-4 sm:px-6 py-2.5">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           <Link
             href="/mulai"
-            className="inline-flex items-center gap-2 text-xs font-medium text-white/70 hover:text-white transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 min-h-11 px-3 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-white/80 hover:text-white transition-colors cursor-pointer"
           >
             <ArrowLeftIcon className="w-3.5 h-3.5 text-[#ffd261]" />
             <span>Kembali ke Pilihan Jalur</span>
@@ -55,9 +55,9 @@ export default async function PelestarianPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/pelestarian/status"
-              className="text-xs font-semibold text-[#ffd261] bg-[#ffd261]/10 hover:bg-[#ffd261]/20 px-3.5 py-1.5 rounded-full border border-[#ffd261]/25 transition-all cursor-pointer flex items-center gap-1.5"
+              className="min-h-11 text-xs font-semibold text-[#ffd261] bg-[#ffd261]/10 hover:bg-[#ffd261]/20 px-4 py-2 rounded-full border border-[#ffd261]/25 transition-all cursor-pointer inline-flex items-center gap-1.5"
             >
-              <ClipboardList className="w-4 h-4" />
+              <ClipboardList className="w-4 h-4" aria-hidden="true" />
               <span>Papan Status Kurasi</span>
             </Link>
           </div>
@@ -75,10 +75,10 @@ export default async function PelestarianPage() {
             className="text-2xl sm:text-4xl font-bold text-white tracking-wide mb-2.5"
             style={{ fontFamily: 'var(--font-philosopher)' }}
           >
-            Studio Transliterasi Manuskrip Kuno
+            Studio Transliterasi Lontar Bali
           </h1>
-          <p className="text-xs sm:text-sm text-white/70 leading-relaxed">
-            Bantu filolog membaca naskah kuno Nusantara. Baca aksara pada foto manuskrip asli, lalu tuliskan transliterasi Latin untuk ditinjau oleh guru atau kurator ahli.
+          <p className="text-xs sm:text-sm text-white/75 leading-relaxed">
+            Bantu filolog membaca naskah lontar Bali kuno. Amati karakter aksara pada foto rontal asli, lalu tuliskan usulan transliterasi Latin secara manual untuk ditinjau kurator.
           </p>
         </div>
 
@@ -87,8 +87,8 @@ export default async function PelestarianPage() {
       </div>
 
       {/* 4. Footer */}
-      <footer className="w-full border-t border-white/10 py-4 px-6 text-center text-xs text-white/40">
-        Aksantara Manuskrip Digital • British Library EAP &amp; PNRI • FMIPA UGM 2026
+      <footer className="relative z-10 w-full border-t border-white/10 py-4 px-6 text-center text-xs text-white/65">
+        Aksantara Lontar Digital • Koleksi Rujukan Gedong Kirtya &amp; British Library EAP • Bali DigiFest 2026
       </footer>
     </main>
   );

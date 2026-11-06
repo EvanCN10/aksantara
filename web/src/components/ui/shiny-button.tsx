@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { useId, useSyncExternalStore } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
@@ -34,6 +35,8 @@ export interface ShinyButtonProps {
   label?: string;
   href?: string;
   onClick?: () => void;
+  disabled?: boolean;
+  type?: "button" | "submit" | "reset";
   className?: string;
   fillColor?: string;
   labelColor?: string;
@@ -52,6 +55,8 @@ export function ShinyButton({
   label = "Get Started",
   href,
   onClick,
+  disabled = false,
+  type = "button",
   className = "",
   fillColor = "rgba(13, 14, 18, 0.65)",
   labelColor = "#F6F2E9",
@@ -70,7 +75,8 @@ export function ShinyButton({
   const instanceId = useId().replace(/[^a-zA-Z0-9]/g, "");
   const scope = `gleam-edge-${instanceId}`;
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = () => {
+    if (disabled) return;
     onClick?.();
     if (href) {
       router.push(href);
@@ -112,10 +118,15 @@ export function ShinyButton({
 
       isolation: isolate;
       position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-block-size: 2.75rem;
+      text-decoration: none;
       overflow: hidden;
       cursor: pointer;
-      outline-offset: 4px;
-      padding: 0.85rem 2.25rem;
+      outline-offset: 3px;
+      padding: 0.8rem 2.25rem;
       font-size: 0.95rem;
       line-height: 1.2;
       font-weight: 500;
@@ -219,6 +230,19 @@ export function ShinyButton({
       animation-composition: add;
     }
 
+    .${scope}:focus-visible {
+      outline: 2px solid var(--gleam-accent);
+      outline-offset: 3px;
+    }
+
+    .${scope}:disabled,
+    .${scope}[aria-disabled="true"] {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+      animation: none !important;
+    }
+
     .${scope}:is(:hover, :focus-visible) {
       --gradient-percent-${instanceId}: 20%;
       --gradient-angle-offset-${instanceId}: 95deg;
@@ -284,15 +308,26 @@ export function ShinyButton({
   return (
     <>
       <style>{css}</style>
-      <button
-        type="button"
-        className={`${scope} ${className}`}
-        onClick={handleClick}
-        aria-label={label}
-        data-reduced-motion={reducedMotion ? "true" : undefined}
-      >
-        <span>{label}</span>
-      </button>
+      {href && !disabled ? (
+        <Link
+          href={href}
+          onClick={() => onClick?.()}
+          className={`${scope} ${className}`}
+          data-reduced-motion={reducedMotion ? "true" : undefined}
+        >
+          <span>{label}</span>
+        </Link>
+      ) : (
+        <button
+          type={type}
+          disabled={disabled}
+          className={`${scope} ${className}`}
+          onClick={handleClick}
+          data-reduced-motion={reducedMotion ? "true" : undefined}
+        >
+          <span>{label}</span>
+        </button>
+      )}
     </>
   );
 }

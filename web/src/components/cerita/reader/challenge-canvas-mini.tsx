@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { DrawingCanvas, type DrawingCanvasRef } from '@/components/canvas/drawing-canvas';
 import {
   evaluateGlyph,
+  getClassifierTarget,
   getPredictionDisplayName,
   type GlyphInferenceOutput,
 } from '@/lib/onnx/onnx-classifier';
@@ -97,16 +98,19 @@ export function ChallengeCanvasMini({
     setEvaluationResult(null);
 
     try {
-      const image = canvasRef.current?.getCanvasBase64();
-      if (!image || canvasRef.current?.isEmpty()) {
+      const imageData = canvasRef.current?.getImageData();
+      if (!imageData || canvasRef.current?.isEmpty()) {
         throw new Error('Goreskan karakter pada kanvas sebelum meminta verifikasi.');
       }
 
-      const result = await evaluateGlyph({
-        aksaraId,
-        karakterSlug: targetGlif.slug,
-        image,
-      });
+      const result = await evaluateGlyph(
+        {
+          aksaraId,
+          karakterSlug: targetGlif.slug,
+          image: '',
+        },
+        imageData
+      );
 
       if (token !== requestTokenRef.current) return;
 
@@ -187,8 +191,9 @@ export function ChallengeCanvasMini({
             type="button"
             onClick={handleUndo}
             disabled={strokeCount === 0 || isVerifying || isPassed}
+            aria-label="Urungkan goresan terakhir"
             title="Urungkan goresan terakhir"
-            className="p-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 active:scale-95 text-white/70 hover:text-white transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+            className="inline-flex items-center justify-center min-h-11 min-w-11 p-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 active:scale-95 text-white/80 hover:text-white transition-all disabled:opacity-35 disabled:pointer-events-none cursor-pointer"
           >
             <UndoIcon className="w-4 h-4" />
           </button>
@@ -196,12 +201,13 @@ export function ChallengeCanvasMini({
             type="button"
             onClick={handleClear}
             disabled={strokeCount === 0 || isVerifying || isPassed}
+            aria-label="Bersihkan kanvas"
             title="Bersihkan kanvas"
-            className="p-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-rose-500/20 active:scale-95 text-white/70 hover:text-rose-300 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+            className="inline-flex items-center justify-center min-h-11 min-w-11 p-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-rose-500/20 active:scale-95 text-white/80 hover:text-rose-300 transition-all disabled:opacity-35 disabled:pointer-events-none cursor-pointer"
           >
             <TrashIcon className="w-4 h-4" />
           </button>
-          <span className="text-[11px] font-mono text-white/40 ml-1">
+          <span className="text-[11px] font-mono text-white/70 ml-1">
             {strokeCount} goresan
           </span>
         </div>
@@ -209,6 +215,7 @@ export function ChallengeCanvasMini({
         <div>
           {!isPassed ? (
             <ShinyButton
+              disabled={strokeCount === 0 || isVerifying}
               label={
                 isVerifying
                   ? 'Memeriksa AI...'
@@ -217,19 +224,19 @@ export function ChallengeCanvasMini({
                   : 'Verifikasi Goresan AI'
               }
               onClick={handleVerify}
-              className={`py-2 px-4 text-xs font-semibold ${
+              className={`py-2.5 px-4 text-xs font-semibold ${
                 strokeCount > 0 && !isVerifying
                   ? 'cursor-pointer shadow-[0_0_20px_rgba(255,210,97,0.3)] hover:scale-[1.01]'
-                  : 'opacity-40 cursor-not-allowed pointer-events-none'
+                  : 'opacity-45 cursor-not-allowed'
               }`}
             />
           ) : (
             <div className="text-right">
-              <span className="text-xs font-semibold text-emerald-400 block">
+              <span className="text-xs font-semibold text-emerald-300 block">
                 Tulisan benar menurut model
               </span>
-              <span className="text-[10px] text-white/50 block">
-                Model eksperimen; probabilitas belum dikalibrasi
+              <span className="text-[10px] text-white/70 block">
+                Klasifikasi ONNX Runtime Web
               </span>
             </div>
           )}
@@ -238,81 +245,84 @@ export function ChallengeCanvasMini({
 
       {/* Error Notice */}
       {evaluationError && (
-        <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200 animate-emerge-up">
+        <div role="alert" className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200 animate-emerge-up">
           {evaluationError}
         </div>
       )}
 
-      {/* Rich AI Evaluation Feedback Card (mirrors /latihan) */}
-      {evaluationResult && (
-        <div
-          className={`p-3.5 rounded-xl border animate-emerge-up space-y-2.5 ${
-            isPassed
-              ? 'bg-emerald-500/10 border-emerald-500/30'
-              : 'bg-amber-500/10 border-amber-500/30'
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-white/50">
-                Probabilitas Target:
-              </span>
-              <span
-                className={`font-mono font-bold text-base ${
-                  isPassed ? 'text-emerald-400' : 'text-[#ffd261]'
-                }`}
-              >
-                {evaluationResult.score.toLocaleString('id-ID', {
-                  minimumFractionDigits: 1,
-                  maximumFractionDigits: 1,
-                })}%
-              </span>
-              <span
-                className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
-                  isPassed
-                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                    : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                }`}
-              >
-                {isPassed ? '✓ Akurat (Lulus)' : 'Perlu Penajaman Bentuk'}
+      {/* Rich AI Evaluation Feedback Card */}
+      <div aria-live="polite">
+        {evaluationResult && (
+          <div
+            className={`p-3.5 rounded-xl border animate-emerge-up space-y-2.5 ${
+              isPassed
+                ? 'bg-emerald-500/10 border-emerald-500/30'
+                : 'bg-amber-500/10 border-amber-500/30'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/70">
+                  Probabilitas Target:
+                </span>
+                <span
+                  className={`font-mono font-bold text-base ${
+                    isPassed ? 'text-emerald-300' : 'text-[#ffd261]'
+                  }`}
+                >
+                  {evaluationResult.score.toLocaleString('id-ID', {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 1,
+                  })}%
+                </span>
+                <span
+                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                    isPassed
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                      : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                  }`}
+                >
+                  {isPassed ? '✓ Sesuai Target' : 'Perlu Penajaman Bentuk'}
+                </span>
+              </div>
+
+              <span className="text-[10px] font-mono text-white/65">
+                {Math.round(evaluationResult.latencyMs)} ms
               </span>
             </div>
 
-            <span className="text-[10px] font-mono text-white/40">
-              {Math.round(evaluationResult.latencyMs)}ms
-            </span>
+            <p className="text-xs text-white/85 leading-relaxed">
+              {evaluationResult.ringkasan}
+            </p>
+
+            {/* Top-3 predictions breakdown */}
+            {Array.isArray(evaluationResult.top3) && evaluationResult.top3.length > 0 && (
+              <div className="pt-2 border-t border-white/10 flex flex-wrap items-center gap-1.5 text-[11px]">
+                <span className="text-[10px] text-white/70 font-semibold uppercase tracking-wider mr-1">
+                  Prediksi Model:
+                </span>
+                {evaluationResult.top3.map((item, idx) => {
+                  const displayName = getPredictionDisplayName(aksaraId, item.sourceLabel);
+                  const expectedSource = getClassifierTarget(aksaraId, targetGlif.slug);
+                  const isTarget = expectedSource !== null && item.sourceLabel === expectedSource;
+                  return (
+                    <span
+                      key={idx}
+                      className={`px-2 py-0.5 rounded border font-mono text-[10px] ${
+                        isTarget
+                          ? 'bg-[#ffd261]/15 border-[#ffd261]/40 text-[#ffd261] font-bold'
+                          : 'bg-white/5 border-white/10 text-white/75'
+                      }`}
+                    >
+                      {displayName}: {(item.probability * 100).toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
+                    </span>
+                  );
+                })}
+              </div>
+            )}
           </div>
-
-          <p className="text-xs text-white/80 leading-relaxed">
-            {evaluationResult.ringkasan}
-          </p>
-
-          {/* Top-3 predictions breakdown */}
-          {Array.isArray(evaluationResult.top3) && evaluationResult.top3.length > 0 && (
-            <div className="pt-2 border-t border-white/10 flex flex-wrap items-center gap-1.5 text-[11px]">
-              <span className="text-[10px] text-white/50 font-semibold uppercase tracking-wider mr-1">
-                Prediksi Model:
-              </span>
-              {evaluationResult.top3.map((item, idx) => {
-                const displayName = getPredictionDisplayName(aksaraId, item.sourceLabel);
-                const isTarget = item.sourceLabel.toLowerCase() === targetGlif.label.toLowerCase() || item.sourceLabel.toLowerCase() === targetGlif.slug.toLowerCase();
-                return (
-                  <span
-                    key={idx}
-                    className={`px-2 py-0.5 rounded border font-mono text-[10px] ${
-                      isTarget
-                        ? 'bg-[#ffd261]/15 border-[#ffd261]/40 text-[#ffd261] font-bold'
-                        : 'bg-white/5 border-white/10 text-white/70'
-                    }`}
-                  >
-                    {displayName}: {(item.probability * 100).toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
-                  </span>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

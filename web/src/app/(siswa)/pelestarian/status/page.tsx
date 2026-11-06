@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { CurationTable } from '@/components/pelestarian/curation-table';
 import { OrnateFrame } from '@/components/ui/ornate-frame';
@@ -7,7 +8,7 @@ import type { KurasiStatusItem } from '@/types/pelestarian';
 
 function ArrowLeftIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
       <path strokeLinecap="round" strokeLinejoin="round" d="M19 12H5m7 7-7-7 7-7" />
     </svg>
   );
@@ -89,83 +90,83 @@ export default async function PelestarianStatusPage() {
   }
 
   return (
-    <main className="relative min-h-screen bg-[#0c1a2c] text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col justify-between">
+    <main className="relative min-h-dvh text-[#F6F2E9] selection:bg-[#ffd261]/20 selection:text-[#ffd261] flex flex-col justify-between">
+      {/* Visual Thematic Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#060d16]" aria-hidden="true">
+        <Image
+          src="/images/ui/backgrounds/bg-studio-pelestarian.webp"
+          alt=""
+          fill
+          priority={true}
+          quality={90}
+          sizes="100vw"
+          className="object-cover object-center filter brightness-[0.42] contrast-[1.05]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060d16] via-[#060d16]/75 to-[#060d16]/45" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(6,13,22,0.8)_100%)]" />
+      </div>
+
       {/* Background Ambience */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute top-[-10%] left-1/3 w-[750px] h-[380px] bg-[radial-gradient(ellipse_at_center,rgba(255,210,97,0.1),transparent_70%)] blur-3xl" />
         <div className="absolute bottom-[-10%] right-1/4 w-[700px] h-[360px] bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.08),transparent_70%)] blur-3xl" />
-        <div className="absolute inset-0 bg-[radial-gradient(#ffd261_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.025]" />
       </div>
 
       {/* 1. Top Navigation Bar */}
-      <header className="sticky top-0 z-30 w-full backdrop-blur-xl bg-[#0c1a2c]/85 border-b border-white/10 px-4 sm:px-6 py-3.5">
+      <header className="sticky top-0 z-30 w-full backdrop-blur-xl bg-[#0c1a2c]/85 border-b border-white/10 px-4 sm:px-6 py-2.5">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
           <Link
             href="/pelestarian"
-            className="inline-flex items-center gap-2 text-xs font-medium text-white/70 hover:text-white transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 min-h-11 px-3.5 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-white/80 hover:text-white transition-colors cursor-pointer"
           >
             <ArrowLeftIcon className="w-3.5 h-3.5 text-[#ffd261]" />
             <span>Kembali ke Studio Transliterasi</span>
           </Link>
 
           <span className="text-[11px] font-mono text-[#ffd261] bg-[#ffd261]/10 px-3 py-1 rounded-full border border-[#ffd261]/25">
-            {isReviewer ? 'Antrean Kurator / Guru' : 'Papan Status Usulan'}
+            {isReviewer ? 'Antrean Kurator / Guru' : !user ? 'Status Lokal Tamu' : 'Papan Status Usulan'}
           </span>
         </div>
       </header>
 
       {/* 2. Main Curation Content */}
       <div className="relative z-10 max-w-5xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 flex-1 flex flex-col gap-6 sm:gap-8">
-        {/* Title Header */}
         <div className="text-center max-w-2xl mx-auto">
           <span className="text-[11px] font-mono tracking-widest uppercase text-[#ffd261] px-3 py-1 rounded-full bg-[#ffd261]/10 border border-[#ffd261]/25 inline-block mb-2">
-            Verifikasi &amp; Validasi Ahli
+            Verifikasi &amp; Validasi Manusia
           </span>
           <h1
             className="text-2xl sm:text-4xl font-bold text-white tracking-wide mb-2.5"
             style={{ fontFamily: 'var(--font-philosopher)' }}
           >
-            {isReviewer ? 'Antrean Peninjauan Transliterasi' : 'Status Usulan Transliterasi Anda'}
+            {isReviewer ? 'Antrean Peninjauan Transliterasi' : 'Status Usulan Transliterasi Lontar'}
           </h1>
-          <p className="text-xs sm:text-sm text-white/70 leading-relaxed">
+          <p className="text-xs sm:text-sm text-white/75 leading-relaxed">
             {isReviewer
-              ? 'Tinjau usulan pembacaan naskah kuno dari siswa, periksa terhadap foto manuskrip rujukan, dan berikan catatan evaluasi.'
-              : 'Daftar usulan pembacaan naskah kuno Anda yang tersimpan di basis data dan menunggu atau telah ditinjau oleh kurator.'}
+              ? 'Tinjau usulan pembacaan naskah lontar dari siswa terhadap foto manuskrip rujukan dan berikan catatan evaluasi.'
+              : 'Pantau status usulan pembacaan naskah lontar Bali yang telah Anda ajukan.'}
           </p>
         </div>
 
-        {/* Authentication Notice for Guests */}
-        {!user ? (
-          <div className="p-8 rounded-3xl bg-[#141e2e]/90 border border-white/10 text-center flex flex-col items-center gap-4 max-w-lg mx-auto">
-            <span className="text-3xl">📜</span>
-            <h2 className="text-lg font-bold text-white">Sesi Akun Diperlukan</h2>
-            <p className="text-xs text-white/70 leading-relaxed">
-              Masuk ke akun Aksantara Anda untuk melihat riwayat usulan transliterasi pribadi atau mengakses antrean peninjauan bagi guru dan ahli.
-            </p>
-            <Link
-              href="/auth?redirect=/pelestarian/status"
-              className="py-2.5 px-6 rounded-xl bg-gradient-to-r from-[#ffd261] to-[#D4A373] text-[#0c1a2c] text-xs font-bold shadow-lg hover:scale-105 transition-all"
-            >
-              Masuk ke Akun Anda →
-            </Link>
-          </div>
-        ) : queryErrorNotice ? (
-          <div className="p-6 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200 text-center">
+        {queryErrorNotice ? (
+          <div role="alert" className="p-6 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200 text-center">
             {queryErrorNotice}
           </div>
         ) : (
-          /* Curation Table and Real Records */
-          <OrnateFrame className="w-full">
-            <div className="rounded-3xl bg-[#141e2e]/90 p-5 sm:p-7">
-              <CurationTable items={items} canReview={isReviewer} userRole={userRole} />
-            </div>
+          <OrnateFrame className="w-full rounded-3xl" innerClassName="rounded-3xl bg-[#141e2e]/90 p-5 sm:p-7">
+            <CurationTable
+              items={items}
+              canReview={isReviewer}
+              userRole={userRole}
+              isGuestSession={!user}
+            />
           </OrnateFrame>
         )}
       </div>
 
       {/* 3. Footer */}
-      <footer className="w-full border-t border-white/10 py-4 px-6 text-center text-xs text-white/40">
-        Aksantara Epigrafi &amp; Filologi • Peninjauan Kurasi Naskah Kuno • FMIPA UGM 2026
+      <footer className="relative z-10 w-full border-t border-white/10 py-4 px-6 text-center text-xs text-white/65">
+        Aksantara Epigrafi &amp; Filologi Bali • Peninjauan Manual Naskah Lontar • Bali DigiFest 2026
       </footer>
     </main>
   );

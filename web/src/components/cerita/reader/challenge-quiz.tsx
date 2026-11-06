@@ -21,9 +21,9 @@ function CheckIcon({ className = 'w-4 h-4' }: { className?: string }) {
 
 function XIcon({ className = 'w-4 h-4' }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="6" />
+      <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   );
 }
@@ -128,27 +128,29 @@ export function ChallengeQuiz({
       </div>
 
       {/* Answer Explanation & Feedback */}
-      {hasAnswered && selectedOption && (
-        <div
-          key={`${selectedId}-${isCorrect}`}
-          className={`p-3.5 rounded-xl border text-xs leading-relaxed transition-all animate-emerge-up ${
-            isCorrect
-              ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-100 shadow-[0_0_20px_rgba(16,185,129,0.15)]'
-              : 'bg-rose-500/15 border-rose-500/40 text-rose-100 shadow-[0_0_20px_rgba(244,63,94,0.15)]'
-          }`}
-          style={{ animationDuration: '0.3s' }}
-        >
-          <strong className="block mb-0.5 text-sm">
-            {isPassed ? 'Jawaban benar!' : 'Kurang Tepat, Coba Lagi!'}
-          </strong>
-          <p className="font-light">
-            {selectedOption.penjelasan ||
-              (isCorrect
-                ? 'Pilihanmu tepat sesuai filosofi naskah kuno!'
-                : 'Pilih opsi yang lain untuk menemukan jawaban yang sesuai.')}
-          </p>
-        </div>
-      )}
+      <div aria-live="polite">
+        {hasAnswered && selectedOption && (
+          <div
+            key={`${selectedId}-${isCorrect}`}
+            className={`p-3.5 rounded-xl border text-xs leading-relaxed transition-all animate-emerge-up ${
+              isCorrect
+                ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-100 shadow-[0_0_20px_rgba(16,185,129,0.15)]'
+                : 'bg-rose-500/15 border-rose-500/40 text-rose-100 shadow-[0_0_20px_rgba(244,63,94,0.15)]'
+            }`}
+            style={{ animationDuration: '0.3s' }}
+          >
+            <strong className="block mb-0.5 text-sm">
+              {isPassed ? 'Jawaban benar!' : 'Kurang Tepat, Coba Lagi!'}
+            </strong>
+            <p className="font-light">
+              {selectedOption.penjelasan ||
+                (isCorrect
+                  ? 'Pilihanmu tepat sesuai filosofi naskah kuno!'
+                  : 'Pilih opsi yang lain untuk menemukan jawaban yang sesuai.')}
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

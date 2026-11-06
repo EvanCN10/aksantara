@@ -86,11 +86,11 @@ export function CanvasToolbar({
           type="button"
           onClick={onUndo}
           disabled={disabled || strokeCount === 0}
-          title="Urungkan goresan terakhir (Ctrl+Z)"
+          title="Urungkan goresan terakhir"
           aria-label="Urungkan goresan terakhir"
-          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 active:scale-95"
+          className="inline-flex items-center justify-center gap-1.5 min-h-11 min-w-11 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed bg-white/5 hover:bg-white/10 text-white/85 hover:text-white border border-white/10 active:scale-95"
         >
-          <UndoIcon className="w-3.5 h-3.5 text-amber-300" />
+          <UndoIcon className="w-4 h-4 text-amber-300" />
           <span className="hidden sm:inline">Urungkan</span>
         </button>
 
@@ -100,35 +100,37 @@ export function CanvasToolbar({
           disabled={disabled || strokeCount === 0}
           title="Bersihkan seluruh goresan kanvas"
           aria-label="Bersihkan seluruh goresan kanvas"
-          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed bg-white/5 hover:bg-rose-500/20 text-white/80 hover:text-rose-200 border border-white/10 hover:border-rose-500/30 active:scale-95"
+          className="inline-flex items-center justify-center gap-1.5 min-h-11 min-w-11 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed bg-white/5 hover:bg-rose-500/20 text-white/85 hover:text-rose-200 border border-white/10 hover:border-rose-500/30 active:scale-95"
         >
-          <TrashIcon className="w-3.5 h-3.5 text-rose-400" />
+          <TrashIcon className="w-4 h-4 text-rose-400" />
           <span className="hidden sm:inline">Bersihkan</span>
         </button>
 
-        <div className="h-4 w-px bg-white/15 mx-1" />
+        <div className="h-4 w-px bg-white/15 mx-1" aria-hidden="true" />
 
         {/* Live stroke badge */}
-        <span className="text-[11px] font-mono px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/10 text-white/60">
-          {strokeCount} {strokeCount === 1 ? 'Goresan' : 'Goresan'}
+        <span className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-white/75">
+          {strokeCount} Goresan
         </span>
       </div>
 
       {/* Right Group: Guides toggle & Brush Size Selector */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2">
         {/* Toggle Ghost Watermark Guide */}
         <button
           type="button"
           onClick={onToggleGhostGuide}
           disabled={disabled}
-          title={showGhostGuide ? 'Sembunyikan watermark panduan' : 'Tampilkan watermark panduan'}
-          className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer border ${
+          aria-pressed={showGhostGuide}
+          aria-label={showGhostGuide ? 'Sembunyikan panduan bentuk' : 'Tampilkan panduan bentuk'}
+          title={showGhostGuide ? 'Sembunyikan panduan bentuk' : 'Tampilkan panduan bentuk'}
+          className={`inline-flex items-center justify-center gap-1.5 min-h-11 min-w-11 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer border ${
             showGhostGuide
               ? 'bg-[#ffd261]/20 text-[#ffd261] border-[#ffd261]/40 shadow-[0_0_10px_rgba(255,210,97,0.2)]'
-              : 'bg-white/5 text-white/50 border-white/10 hover:text-white/80'
+              : 'bg-white/5 text-white/70 border-white/10 hover:text-white'
           }`}
         >
-          <EyeIcon className="w-3.5 h-3.5" />
+          <EyeIcon className="w-4 h-4" />
           <span className="hidden md:inline">Panduan</span>
         </button>
 
@@ -137,21 +139,27 @@ export function CanvasToolbar({
           type="button"
           onClick={onToggleGrid}
           disabled={disabled}
+          aria-pressed={showGrid}
+          aria-label={showGrid ? 'Sembunyikan garis proporsi' : 'Tampilkan garis proporsi'}
           title={showGrid ? 'Sembunyikan garis proporsi' : 'Tampilkan garis proporsi'}
-          className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer border ${
+          className={`inline-flex items-center justify-center gap-1.5 min-h-11 min-w-11 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer border ${
             showGrid
               ? 'bg-[#D4A373]/20 text-[#D4A373] border-[#D4A373]/40'
-              : 'bg-white/5 text-white/50 border-white/10 hover:text-white/80'
+              : 'bg-white/5 text-white/70 border-white/10 hover:text-white'
           }`}
         >
-          <GridIcon className="w-3.5 h-3.5" />
+          <GridIcon className="w-4 h-4" />
           <span className="hidden md:inline">Grid</span>
         </button>
 
-        <div className="h-4 w-px bg-white/15 mx-1 hidden sm:block" />
+        <div className="h-4 w-px bg-white/15 mx-0.5 hidden sm:block" aria-hidden="true" />
 
         {/* Brush Size Selector Pill */}
-        <div className="flex items-center gap-1 p-0.5 rounded-xl bg-black/40 border border-white/10">
+        <div
+          role="group"
+          aria-label="Ukuran kuas"
+          className="flex items-center gap-1 p-1 rounded-xl bg-black/40 border border-white/10"
+        >
           {(
             [
               { id: 'halus', label: 'Tipis', dotSize: 'w-1.5 h-1.5' },
@@ -164,15 +172,17 @@ export function CanvasToolbar({
               <button
                 key={item.id}
                 type="button"
+                aria-pressed={isActive}
+                aria-label={`Kuas ${item.label}`}
                 onClick={() => onBrushSizeChange(item.id)}
                 title={`Kuas ${item.label}`}
-                className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium transition-all cursor-pointer ${
+                className={`inline-flex items-center justify-center gap-1.5 min-h-11 min-w-11 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
                   isActive
                     ? 'bg-[#ffd261] text-[#0c1a2c] font-bold shadow-sm'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                    : 'text-white/75 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <span className={`rounded-full bg-current ${item.dotSize}`} />
+                <span className={`rounded-full bg-current ${item.dotSize}`} aria-hidden="true" />
                 <span className="hidden sm:inline">{item.label}</span>
               </button>
             );

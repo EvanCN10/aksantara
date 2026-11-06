@@ -12,6 +12,8 @@ import { ChallengeCanvasMini } from '@/components/cerita/reader/challenge-canvas
 import { ChapterCompleteModal } from '@/components/cerita/reader/chapter-complete-modal';
 import { ShinyButton } from '@/components/ui/shiny-button';
 import { playWoodTap } from '@/lib/audio/sound-effects';
+import { useAuth } from '@/context/auth-context';
+import { saveStoryCompletion, saveGlyphPractice } from '@/lib/supabase/progress-service';
 
 interface StoryPlayerPageProps {
   params: Promise<{ judul: string; n: string }>;
@@ -35,6 +37,7 @@ function ArrowLeftIcon({ className = 'w-4 h-4' }: { className?: string }) {
 
 export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const unwrappedParams = use(params);
 
   const rawJudul = unwrappedParams?.judul?.toLowerCase() || 'calon-arang';
@@ -107,6 +110,12 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
     if (!canProceed) return;
 
     if (isLastBeat) {
+      void saveStoryCompletion(user?.id ?? 'guest_local', {
+        eposSlug: skenario.eposSlug,
+        babNomor: skenario.babNomor,
+        bintang: isChapterAssisted ? 2 : 3,
+        xpEarned: skenario.xpReward,
+      });
       setIsChapterFinished(true);
       return;
     }
@@ -229,6 +238,19 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
           passed: true,
         },
       }));
+      if (currentBeat.targetGlif) {
+        void saveGlyphPractice(user?.id ?? 'guest_local', {
+          aksaraId: 'bali',
+          glifSlug: currentBeat.targetGlif.slug,
+          simbol: currentBeat.targetGlif.simbol,
+          label: currentBeat.targetGlif.label,
+          score: result.score,
+          status: result.score >= 85 ? 'sempurna' : 'bagus',
+          strokeCount: 1,
+          ringkasan: result.ringkasan,
+          latencyMs: result.latencyMs,
+        });
+      }
       if (assisted) {
         setRecoveryMessage('Kamu menyelesaikan tantangan dengan bantuan.');
       } else {
@@ -392,38 +414,41 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
       </div>
 
       {/* 3. Bottom Navigation Bar */}
-      <footer className="sticky bottom-0 z-30 w-full backdrop-blur-xl bg-[#0c1a2c]/90 border-t border-white/10 px-4 sm:px-6 py-3.5 sm:py-4">
+      <footer className="sticky bottom-0 z-30 w-full backdrop-blur-xl bg-[#0c1a2c]/90 border-t border-white/10 px-4 sm:px-6 py-3 sm:py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
           {/* Previous Step Button */}
           <button
             type="button"
             onClick={handlePrevBeat}
             disabled={currentBeatIndex === 0}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/10 text-xs font-medium transition-all disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
+            aria-label="Adegan sebelumnya"
+            className="inline-flex items-center justify-center gap-1.5 min-h-11 min-w-11 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 text-xs font-medium transition-all disabled:opacity-25 disabled:cursor-not-allowed cursor-pointer"
           >
             <ArrowLeftIcon className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Sebelumnya</span>
           </button>
 
           {/* Step Indicator */}
-          <span className="text-xs font-mono text-white/45">
+          <span className="text-xs font-mono text-white/75">
             Adegan {currentBeatIndex + 1} dari {totalBeats}
           </span>
 
-          {/* Primary Next Action Button with Beacon Pulse */}
+          {/* Primary Next Action Button */}
           <div className={canProceed ? 'animate-beacon-pulse rounded-full' : ''}>
             {isLastBeat ? (
               <ShinyButton
+                disabled={!canProceed}
                 label="Tuntaskan Bab (Selesai) ✓"
                 onClick={handleNextBeat}
                 className={`py-2.5 px-5 text-xs sm:text-sm font-bold ${
                   canProceed
                     ? 'cursor-pointer shadow-[0_0_20px_rgba(255,210,97,0.35)] hover:scale-[1.01]'
-                    : 'opacity-40 cursor-not-allowed pointer-events-none'
+                    : 'opacity-45 cursor-not-allowed'
                 }`}
               />
             ) : (
               <ShinyButton
+                disabled={!canProceed}
                 label={
                   canProceed
                     ? 'Lanjutkan Cerita →'
@@ -435,7 +460,7 @@ export default function StoryPlayerPage({ params }: StoryPlayerPageProps) {
                 className={`py-2.5 px-5 text-xs sm:text-sm font-bold ${
                   canProceed
                     ? 'cursor-pointer shadow-[0_0_20px_rgba(255,210,97,0.35)] hover:scale-[1.01]'
-                    : 'opacity-40 cursor-not-allowed pointer-events-none'
+                    : 'opacity-45 cursor-not-allowed'
                 }`}
               />
             )}
